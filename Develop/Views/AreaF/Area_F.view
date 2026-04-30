@@ -1,0 +1,52 @@
+<style>
+    .footer-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* 親要素の幅・高さに対して隙間なく広げる */
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0 15px;
+        box-sizing: border-box;
+        
+        /* 背景を緑に */
+        background-color: #287d3c; 
+        color: white;
+    }
+
+    .message-container {
+        display: flex;
+        align-items: center;
+    }
+
+    /* 枠なしテキスト表示 */
+    .message-text-area {
+        width: 300px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #ffffff;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .copyright-section {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+</style>
+
+<div class="footer-flex">
+    <!-- 左側：枠なしのテキスト表示エリア -->
+    <div class="message-container">
+        <div id="footer-message" class="message-text-area">
+            {$Footer_Message}
+        </div>
+    </div>
+
+    <!-- 右側：コピーライト -->
+    <div class="copyright-section">
+        &copy; {$Current_Year} {$Company_Name}
+    </div>
+</div>

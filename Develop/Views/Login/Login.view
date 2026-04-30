@@ -1,0 +1,105 @@
+<div class="login-page"> <div class="login-container">
+        <h1>wwProjectシステム</h1>
+        
+        <div class="error-area">{$error_msg}</div>
+        
+        <form action="{$auth_url}" method="POST">
+            <div class="input-group">
+                <input type="text" name="login_id" placeholder="LOGIN ID" value="{$login_id}" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="PASSWORD" required>
+            </div>
+            
+            <button type="submit" class="btn-green">LOGIN</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* 1. ページ全体を画面中央に寄せるための基盤 */
+    .login-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* 画面の高さ一杯に広げる */
+        background-color: #f4f7f6; /* 薄いグレーで洗練された印象に */
+        font-family: 'Helvetica Neue', Arial, sans-serif; /* プロフェッショナルなフォント */
+    }
+
+    /* 2. ログインボックス（器）の装飾 */
+    .login-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px; /* 角を少し丸くして柔らかさを */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* 薄い影で立体感を出す */
+        width: 100%;
+        max-width: 400px; /* 横幅が広がりすぎないように */
+        text-align: center;
+    }
+
+    /* 3. タイトルの調整 */
+    .login-container h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 30px;
+        font-weight: 300; /* 少し細めにしてモダンに */
+        letter-spacing: 1px; /* 文字間隔を広げて読みやすく */
+    }
+
+    /* 4. 入力グループの調整 */
+    .input-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    /* 5. 入力フィールド（USER ID / PASSWORD）の質感 */
+    .input-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.3s, box-shadow 0.3s; /* 反応を滑らかに */
+        box-sizing: border-box; /* paddingを含めたサイズ計算 */
+    }
+
+    /* 入力時に青い影を出して視認性を高める */
+    .input-group input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    /* 6. 渡部様こだわりの「緑のボタン」 */
+    .btn-green {
+        background-color: #28a745; /* 信頼感のある緑 */
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase; /* 文字を大文字に */
+        letter-spacing: 1px;
+        transition: background-color 0.3s; /* ホバー時の変化を滑らかに */
+        margin-top: 10px;
+    }
+
+    /* ホバー時の反応 */
+    .btn-green:hover {
+        background-color: #218838; /* 少し濃い緑で反応を示す */
+    }
+    
+    /* エラーメッセージをBOLDに修正 */
+    .error-area {
+        color: #e53e3e;
+        font-size: 14px;
+        text-align: center;
+        height: 20px;
+        margin-bottom: 25px;
+        font-weight: bold; /* BOLD指定 */
+    }
+</style>

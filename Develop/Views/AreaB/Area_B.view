@@ -1,0 +1,51 @@
+<style>
+    /* この div が Area B の中身を左右に引き離します */
+    .b-flex-container {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100%;
+        height: 100%;
+        padding: 0 15px;
+        box-sizing: border-box; /* 左右の余白を計算に含める */
+    }
+
+    .b-left-box {
+        font-style: italic;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .b-right-box {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .b-user-name {
+        font-weight: bold;
+    }
+
+    .b-logout-button {
+        background-color: #f0ad4e;
+        color: white !important;
+        padding: 4px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 12px;
+        line-height: 1;
+    }
+</style>
+
+<div class="b-flex-container">
+    <!-- 左側：プロジェクト名（空でもこの場所を占有します） -->
+    <div class="b-left-box">
+        {$Selected_Project_Name}
+    </div>
+
+    <!-- 右側：ユーザー名とボタン -->
+    <div class="b-right-box">
+        <div class="b-user-name">{$User_Name}</div>
+        <a href="javascript:void(0);" onclick="location.href='Logout';" class="b-logout-button">ログアウト</a>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+<style>
+    .logo-container {
+        color: #ffffff !important; 
+        font-size: 22px;
+        font-weight: bold;
+        line-height: 50px; /* 親要素の高さに合わせる */
+        padding-left: 15px;
+        letter-spacing: 2px;
+    }
+    .logo-container span {
+        color: #4caf50; /* 緑系のアクセント */
+    }
+</style>
+<div class="logo-container">
+    ww<span>Project</span>
+</div>
