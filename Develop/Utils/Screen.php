@@ -12,10 +12,12 @@ class Screen {
     // Viewをセットする（Console.viewなどの枠組み用）
     public static function view($path, $data = []) {
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::view() path: {$path}");
+        $logger->debug("Screen::view() path: {$path} start...");
         
         self::$outputBuffer = self::getContents($path, $data);
         echo self::$outputBuffer;
+
+        $logger->debug("Screen::view() path: {$path} finish.");
     }
     
     // index.phpの最後で呼び出す
@@ -26,7 +28,7 @@ class Screen {
     // 内部処理：View読み込みと置換
     private static function getContents($path, $data = []) {
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::getContents() path: {$path}");
+        $logger->debug("Screen::getContents() start...");
         
         $projectRoot = \Framework\Core\Container::get('PROJECT_ROOT');
         $file = $projectRoot . $path;
@@ -50,66 +52,85 @@ class Screen {
             }
         }
         
+        $logger->debug("Screen::getContents() finish.");
         return $content;
     }
     
     // エリアAの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaA($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::updateAreaA() {$viewPath}");
+        $logger->debug("Screen::updateAreaA() path: {$viewPath} start...");
+        $logger->debug("Screen::areaView() sending JSON: " . json_encode(array_keys(self::$storage)));
+        
         self::logAndSet('a', $viewPath, $data); 
+        
+        $logger->debug("Screen::updateAreaA() finish.");
     }
     
     // エリアBの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaB($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::updateAreaB() {$viewPath}");
+        $logger->debug("Screen::updateAreaB() path: {$viewPath} start...");
+        
         self::logAndSet('b', $viewPath, $data); 
+        
+        $logger->debug("Screen::updateAreaB() finish.");
     }
     
     // エリアCの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaC($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::getContents() {$viewPath}");
+        $logger->debug("Screen::updateAreaC() {$viewPath} start...");
+        
         self::logAndSet('c', $viewPath, $data); 
+        
+        $logger->debug("Screen::updateAreaC() finish.");
     }
     
     // エリアDの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaD($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::getContents() {$viewPath}");
+        $logger->debug("Screen::updateAreaD() path: {$viewPath} start...");
+        
         self::logAndSet('d', $viewPath, $data); 
+        
+        $logger->debug("Screen::updateAreaD() finish.");
     }
     
     // エリアEの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaE($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::getContents() {$viewPath}");
+        $logger->debug("Screen::updateAreaE() path: {$viewPath} start...");
+        
         self::logAndSet('e', $viewPath, $data); 
+        
+        $logger->debug("Screen::updateAreaE() finish.");
     }
     
     // エリアFの更新準備（共通のsetAreaを呼び出す）
     public static function updateAreaF($viewPath, $data = []) { 
         $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::getContents() {$viewPath}");
+        $logger->debug("Screen::updateAreaF() path: {$viewPath} start...");
+
         self::logAndSet('f', $viewPath, $data); 
+
+        $logger->debug("Screen::updateAreaF() finish.");
     }
     
     // ロギングとセットを共通化
     private static function logAndSet($key, $viewPath, $data) {
-        $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::updateArea" . strtoupper($key) . "() start...");
-        
         // getContentsを使ってHTMLを取得（置換ロジックも共通で使える）
         self::$storage['areas'][$key] = self::getContents($viewPath, $data);
-        
-        $logger->debug("Screen::updateArea" . strtoupper($key) . "() finish.");
     }
     
     // 格納された全エリアをJSONで一括出力
     public static function areaView() {
+        $logger = new \Framework\Core\Logger();
+        $logger->debug("Screen::areaView() start...");
+        
         header('Content-Type: application/json');
         echo json_encode(self::$storage);
+        $logger->debug("Screen::areaView() finish.");
         exit;
     }
 }

@@ -44,8 +44,9 @@
     </div>
 
     <!-- 右側：ユーザー名とボタン -->
-    <div class="b-right-box">
-        <div class="b-user-name">{$User_Name}</div>
-        <a href="javascript:void(0);" onclick="location.href='Logout';" class="b-logout-button">ログアウト</a>
-    </div>
-</div>
+	<div class="b-right-box">
+	    <div class="b-user-name">{$User_Name}</div>
+		<a href="javascript:void(0);" 
+		   onclick="if(confirm('ログアウトしてもよろしいですか？')){ location.href='../../Develop/Login'; }" 
+		   class="b-logout-button">ログアウト</a>
+   </div>

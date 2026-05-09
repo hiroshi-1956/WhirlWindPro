@@ -64,6 +64,9 @@ class LoginController extends \Develop\Utils\BaseController {
                 if ($authenticated) {
                     $this->logger->debug("Login OK - {$login_id}");
                     
+                    // Sessionの開始
+                    \Develop\Utils\Session::start();
+                    
                     session_regenerate_id(true);
                     \Develop\Utils\Session::loginSuccess($user);
                     
@@ -115,7 +118,8 @@ class LoginController extends \Develop\Utils\BaseController {
         \Develop\Utils\Session::destroy();
         
         $base_url = \Framework\Core\Container::get('BASE_URL');
-        header("Location: {$base_url}/Develop/Login/initialAction");
+        header("Location: {$base_url}/Develop/Logout");
+        
         exit;
     }
 }

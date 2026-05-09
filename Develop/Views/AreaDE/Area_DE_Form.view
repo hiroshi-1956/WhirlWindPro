@@ -1,34 +1,59 @@
+<style>
+    [id^="area-d"], [id^="area_d"] { width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important; border-right: none !important; }
+    [id^="area-e"], [id^="area_e"] { display: none !important; }
+    .wide-form-container { padding: 40px; max-width: 800px; margin: 0 auto; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; margin-bottom: 8px; font-weight: bold; }
+    .field input, .field textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    .form-actions { margin-top: 40px; text-align: right; }
+    .btn { padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-cancel { background-color: #95a5a6; color: white; margin-right: 20px; }
+    .btn-save { background-color: #27ae60; color: white; }
+</style>
+
 <div class="wide-form-container">
     <h2>{$title}</h2>
-    <div class="form-grid">
-        <div class="field">
-            <label>プロジェクト名</label>
-            <input type="text" name="p_name" placeholder="例：次世代コアシステム開発">
-        </div>
-        <div class="field">
-            <label>詳細説明（広々使えます）</label>
-            <textarea name="p_desc" rows="10" placeholder="プロジェクトの目的や概要を入力してください..."></textarea>
-        </div>
+    <div class="field">
+        <label>プロジェクトID</label>
+        <input type="text" id="new_p_id">
+    </div>
+    <div class="field">
+        <label>プロジェクト名</label>
+        <input type="text" id="new_p_name">
+    </div>
+    <div class="field">
+        <label>詳細説明</label>
+        <textarea id="new_p_desc" rows="10"></textarea>
     </div>
     <div class="form-actions">
-        <button class="btn-save" onclick="saveProject()">この内容で登録する</button>
+    
+        <button type="button" class="btn btn-cancel" 
+            onclick="if(confirm('入力した内容は破棄されます。よろしいですか？')){ bridge({code:'Project/cancelProject'}); }">
+            キャンセル
+        </button>
+
+        <button type="button" class="btn btn-save" 
+            onclick="
+                var id = document.getElementById('new_p_id').value;
+                var name = document.getElementById('new_p_name').value;
+                var desc = document.getElementById('new_p_desc').value;
+
+                if(!name){ alert('プロジェクト名を入力してください'); return; }
+
+                if(confirm('この内容で登録してもよろしいですか？')){
+                    bridge({
+                        code: 'Project/saveProject',
+                        p_id: id,
+                        p_name: name,
+                        p_desc: desc
+                    });
+                }
+            ">
+            この内容で登録する
+        </button>
     </div>
 </div>
 
-<style>
-.wide-form-container {
-    padding: 40px;
-    max-width: 800px; /* D+Eを結合しても、中央に寄せて読みやすく */
-    margin: 0 auto;
-}
-.form-grid { display: flex; flex-direction: column; gap: 20px; }
-.field label { display: block; margin-bottom: 8px; font-weight: bold; }
-.field input, .field textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.form-actions { margin-top: 30px; text-align: right; }
-.btn-save { padding: 15px 30px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; }
-</style>
+<script>
+    console.log("Form loaded. bridge data format updated.");
+</script>

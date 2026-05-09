@@ -1,0 +1,232 @@
+<style>
+    /* 全体コンテナ */
+    .table-edit-container {
+        padding: 10px;
+        background-color: #ffffff;
+        font-family: 'Helvetica Neue', Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        color: #333;
+    }
+
+    .edit-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        border-left: 5px solid #2c3e50;
+        padding-left: 12px;
+        line-height: 1.2;
+    }
+
+    /* 1. 上部：基本情報入力テーブル（スリム版） */
+    .base-info-table {
+        border-collapse: collapse;
+        margin-bottom: 25px;
+        width: auto;
+    }
+
+    .base-info-table th {
+        width: 120px;
+        padding: 6px 12px;
+        text-align: left;
+        font-weight: bold;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        font-size: 13px; /* 1つ小さく設定 */
+        color: #555;
+    }
+
+    .base-info-table td {
+        padding: 4px 10px;
+        border: 1px solid #ccc;
+    }
+
+    .input-text-full {
+        width: 400px; /* 枠の大きさを小さく調整 */
+        padding: 4px 6px;
+        border: 1px solid #999;
+        font-size: 14px;
+        border-radius: 3px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        height: 28px;
+    }
+
+    .radio-group label {
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+
+    /* 2. 下部：カラム定義テーブル */
+    .column-def-table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 1100px;
+        margin-bottom: 20px;
+    }
+
+    .column-def-table th {
+        padding: 8px 5px;
+        font-weight: bold;
+        border: 1px solid #ccc;
+        background: #2c3e50; /* エリアCと同じグレーの濃さ */
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .column-def-table td {
+        border: 1px solid #ccc;
+        padding: 4px;
+        text-align: center;
+        background: #fff;
+    }
+
+    .row-num {
+        background: #f0f0f0 !important;
+        width: 35px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .input-col {
+        width: 95%;
+        border: 1px solid #aaa;
+        padding: 4px;
+        font-size: 13px;
+    }
+
+    .input-short {
+        width: 50px;
+        border: 1px solid #aaa;
+        padding: 4px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .select-type {
+        width: 100px;
+        border: 1px solid #aaa;
+        padding: 3px;
+        font-size: 13px;
+    }
+
+    /* 3. フッター：ボタンエリア */
+    .edit-footer {
+        max-width: 1100px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+        padding-top: 15px;
+    }
+
+    .note-text {
+        margin-right: auto;
+        color: #666;
+        font-size: 12px;
+    }
+
+    .btn-register {
+        background-color: #2e7d32;
+        color: white;
+        border: none;
+        padding: 8px 35px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .btn-cancel {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        padding: 8px 35px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .btn-register:hover, .btn-cancel:hover {
+        opacity: 0.85;
+    }
+</style>
+
+<div class="table-edit-container">
+    <div class="edit-title">新規テーブル登録</div>
+
+    <table class="base-info-table">
+        <tr>
+            <th>テーブル名称</th>
+            <td><input type="text" class="input-text-full" value="Administrators" placeholder="英数物理名"></td>
+        </tr>
+        <tr>
+            <th>日本語名称</th>
+            <td><input type="text" class="input-text-full" value="管理者氏名" placeholder="日本語論理名"></td>
+        </tr>
+        <tr>
+            <th>種別</th>
+            <td>
+                <div class="radio-group">
+                    <label><input type="radio" name="table_type" value="table" checked> テーブル</label>
+                    <label><input type="radio" name="table_type" value="view"> ビュー</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>説明</th>
+            <td><input type="text" class="input-text-full" value="ログイン時の管理者の氏名"></td>
+        </tr>
+    </table>
+
+    <table class="column-def-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>physical</th>
+                <th>logical</th>
+                <th>type</th>
+                <th>Length</th>
+                <th>primary</th>
+                <th>Null</th>
+                <th>Unique</th>
+                <th>Default</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php for ($i = 1; $i <= 8; $i++): ?>
+            <tr>
+                <td class="row-num"><?php echo $i; ?></td>
+                <td><input type="text" class="input-col" name="col_physical[]"></td>
+                <td><input type="text" class="input-col" name="col_logical[]"></td>
+                <td>
+                    <select class="select-type" name="col_type[]">
+                        <option value="int">int</option>
+                        <option value="varchar" selected>varchar</option>
+                        <option value="text">text</option>
+                        <option value="datetime">datetime</option>
+                        <option value="timestamp">timestamp</option>
+                    </select>
+                </td>
+                <td><input type="text" class="input-short" name="col_length[]"></td>
+                <td><input type="checkbox" name="col_primary[]"></td>
+                <td><input type="checkbox" name="col_null[]"></td>
+                <td><input type="checkbox" name="col_unique[]"></td>
+                <td><input type="text" class="input-col" name="col_default[]"></td>
+            </tr>
+            <?php endfor; ?>
+        </tbody>
+    </table>
+
+    <div class="edit-footer">
+        <div class="note-text">※初期表示時は8カラム（最大30カラムまで拡張可能）</div>
+        <button class="btn-register" onclick="bridge({ code: 'DBDefinition/register', data: $('#form-id').serialize() });">登録</button>
+        <button class="btn-cancel" onclick="bridge({ code: 'DBDefinition/cancel' });">キャンセル</button>
+    </div>
+</div>

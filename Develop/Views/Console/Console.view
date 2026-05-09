@@ -2,119 +2,103 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>wwProject Console</title>
     <style>
-        /* 全体：スクロールを抑制し、100vhに固定 */
-        html, body { 
-            height: 100%; margin: 0; padding: 0; overflow: hidden; 
-            font-family: "Segoe UI", "Meiryo", sans-serif; background-color: #1e1e1e; color: #eee;
-        }
-
-        /* メインコンテナ：縦方向のFlex */
-        .console-wrapper { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
-
-        /* ヘッダー(A+B)：高さ 50px 固定 */
-        .header-row { 
-            display: flex; height: 50px; flex-shrink: 0; 
-            background: #2d2d2d; border-bottom: 1px solid #111; 
-        }
-        #area-a { 
-            width: 250px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-            background: #333; font-weight: bold; border-right: 1px solid #111; font-size: 18px; color: #fff;
-        }
-        #area-b { 
-            flex: 1; display: flex; align-items: center; padding: 0 15px; 
-            font-size: 13px; justify-content: space-between; background: #f8f9fa; color: #333;
-        }
-
-        /* メインボディ(C, D, E)：残りの高さを占有 */
-        .main-body { display: flex; flex: 1; overflow: hidden; }
-
-        /* エリアC(サイドナビ)：エリアAと幅を 250px で統一 */
-        #area-c { 
-            width: 250px; flex-shrink: 0; background: #2c3e50; 
-            border-right: 1px solid #111; overflow-y: auto; color: #fff;
-        }
-
-        /* ワークスペースグループ(D+E+F) */
-        .right-container { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        /* 1. 基本レイアウト */
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: sans-serif; background: #1e1e1e; color: #eee; }
+        .console-wrapper { display: flex; flex-direction: column; height: 100vh; }
         
-        /* エリアDとEを横に並べる */
-        .content-row { display: flex; flex: 1; overflow: hidden; }
-
-        /* エリアD(リスト)：幅 280px 固定 */
-        #area-d { 
-            width: 280px; flex-shrink: 0; background: #fdfdfd; 
-            border-right: 1px solid #ddd; overflow-y: auto; color: #333;
-        }
-
-        /* エリアE(メイン)：可変 */
-        #area-e { 
-            flex: 1; background: #fff; overflow-y: auto; color: #333;
-        }
-
-        /* エリアF(ステータスバー)：高さ 32px 固定 */
-		#area-f {
-			height: 32px !important;
-		    padding: 0 !important;
-		    margin: 0 !important;
-		    background-color: transparent !important;
-		    overflow: hidden;
+        /* エリアA, B (Header) */
+        .header-row { display: flex; height: 50px; background: #2d2d2d; border-bottom: 1px solid #111; flex-shrink: 0; }
+        #area-a { width: 250px; display: flex; align-items: center; justify-content: center; background: #333; font-weight: bold; border-right: 1px solid #111; color: #fff; }
+        /* エリアB：背景を白（画像準拠）に変更 */
+        #area-b { flex: 1; display: flex; align-items: center; padding: 0 15px; background: #fff; color: #333; justify-content: space-between; font-size: 13px; }
+        
+        .main-body { display: flex; flex: 1; overflow: hidden; }
+        
+        /* 2. エリアC (Side Nav) */
+		#area-c {
+		    width: 250px;
+		    height: 100%; /* 親（main-body）の高さに合わせる */
+		    flex-shrink: 0;
+		    display: flex;
+		    flex-direction: column; /* 縦並びにする */
+		    background: #2c3e50;
+		    border-right: 1px solid #111;
+		}
+		
+		/* 念押し：すべてのリスト記号を消す（もし残っていてもこれで消えるはず） */
+		#area-c * {
+		    list-style: none !important;
+		    list-style-type: none !important;
 		}
 
-        /* スクロールバーのカスタマイズ */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        .navi-project-title { padding: 15px; font-weight: bold; background: #1a252f; border-bottom: 1px solid #111; color: #ecf0f1; }
+        
+        .menu-item { 
+            padding: 12px 20px; cursor: pointer; display: flex; align-items: center;
+            border-bottom: 1px solid #34495e; color: #ecf0f1; font-size: 14px;
+        }
+        .menu-item:hover { background: #3e4f5f; }
+        .menu-item.active { background: #3498db; }
+        
+        /* ProjectLockを最下部へ */
+        .navi-footer { margin-top: auto; background: #1a252f; border-top: 1px solid #111; }
+
+        /* 3. エリアD, E, F */
+        .right-container { flex: 1; display: flex; flex-direction: column; }
+        .content-row { display: flex; flex: 1; overflow: hidden; }
+        #area-d { width: 100px; background: #fdfdfd; border-right: 1px solid #ddd; overflow-y: auto; color: #333; }
+        #area-e { flex: 1; background: #fff; overflow-y: auto; color: #333; }
+        #area-f { height: 45px; background: #1a7a42; color: #fff; display: flex; align-items: center; padding: 0 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div class="console-wrapper">
     <header class="header-row">
-        <!-- 初期表示はPHP変数を展開（図の1枚目→2枚目） -->
-        <div id="area-a">{$Area_A}</div>
-        <div id="area-b">{$Area_B}</div>
+        <div id="area-a">WhirlWindPro</div>
+        <!-- 修正：{$Area_B}を削除。初期状態は空にします -->
+        <div id="area-b"></div>
     </header>
 
     <main class="main-body">
-        <aside id="area-c">{$Area_C}</aside>
+        <!-- 修正：中身の ProjectLock 残骸を完全に削除しました -->
+        <aside id="area-c"></aside>
         
         <div class="right-container">
             <div class="content-row">
-                <nav id="area-d">{$Area_D}</nav>
-                <section id="area-e">{$Area_E}</section>
+                <nav id="area-d"></nav>
+                <section id="area-e"></section>
             </div>
-            <footer id="area-f">{$Area_F}</footer>
+            <footer id="area-f"></footer>
         </div>
     </main>
 </div>
 
 <script>
 
-	bindGlobalEvents() {
-	    const container = document.getElementById('area-c-content');
-	    if (!container) return;
-	
-	    container.onclick = (e) => {
-	        const item = e.target.closest('.menu-item');
-	        if (item) {
-	            // dataset.name をサーバーに送る
-	            this.updateConsole('clickProjectNabi', item.dataset.name);
+	function bridge(payload) {
+	    const body = new URLSearchParams(payload).toString();
+	    fetch('ServerBridgeAction', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	        body: body
+	    })
+	    .then(res => res.json())
+	    .then(data => {
+	        // 届いたデータを各エリアに流し込む（ここは固定）
+	        if (data.areas) {
+	            Object.entries(data.areas).forEach(([areaId, html]) => {
+	                const target = document.getElementById(`area-${areaId.toLowerCase()}`);
+	                if (target) target.innerHTML = html;
+	            });
 	        }
-	    };
+	    });
 	}
 	
-	// 器（container）だけを更新
-	reflectAreas(response) {
-	    const target = document.getElementById('area-c-replaceable-container');
-	    if (target && response.Area_C) {
-	        target.innerHTML = response.Area_C;
-	    }
-	}
-
+	// 画面表示後、即座に areaInitialAction を起動する
+	window.onload = () => bridge({ code: 'Console/areaInitial' });
 </script>
 
 </body>

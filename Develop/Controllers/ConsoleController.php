@@ -24,62 +24,106 @@ class ConsoleController extends \Develop\Utils\BaseController {
         $screenData = [];
         \Develop\Utils\Screen::view('\Develop\Views\Console\Console.view', $screenData);
         
-        //$this->AreaInitialAction();
+        // 4. Console 立ち上げ時の初期セット。
+        \Develop\Utils\Session::set('Footer_Message', 'consode start...');
         
-        $this->logger->debug("Console::initialAction() finish.");
+        $this->logger->debug("ConsoleController::initialAction() finish.");
     }
     
     /**
-     * エリア初期化アクション（JSのwindow.onloadから呼ばれる）
+     * エリア初期化アクション
      */
-    public function AreaInitialAction() {
-        $this->logger->debug("Console::AreaInitialAction() start...");
+    public function areaInitialAction() {
+        $this->logger->debug("ConsoleController::AreaInitialAction() start...");
         
         try {
-            // 1. データの準備
-            $dataA = [
-                'Logo_Name' => 'wwProject'
-            ];
+            // Request::post を使用
+            $projectId = \Develop\Utils\Request::post('project_id');
             
+            if ($projectId) {
+                // プロジェクトが選択された場合のみ更新
+                \Develop\Utils\Session::set('active_project', $projectId);
+                // 名称は ProjectController 内でDBから取得したものを優先するため、ここではIDを入れない
+                \Develop\Utils\Session::set('Selected_Project_Name', '');
+            } else {
+                // 初期表示（window.onload）の時だけリセットしたい場合はここを有効に
+                // \Develop\Utils\Session::set('active_project', null);
+            }
+            \Develop\Utils\Session::set('active_function', null);
+            
+            // 共通データの準備（既存通り）
             $loginUserName = \Develop\Utils\Session::get('user_name');
-            $dataB = [
-                'User_Name' => $loginUserName,
-                'Selected_Project_Name' => ''
-            ];
+            $footerMessage = \Develop\Utils\Session::get('Footer_Message');
             
-            $dataF = [
-                'Footer_Message' => 'Ready.',
-                'Current_Year' => date('Y'),
-                'Company_Name' => 'wwProject Team.'
-            ];
+            $dataA = [ 'Logo_Name' => 'wwProject' ];
+            $dataB = [ 'User_Name' => $loginUserName, 'Selected_Project_Name' => '' ];
+            $dataF = [ 'Footer_Message' => $footerMessage, 'Current_Year' => '2026', 'Company_Name' => 'WhirlWindPro Team.' ];
             
-            // 1. 各エリアのViewをセット
+            // 各エリアのView更新（既存通り）
             \Develop\Utils\Screen::updateAreaA('\Develop\Views\AreaA\Area_A.view', $dataA);
             \Develop\Utils\Screen::updateAreaB('\Develop\Views\AreaB\Area_B.view', $dataB);
             \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\Area_D_clear.view', []);
             \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
             \Develop\Utils\Screen::updateAreaF('\Develop\Views\AreaF\Area_F.view', $dataF);
             
-            // 2. エリアCのViewをセット
-            //setSessionValue('active_project', null);
-            //setSessionValue('active_function', null);
+            // エリアCの再描画
+            $projectCtrl = new ProjectController();
+            $html = $projectCtrl->startProjectNabi();
+            \Develop\Utils\Screen::updateAreaC('\Develop\Views\AreaC\Area_C.view', [ 'Area_C_Html' => $html ]);
             
-            //$projectCtrl = new ProjectController();
-            //$html = $projectCtrl->startProjectNabi();
-            
-            //\Develop\Utils\Screen::updateAreaC('\Develop\Views\AreaC\Area_C.view', [
-            //    'Menu_Html' => $html
-            //]);
-            
-            // 3. JSON形式で全エリアをまとめて返却
-            \Develop\Utils\Screen::areaView();
-            
-            $this->logger->debug("Console::AreaInitialAction() finish.");
+            $this->logger->debug("ConsoleController::AreaInitialAction() finish.");
         } catch (\Exception $e) {
-            $this->logger->error("AreaInitialAction Error: " . $e->getMessage());
-            return json_encode([
-                'error' => $e->getMessage()
-            ]);
+            $this->logger->error("Console::AreaInitialAction() Error: " . $e->getMessage());
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+    
+    public function ServerBridgeAction() {
+        $this->logger->debug("ConsoleController::ServerBridge() start...");
+        
+        $code = \Develop\Utils\Request::post('code');
+        
+        try {
+            if (strpos($code, '/') !== false) {
+                list($appName, $actionName) = explode('/', $code);
+                
+                $className = "\\Develop\\Controllers\\{$appName}Controller";
+                $methodName = "{$actionName}Action";
+                $this->logger->debug("ConsoleController::ServerBridge() {$className}::{$methodName}()");
+                
+                // クラスの存在チェック（なければ例外を投げる）
+                if (!class_exists($className)) {
+                    throw new \Exception("App Class Not Found: {$className}");
+                }
+                
+                $instance = new $className();
+                
+                // メソッドの存在チェック（なければ例外を投げる）
+                if (!method_exists($instance, $methodName)) {
+                    throw new \Exception("App Method Not Found: {$className}::{$methodName}");
+                }
+                
+                $instance->$methodName();
+                
+            } else {
+                // Console内部メソッド
+                $methodName = "{$code}Action";
+                if (!method_exists($this, $methodName)) {
+                    throw new \Exception("Internal Method Not Found: {$methodName}");
+                }
+                $this->$methodName();
+            }
+            
+            // 全て正常なら一括出力
+            \Develop\Utils\Screen::areaView();
+            $this->logger->debug("ConsoleController::ServerBridge() finish.");
+            
+        } catch (\Throwable $e) {
+            $this->logger->error("ConsoleController::ServerBridge Fatal: " . $e->getMessage());
+            
+            header("HTTP/1.1 500 Internal Server Error");
+            echo "Server Error: " . $e->getMessage();
+            exit;
         }
     }
 }

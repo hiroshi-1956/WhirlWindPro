@@ -4,6 +4,14 @@ namespace Develop\Utils;
 
 class Session {
     
+    public static function start() {
+        $logger = new \Framework\Core\Logger();
+        $logger->debug("Session::start()");
+        
+        session_destroy();
+        session_start();
+    }
+    
     // セッションに値を書き込む
     public static function set($key, $value) {
         // セッションが開始されていなければ開始する
