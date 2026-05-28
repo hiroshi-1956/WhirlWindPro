@@ -1,0 +1,220 @@
+<style>
+/* 新規登録画面（NewTable.view）と全く同じデザインシステム */
+.db-definition-wrapper {
+    padding: 20px;
+    background-color: #fff;
+    font-family: sans-serif;
+}
+.db-update-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    border-left: 5px solid #2c3e50;
+    padding-left: 10px;
+    margin-bottom: 20px;
+    color: #333;
+}
+.master-table-form {
+    width: 600px;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+.master-table-form th {
+    width: 130px;
+    text-align: left;
+    padding: 8px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    font-size: 0.95em;
+    color: #333;
+}
+.master-table-form td {
+    padding: 6px;
+    border: 1px solid #ccc;
+}
+.master-table-form input[type="text"],
+.master-table-form select {
+    width: 98%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+/* カラム一覧テーブル（ヘッダー濃紺、セル枠線） */
+.col-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.col-list-table th {
+    background-color: #34495e;
+    color: #fff;
+    padding: 10px;
+    font-size: 0.95em;
+    border: 1px solid #2c3e50;
+}
+.col-list-table td {
+    padding: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.col-list-table td input[type="text"],
+.col-list-table td select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+/* ボタンまわりのレイアウト */
+.footer-action-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+.row-control-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.row-control-box input[type="text"] {
+    width: 40px;
+    text-align: center;
+    padding: 5px;
+}
+.btn-row-add {
+    background-color: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;
+}
+.btn-row-del {
+    background-color: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;
+}
+.right-submit-box {
+    display: flex;
+    gap: 10px;
+}
+.btn-form-cancel {
+    background-color: #c0392b; color: white; border: none; padding: 8px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.95em;
+}
+.btn-form-submit {
+    background-color: #27ae60; color: white; border: none; padding: 8px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.95em;
+}
+</style>
+
+<div class="db-definition-wrapper">
+    <div class="db-update-title">ℹ️ DB定義修正</div>
+
+    <form id="db-update-form">
+        <table class="master-table-form">
+            <tr>
+                <th>テーブル名称</th>
+                <td>
+                    <input type="text" name="table_name" value="<?php echo htmlspecialchars($table_name ?? '', ENT_QUOTES); ?>" readonly style="background-color: #f9f9f9; color: #666;">
+                </td>
+            </tr>
+            <tr>
+                <th>日本語名称</th>
+                <td>
+                    <input type="text" name="logical_name" value="<?php echo htmlspecialchars($logical_name ?? '', ENT_QUOTES); ?>">
+                </td>
+            </tr>
+            <tr>
+                <th>種別</th>
+                <td>
+                    <select name="table_type">
+                        <option value="table" <?php echo ($table_type === 'table') ? 'selected' : ''; ?>>テーブル</option>
+                        <option value="view" <?php echo ($table_type === 'view') ? 'selected' : ''; ?>>ビュー</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>説明</th>
+                <td>
+                    <input type="text" name="description" value="<?php echo htmlspecialchars($description ?? '', ENT_QUOTES); ?>">
+                </td>
+            </tr>
+        </table>
+
+        <?php if (!empty($import_error_msg)): ?>
+            <div style="color: red; font-weight: bold; margin-bottom: 10px;"><?php echo htmlspecialchars($import_error_msg, ENT_QUOTES); ?></div>
+        <?php endif; ?>
+
+        <table class="col-list-table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>physical</th>
+                    <th>logical</th>
+                    <th style="width: 140px;">type</th>
+                    <th style="width: 80px;">Length</th>
+                    <th style="width: 60px;">primary</th>
+                    <th style="width: 50px;">Null</th>
+                    <th style="width: 60px;">Unique</th>
+                    <th>Default</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($imported_cols) && is_array($imported_cols)): ?>
+                    <?php foreach ($imported_cols as $i => $col): ?>
+                        <tr>
+                            <td style="background-color: #f9f9f9; font-weight: bold;"><?php echo ($i + 1); ?></td>
+                            
+                            <td><input type="text" name="col_physical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($col['physical'] ?? '', ENT_QUOTES); ?>"></td>
+                            
+                            <td><input type="text" name="col_logical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($col['logical'] ?? '', ENT_QUOTES); ?>"></td>
+                            
+                            <td>
+                                <select name="col_type[<?php echo $i; ?>]">
+                                    <option value="int" <?php echo (($col['type'] ?? 'varchar') === 'int') ? 'selected' : ''; ?>>int</option>
+                                    <option value="varchar" <?php echo (($col['type'] ?? 'varchar') === 'varchar') ? 'selected' : ''; ?>>varchar</option>
+                                    <option value="char" <?php echo (($col['type'] ?? 'varchar') === 'char') ? 'selected' : ''; ?>>char</option>
+                                    <option value="text" <?php echo (($col['type'] ?? 'varchar') === 'text') ? 'selected' : ''; ?>>text</option>
+                                    <option value="tinyint" <?php echo (($col['type'] ?? 'varchar') === 'tinyint') ? 'selected' : ''; ?>>tinyint</option>
+                                    <option value="timestamp" <?php echo (($col['type'] ?? 'varchar') === 'timestamp') ? 'selected' : ''; ?>>timestamp</option>
+                                </select>
+                            </td>
+                            
+                            <td><input type="text" name="col_length[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($col['length'] ?? '', ENT_QUOTES); ?>"></td>
+                            
+                            <td>
+                                <input type="hidden" name="col_primary[<?php echo $i; ?>]" value="0">
+                                <input type="checkbox" name="col_primary[<?php echo $i; ?>]" value="1" <?php echo !empty($col['primary']) ? 'checked="checked"' : ''; ?>>
+                            </td>
+                            
+                            <td>
+                                <input type="hidden" name="col_null[<?php echo $i; ?>]" value="0">
+                                <input type="checkbox" name="col_null[<?php echo $i; ?>]" value="1" <?php echo !empty($col['null']) ? 'checked="checked"' : ''; ?>>
+                            </td>
+                            
+                            <td>
+                                <input type="hidden" name="col_unique[<?php echo $i; ?>]" value="0">
+                                <input type="checkbox" name="col_unique[<?php echo $i; ?>]" value="1" <?php echo !empty($col['unique']) ? 'checked="checked"' : ''; ?>>
+                            </td>
+                            
+                            <td><input type="text" name="col_default[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($col['default'] ?? '', ENT_QUOTES); ?>"></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+        <div class="footer-action-container">
+            <div class="row-control-box">
+                <input type="text" id="row_count_input" value="1">
+                <span>行</span>
+                <button type="button" class="btn-row-add" onclick="document.getElementById('row_action_type').value='add'; document.getElementById('row_action_count').value=document.getElementById('row_count_input').value; bridge({ code: 'DBDefinition/modifyRows', formId: 'db-update-form' });">【追加】</button>
+                <button type="button" class="btn-row-del" onclick="document.getElementById('row_action_type').value='delete'; document.getElementById('row_action_count').value=document.getElementById('row_count_input').value; bridge({ code: 'DBDefinition/modifyRows', formId: 'db-update-form' });">【削除】</button>
+                
+                <input type="hidden" name="row_action_type" id="row_action_type" value="">
+                <input type="hidden" name="row_action_count" id="row_action_count" value="0">
+            </div>
+
+            <div class="right-submit-box">
+                <button type="button" class="btn-form-cancel" onclick="bridge({ code: 'DBDefinition/cancel' });">キャンセル</button>
+                <button type="button" class="btn-form-submit" onclick="bridge({ code: 'DBDefinition/register', formId: 'db-update-form' });">修正</button>
+            </div>
+        </div>
+    </form>
+</div>

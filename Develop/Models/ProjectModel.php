@@ -9,7 +9,7 @@ class ProjectModel extends \Develop\Utils\BaseModel {
         
         $projectList = [];
         try {
-            $sql = "SELECT project_id, project_name FROM projects ORDER BY sort_order DESC";
+            $sql = "SELECT project_id, project_name FROM db_projects ORDER BY sort_order DESC";
             $stmt = $this->db->query($sql);
             $projectList = $stmt->fetchAll();
          

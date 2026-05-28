@@ -1,8 +1,10 @@
 <?php
-
 /**
- * wwProjectV1.01 - index.php
+ * WhirlWindProV1.09 - index.php
  */
+
+error_reporting(E_ALL & ~ E_DEPRECATED & ~ E_USER_DEPRECATED & ~ E_NOTICE);
+//error_reporting(0);
 
 // 1. 最上部でセッション開始
 session_start();
@@ -29,7 +31,6 @@ use Framework\Core\Container;
 $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
 Container::set('DOC_ROOT', $root);
 Container::set('PROJECT_ROOT', $projectRoot);
-Container::set('BASE_URL',     $baseUrl);
 Container::set('DEVELOP_URL',  $baseUrl . '/Develop');
 
 // 6. 各種コンテナ・DBの初期化
@@ -64,6 +65,9 @@ try {
 // 7. SESSION状態の初期値セット
 $_SESSION['LAYOUT_MODE'] = $_SESSION['LAYOUT_MODE'] ?? 'separate';
 $_SESSION['ENVIRONMENT'] = $_SESSION['ENVIRONMENT'] ?? 'development';
+
+//echo $baseUrl;
+Container::set('BASE_URL',     $baseUrl);
 
 // 8. ルーティング実行
 $router = new \Framework\Core\Router();

@@ -1,7 +1,7 @@
 <style>
 /* 1. 全体コンテナ */
 .db-list-container {
-    width: 1; 
+    width: 100%; /* ★ 1 から 100% に修正 */
     height: 99%;       /* 高さを画面の約2/3に固定 */
     margin: 0px auto;  /* ★中央配置：上下に20px、左右はautoで中央へ */
     display: flex;
@@ -84,6 +84,29 @@
 .db-table-card .logical-name {
     font-size: 0.95em;  /* ★論理名も大きく */
     color: #555;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* 5. 👇【追加】タイプバッジと右側への余白調整 */
+.table-type-badge {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-weight: bold;
+    margin-right: 14px; /* 👈 ここでバッジの右側に隙間を作り、日本語名称を右にずらしています */
+    vertical-align: middle;
+}
+.badge-table { background-color: #34495e; }
+.badge-view  { background-color: #27ae60; }
+
+/* データがない時のメッセージ */
+.no-data-msg {
+    padding: 30px 15px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
 }
 </style>
 
@@ -98,5 +121,33 @@
     
     <div class="db-list-scroll">
         <div class="list-label">登録済みテーブル一覧</div>
+        
+        <?php 
+        // コントローラーから渡された一覧データがあるかチェック
+        if (!empty($table_list) && is_array($table_list)): 
+            foreach ($table_list as $table): 
+                // 各行のデータを安全にエスケープして取得
+                $physical = htmlspecialchars($table['physical_name'] ?? '', ENT_QUOTES);
+                $logical  = htmlspecialchars($table['logical_name'] ?? '', ENT_QUOTES);
+                $tableType = htmlspecialchars($table['table_type'] ?? '', ENT_QUOTES);
+                
+                // バッジ用の色分け（table なら青、view なら緑など、お好みで）
+                $badgeClass = ($tableType === 'view') ? 'badge-view' : 'badge-table';
+        ?>
+            <div class="db-table-card" onclick="bridge({ code: 'DBDefinition/editTable', tableName: '<?php echo $physical; ?>' });">
+                <span class="physical-name"><?php echo $physical; ?></span>
+                <span class="logical-name">
+                    <?php if (!empty($tableType)): ?>
+                        <span class="table-type-badge <?php echo $badgeClass; ?>"><?php echo $tableType; ?></span>
+                    <?php endif; ?>
+                    <?php echo $logical ?: '（論理名なし）'; ?>
+                </span>
+            </div>
+        <?php 
+            endforeach; 
+        else: 
+        ?>
+            <div class="no-data-msg">登録済みのテーブルはありません。</div>
+        <?php endif; ?>
     </div>
 </div>

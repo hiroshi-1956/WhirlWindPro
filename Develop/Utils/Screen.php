@@ -98,11 +98,29 @@ class Screen {
     }
     
     // エリアEの更新準備（共通のsetAreaを呼び出す）
-    public static function updateAreaE($viewPath, $data = []) { 
-        $logger = new \Framework\Core\Logger();
-        $logger->debug("Screen::updateAreaE() path: {$viewPath} start...");
+//     public static function updateAreaE($viewPath, $data = []) { 
+//         $logger = new \Framework\Core\Logger();
+//         $logger->debug("Screen::updateAreaE() path: {$viewPath} start...");
         
-        self::logAndSet('e', $viewPath, $data); 
+//         self::logAndSet('e', $viewPath, $data); 
+        
+//         $logger->debug("Screen::updateAreaE() finish.");
+//     }
+    public static function updateAreaE($viewPath, $data = []) {
+        $logger = new \Framework\Core\Logger();
+        $logger->debug("Screen::updateAreaE() [iframe起動版] path: {$viewPath} start...");
+        
+        // 通常通りHTMLコンテンツを取得
+        $originalHtml = self::getContents($viewPath, $data);
+        
+        // ダブルクォーテーションの衝突防止エスケープ処理
+        $escapedHtml = htmlspecialchars($originalHtml, ENT_QUOTES, 'UTF-8');
+        
+        // iframeで包んだHTMLを生成（高さはシステムのエリアEに合わせて適宜微調整してください）
+        $iframeHtml = '<iframe srcdoc="' . $escapedHtml . '" style="width: 100%; height: 100%; min-height: 700px; border: none; margin: 0; padding: 0; overflow: auto;"></iframe>';
+        
+        // ストレージにセット
+        self::$storage['areas']['e'] = $iframeHtml;
         
         $logger->debug("Screen::updateAreaE() finish.");
     }

@@ -7,11 +7,61 @@ class Router {
     public function run() {
         $logger = Container::get('logger');
         
-        // 1. URLを解析（?以降をカットし、末尾のスラッシュを整える）
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $uri = rtrim($uri, '/') . '/'; // 末尾を必ずスラッシュありにして解析しやすくする
+        // 1. 生のURLを取得してデコード
+        $rawUri = rawurldecode($_SERVER['REQUEST_URI']);
         
-        // 2. モードの特定
+        // URLに "FETCH::" が含まれている場合、他の解析をすべてスルーして実行
+        if (strpos($rawUri, 'FETCH::') !== false) {
+            $logger->debug("Direct Fetch Mode: Start parsing '{$rawUri}'");
+            
+            // "FETCH::" 以降の文字列を取得 (例: Console/AreaInitialAction)
+            $parts = explode('FETCH::', $rawUri);
+            $directPath = end($parts);
+            
+            // クエリパラメータ（?以降）を削除
+            $directPath = explode('?', $directPath)[0];
+            
+            // スラッシュで分割してコントローラーとメソッドを特定
+            $segments = explode('/', trim($directPath, '/'));
+            
+            if (count($segments) >= 2) {
+                $controllerBase = ucfirst($segments[0]);
+                $methodBase     = $segments[1];
+                
+                // クラス名とメソッド名を整形
+                $fullClassName = "\\Develop\\Controllers\\{$controllerBase}Controller";
+                $methodName     = (preg_match('/Action$/', $methodBase)) ? $methodBase : $methodBase . 'Action';
+                
+                $logger->debug("Direct Fetch Target: {$fullClassName}::{$methodName}");
+                
+                if (class_exists($fullClassName)) {
+                    $controller = new $fullClassName();
+                    if (method_exists($controller, $methodName)) {
+                        $logger->debug("Direct Fetch: Executing now.");
+                        // 実行して終了（exitすることで後の解析ロジックによる書き換えを防ぐ）
+                        call_user_func_array([$controller, $methodName], []);
+                        exit;
+                    } else {
+                        $logger->error("Direct Fetch Error: Method '{$methodName}' not found in '{$fullClassName}'");
+                    }
+                } else {
+                    $logger->error("Direct Fetch Error: Class '{$fullClassName}' not found.");
+                }
+            } else {
+                $logger->error("Direct Fetch Error: Invalid path format. Expected 'Controller/Method'");
+            }
+            
+            // Fetchモードに入ったが実行できなかった場合は404を返して終了
+            header("HTTP/1.1 404 Not Found");
+            echo "Fetch Direct Error: Target not found.";
+            exit;
+        }
+        
+        $uri = parse_url($rawUri, PHP_URL_PATH);
+        $uri = rtrim($uri, '/') . '/';
+
+        $logger->debug("Router::Router() {$uri}");
+        
         $baseUrl = \Framework\Core\Container::get('BASE_URL');
         $baseUrlPath = parse_url($baseUrl, PHP_URL_PATH);
         
@@ -19,7 +69,6 @@ class Router {
         $subPath = str_replace('index.php', '', $subPath);
         $params = explode('/', $subPath);
         
-        // 配列の1番目を「モード」として取り出す
         $modeRaw = array_shift($params);
         $mode = strtolower($modeRaw);
         $allowedModes = ['develop', 'product'];
@@ -27,36 +76,30 @@ class Router {
         if (!in_array($mode, $allowedModes)) {
             $logger->write("Router Error: Invalid or missing mode '{$mode}'");
             header("HTTP/1.1 404 Not Found");
-            echo "<h3>[wwProject System Error]</h3>";
-            echo "URLの先頭には <b>Develop</b> または <b>Product</b> を明示してください。";
-            exit; // 続行させずに止める
+            echo "<h3>[wwProject System Error]</h3>URLの先頭には Develop または Product を明示してください。";
+            exit;
         }
         
-        // 名前空間を決定
-        $namespace = ucfirst($mode); // 'Develop' または 'Product'
-        
-        // 残りの配列からコントローラー名を決定
+        $namespace = ucfirst($mode);
         $controllerName = ucfirst(array_shift($params) ?: 'Login');
-        
-        // 3. クラス名とメソッド名の組み立て
         $fullClassName = "\\{$namespace}\\Controllers\\{$controllerName}Controller";
-        $methodName = (array_shift($params) ?: 'initial') . 'Action';
+        
+        $rawMethod = array_shift($params) ?: 'initial';
+        $methodName = (preg_match('/Action$/', $rawMethod)) ? $rawMethod : $rawMethod . 'Action';
         
         $logger->debug("Attempting to load: {$fullClassName}::{$methodName}");
         
-        // 4. 実行処理（ここが重要！）
         if (class_exists($fullClassName)) {
             $controller = new $fullClassName();
             if (method_exists($controller, $methodName)) {
-                // ログに実行を記録して呼び出し
                 $logger->debug("Router: Executing {$fullClassName}->{$methodName}");
                 call_user_func_array([$controller, $methodName], $params);
             } else {
-                $logger->debug("Router Error: Method {$methodName} not found.");
+                header("HTTP/1.1 404 Not Found");
                 echo "Method {$methodName} not found.";
             }
         } else {
-            $logger->error("Router Error: Controller {$fullClassName} not found.");
+            header("HTTP/1.1 404 Not Found");
             echo "Critical Error: Controller {$fullClassName} not found.";
         }
     }

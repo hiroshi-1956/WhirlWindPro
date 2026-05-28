@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>新規画面パーツ登録</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f5f5f5; 
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 13px; /* 全体的に一回り小さく */
+        }
+
+        .designer-base {
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: transparent;
+        }
+
+        .title { 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin-bottom: 25px; 
+            border-bottom: 1px solid #ccc; 
+            padding-bottom: 10px;
+        }
+
+        .input-table { border-collapse: collapse; margin-bottom: 30px; width: 100%; }
+        .input-table th { width: 130px; text-align: left; font-weight: normal; font-size: 13px; padding: 10px 5px; }
+        .simple-input { border: 1px solid #000; padding: 6px; background: #fff; outline: none; font-size: 13px; }
+        
+        .config-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            margin: 30px 0;
+            font-size: 13px;
+        }
+        .size-select { border: 1px solid #000; padding: 4px; font-weight: bold; font-size: 14px; background: #fff; width: 60px; }
+        
+        .btn-decision { background-color: #ffccbc; color: #d84315; border: 1px solid #d84315; padding: 6px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+
+        #preview-grid { display: grid; gap: 10px; width: 100%; max-width: 1200px; margin-top: 20px; margin-bottom: 10px; }
+        
+        .tile-item { display: flex; flex-direction: column; }
+        .tile-label { font-size: 11px; margin-bottom: 6px; color: #333; }
+        
+        /* 枠の高さを狭く調整 */
+        .tile-box { 
+            border: 1px solid #000; 
+            background-color: #fff; 
+            box-sizing: border-box; 
+            width: 100%; 
+            min-height: 80px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px;
+            margin-bottom: 20px; 
+        }
+
+        /* 枠内のプルダウンフォントを小さく */
+        .tile-inner-select {
+            width: 90%;
+            padding: 4px;
+            border: 1px solid #ccc;
+            font-size: 11px;
+        }
+
+        .action-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-top: 20px; 
+            padding: 20px 0; 
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-image {
+            background-color: #607d8b;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-register { background-color: #5d8b41; color: white; border: none; padding: 10px 40px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-cancel { background-color: #ff0000; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+    </style>
+</head>
+<body onload="
+    /* 初期表示を 1x1 に設定 */
+    var grid = document.getElementById('preview-grid');
+    grid.style.gridTemplateColumns = 'repeat(1, 1fr)';
+    var options = ['１レコード表示', '複数レコード表示', '郵便番号・住所表示', 'ボタン表示', 'テキストボックス', 'ドロップダウン', 'ラジオボタン', '年月日'];
+    var optHtml = options.map(function(o){ return '<option>'+o+'</option>'; }).join('');
+    var html = '<div class=\'tile-item\'><div class=\'tile-label\'>[1,1]</div><div class=\'tile-box\'><select class=\'tile-inner-select\'>' + optHtml + '</select><select class=\'tile-inner-select\'><option>プルダウン2</option></select></div></div>';
+    grid.innerHTML = html;
+">
+
+<div class="designer-base">
+    <div class="title">新規画面パーツ登録</div>
+
+    <form id="main-form">
+        <table class="input-table">
+            <tr>
+                <th>画面パーツ名称</th>
+                <td><input type="text" name="parts_name" id="parts_name" class="simple-input" style="width: 450px;"></td>
+            </tr>
+            <tr>
+                <th>内容の説明</th>
+                <td><input type="text" name="parts_description" class="simple-input" style="width: 90%;"></td>
+            </tr>
+        </table>
+
+        <div class="config-row">
+            <span>サイズ</span>
+            <select id="rows" class="size-select">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            <span>×</span>
+            <select id="cols" class="size-select">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            <button type="button" class="btn-decision" onclick="
+                var rCount = document.getElementById('rows').value;
+                var cCount = document.getElementById('cols').value;
+                var grid = document.getElementById('preview-grid');
+                grid.style.gridTemplateColumns = 'repeat(' + cCount + ', 1fr)';
+                var options = ['１レコード表示', '複数レコード表示', '郵便番号・住所表示', 'ボタン表示', 'テキストボックス', 'ドロップダウン', 'ラジオボタン', '年月日'];
+                var optHtml = options.map(function(o){ return '<option>'+o+'</option>'; }).join('');
+                var html = '';
+                for(var r=1; r<=rCount; r++) {
+                    for(var c=1; c<=cCount; c++) {
+                        html += '<div class=\'tile-item\'><div class=\'tile-label\'>['+r+','+c+']</div><div class=\'tile-box\'><select class=\'tile-inner-select\'>' + optHtml + '</select><select class=\'tile-inner-select\'><option>プルダウン2</option></select></div></div>';
+                    }
+                }
+                grid.innerHTML = html;
+            ">決定</button>
+        </div>
+    </form>
+
+    <div id="preview-grid"></div>
+
+    <div class="action-footer">
+        <button type="button" class="btn-image" onclick="
+            var data = {
+                parts_name: document.getElementById('parts_name').value,
+                rows: document.getElementById('rows').value,
+                cols: document.getElementById('cols').value,
+                tiles: []
+            };
+            document.querySelectorAll('.tile-box').forEach(function(box, i) {
+                var selects = box.querySelectorAll('select');
+                data.tiles.push({ pos: i + 1, type: selects[0].value, sub_type: selects[1].value });
+            });
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = '/PartsDefinition/image';
+            f.target = '_blank';
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'previewData';
+            inp.value = JSON.stringify(data);
+            f.appendChild(inp);
+            document.body.appendChild(f);
+            f.submit();
+            document.body.removeChild(f);
+        ">画面イメージ</button>
+
+        <div class="footer-right">
+            <button type="button" class="btn-cancel" onclick="if(confirm('入力内容は破棄されます。キャンセルしてもよろしいですか？')){ alert('キャンセルしました。'); }">キャンセル</button>
+            <button type="button" class="btn-register" onclick="if(confirm('入力した内容で登録してもよろしいですか？')){ alert('登録処理を実行します。'); }">登録</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

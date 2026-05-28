@@ -43,7 +43,7 @@ class LoginController extends \Develop\Utils\BaseController {
             $password = \Develop\Utils\Request::post('password');
             
             // ユーザー取得
-            $stmt = $db->prepare("SELECT * FROM developers WHERE BINARY login_id = :login_id LIMIT 1");
+            $stmt = $db->prepare("SELECT * FROM db_developers WHERE BINARY login_id = :login_id LIMIT 1");
             $stmt->execute([':login_id' => $login_id]);
             $user = $stmt->fetch();
             

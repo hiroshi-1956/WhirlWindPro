@@ -10,7 +10,7 @@ class CodeMasterModel extends \Develop\Utils\BaseModel {
         $this->logger->debug("CodeMasterModel：：getCodesByGroup() start...");
         
         try {
-            $sql = "SELECT code_key, code_name, description FROM code_master WHERE code_group = :group AND is_active = 1 ORDER BY sort_order ASC";
+            $sql = "SELECT code_key, code_name, description FROM db_CodeMaster WHERE code_group = :group AND is_active = 1 ORDER BY sort_order ASC";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':group', $group, \PDO::PARAM_STR);
             $stmt->execute();

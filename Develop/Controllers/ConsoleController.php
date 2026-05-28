@@ -114,8 +114,12 @@ class ConsoleController extends \Develop\Utils\BaseController {
                 $this->$methodName();
             }
             
-            // 全て正常なら一括出力
+            // ==========================================================
+            // 👇【確定修正】ここにこれを1行追加します！
+            // ==========================================================
             \Develop\Utils\Screen::areaView();
+            // ==========================================================
+            
             $this->logger->debug("ConsoleController::ServerBridge() finish.");
             
         } catch (\Throwable $e) {

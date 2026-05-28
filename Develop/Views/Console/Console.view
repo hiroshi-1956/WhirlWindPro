@@ -79,6 +79,7 @@
 <script>
 
 	function bridge(payload) {
+		console.log("bridge start...");
 	    const body = new URLSearchParams(payload).toString();
 	    fetch('ServerBridgeAction', {
 	        method: 'POST',

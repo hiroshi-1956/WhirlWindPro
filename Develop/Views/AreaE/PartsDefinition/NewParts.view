@@ -1,0 +1,120 @@
+<div class="designer-base" style="padding: 20px; box-sizing: border-box; background-color: transparent; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px;">
+    <div class="title" style="font-size: 14px; font-weight: bold; margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">新規画面パーツ登録</div>
+
+    <table class="input-table" style="border-collapse: collapse; margin-bottom: 30px; width: 100%;">
+        <tr>
+            <th style="width: 130px; text-align: left; font-weight: normal; font-size: 13px; padding: 10px 5px;">画面パーツ名称</th>
+            <td><input type="text" id="parts_name" class="simple-input" style="width: 450px; border: 1px solid #000; padding: 6px; background: #fff; outline: none; font-size: 13px;"></td>
+        </tr>
+        <tr>
+            <th style="width: 130px; text-align: left; font-weight: normal; font-size: 13px; padding: 10px 5px;">内容の説明</th>
+            <td><input type="text" id="parts_description" class="simple-input" style="width: 90%; border: 1px solid #000; padding: 6px; background: #fff; outline: none; font-size: 13px;"></td>
+        </tr>
+    </table>
+
+    <div class="config-row" style="display: flex; align-items: center; gap: 15px; margin: 30px 0; font-size: 13px;">
+        <span>サイズ</span>
+        <select id="rows" class="size-select" style="border: 1px solid #000; padding: 4px; font-weight: bold; font-size: 14px; background: #fff; width: 60px;">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <span>×</span>
+        <select id="cols" class="size-select" style="border: 1px solid #000; padding: 4px; font-weight: bold; font-size: 14px; background: #fff; width: 60px;">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        
+        <button type="button" class="btn-decision" style="background-color: #ffccbc; color: #d84315; border: 1px solid #d84315; padding: 6px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;" onclick="
+            var currentTiles = [];
+            document.querySelectorAll('.tile-box').forEach(function(box, i) {
+                var selects = box.querySelectorAll('select');
+                var label = box.previousElementSibling ? box.previousElementSibling.innerText : '';
+                currentTiles.push({ pos: label, type: selects[0].value, sub_type: selects[1].value });
+            });
+            bridge({ 
+                code: 'PartsDefinition/sizeChange', 
+                parts_name: document.getElementById('parts_name').value,
+                parts_description: document.getElementById('parts_description').value,
+                rows: document.getElementById('rows').value,
+                cols: document.getElementById('cols').value,
+                tilesData: JSON.stringify(currentTiles)
+            });
+        ">決定</button>
+    </div>
+
+    <div id="preview-grid" style="display: grid; gap: 10px; width: 100%; max-width: 1200px; margin-top: 20px; margin-bottom: 10px; grid-template-columns: repeat(1, 1fr);">
+        <div class="tile-item" style="display: flex; flex-direction: column;">
+            <div class="tile-label" style="font-size: 11px; margin-bottom: 6px; color: #333;">[1,1]</div>
+            <div class="tile-box" style="border: 1px solid #000; background-color: #fff; box-sizing: border-box; width: 100%; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-bottom: 20px; position: relative;">
+                
+                <button type="button" class="btn-expand" style="position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; background-color: #757575; color: #fff; border: none; border-radius: 2px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;" onclick="
+                    var currentTiles = [];
+                    document.querySelectorAll('.tile-box').forEach(function(box, i) {
+                        var selects = box.querySelectorAll('select');
+                        var label = box.previousElementSibling ? box.previousElementSibling.innerText : '';
+                        currentTiles.push({ pos: label, type: selects[0].value, sub_type: selects[1].value });
+                    });
+                    bridge({ 
+                        code: 'PartsDefinition/screenBigger', 
+                        targetArea: 'AreaE', 
+                        row_pos: '1', 
+                        col_pos: '1', 
+                        parts_name: document.getElementById('parts_name').value,
+                        parts_description: document.getElementById('parts_description').value,
+                        rows: document.getElementById('rows').value,
+                        cols: document.getElementById('cols').value,
+                        tilesData: JSON.stringify(currentTiles)
+                    });
+                ">↗</button>
+
+                <select class="tile-inner-select" style="width: 90%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">
+                    <option>１レコード</option>
+                    <option>複数レコード</option>
+                    <option>郵便番号・住所・氏名</option>
+                    <option>ボタン</option>
+                    <option>テキストボックス</option>
+                    <option>ドロップダウン</option>
+                    <option>ラジオボタン</option>
+                    <option>年月日</option>
+                </select>
+                <select class="tile-inner-select" style="width: 90%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">
+                    <option>プルダウン2</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 20px 0;">
+        <button type="button" class="btn-image" style="background-color: #607d8b; color: white; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="
+            var data = {
+                parts_name: document.getElementById('parts_name').value,
+                rows: document.getElementById('rows').value,
+                cols: document.getElementById('cols').value,
+                tiles: []
+            };
+            document.querySelectorAll('.tile-box').forEach(function(box, i) {
+                var selects = box.querySelectorAll('select');
+                data.tiles.push({ pos: i + 1, type: selects[0].value, sub_type: selects[1].value });
+            });
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = 'PartsDefinition/image';
+            f.target = '_blank';
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'previewData';
+            inp.value = JSON.stringify(data);
+            f.appendChild(inp);
+            document.body.appendChild(f);
+            f.submit();
+            document.body.removeChild(f);
+        ">画面イメージ</button>
+
+        <div class="footer-right" style="display: flex; gap: 20px;">
+            <button type="button" class="btn-cancel" style="background-color: #ff0000; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="return confirm('入力内容は破棄されます。キャンセルしてもよろしいですか？')">キャンセル</button>
+            <button type="button" class="btn-register" style="background-color: #5d8b41; color: white; border: none; padding: 10px 40px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="return confirm('入力した内容で登録してもよろしいですか？')">登録</button>
+        </div>
+    </div>
+</div>

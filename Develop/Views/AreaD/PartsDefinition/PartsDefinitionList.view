@@ -1,0 +1,102 @@
+<style>
+/* 1. 全体コンテナ */
+.db-list-container {
+    width: 1; 
+    height: 99%;       /* 高さを画面の約2/3に固定 */
+    margin: 0px auto;  /* ★中央配置：上下に20px、左右はautoで中央へ */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; 
+    color: #333;
+    font-size: 16px;    /* ★全体のフォントサイズを大きく(14->16) */
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 少し浮き出させて中央感を強調 */
+}
+
+/* 2. 先頭：タイトルエリア */
+.db-main-title {
+    padding: 10px 10px; /* 余白も少し広く */
+    font-size: 1.00em;  /* ★さらに大きく */
+    font-weight: bold;
+    /* ★エリアCと同じ背景色(#2c3e50)と文字色(#ecf0f1)に設定 */
+    background-color: #2c3e50; 
+    color: #ecf0f1;
+    border-bottom: 1px solid #1a252f;
+    text-align: center; /* タイトルは中央に */
+}
+
+/* 3. アクションエリア */
+.db-action-area {
+    padding: 20px 15px;
+}
+
+.btn-new-registration {
+    width: 100%;
+    padding: 8px 8px;
+    background-color: #3498db; 
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    /* ★全体のフォントサイズを 1.1em から 0.95em に微調整 */
+    font-size: 0.95em; 
+}
+
+/* 4. 一覧エリア */
+.db-list-scroll {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.list-label {
+    padding: 10px 15px;
+    font-size: 0.85em;  /* ★大きく */
+    color: #777;
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+
+.db-table-card {
+    padding: 15px;      /* 余白を増やして見やすく */
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.db-table-card:hover {
+    background-color: #f0f7ff;
+}
+
+.db-table-card .physical-name {
+    font-family: 'Consolas', monospace;
+    font-weight: bold;
+    color: #000;
+    font-size: 1.1em;   /* ★物理名を強調 */
+    display: block;
+    margin-bottom: 4px;
+}
+
+.db-table-card .logical-name {
+    font-size: 0.95em;  /* ★論理名も大きく */
+    color: #555;
+}
+</style>
+
+<div class="db-list-container">
+    <div class="db-main-title">画面パーツ定義</div>
+
+    <div class="db-action-area">
+        <button class="btn-new-registration" onclick="bridge({ code: 'PartsDefinition/newParts' });">
+            <span>+</span> 画面パーツ定義新規登録
+        </button>
+    </div>
+    
+    <div class="db-list-scroll">
+        <div class="list-label">登録済み画面定義一覧</div>
+    </div>
+</div>

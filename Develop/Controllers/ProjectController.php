@@ -38,7 +38,7 @@ class ProjectController extends \Develop\Utils\BaseController {
         // ★ProjectLockの状態を取得
         $isLocked = \Develop\Utils\Session::get('project_lock_status') ?? false;
         // ロック中ならグレーアウトし、クリックイベントを無効化するスタイル
-        $disabledStyle = $isLocked ? 'opacity: 0.1; cursor: not-allowed; pointer-events: none;' : 'cursor: pointer;';
+        $disabledStyle = $isLocked ? 'opacity: 0.6; cursor: not-allowed; pointer-events: none;' : 'cursor: pointer;';
         
         $html = '<div class="project-list-container">';
             
