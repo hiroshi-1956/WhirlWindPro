@@ -1,7 +1,7 @@
 <?php
 namespace Develop\Utils;
 
-use Framework\Core\Container;
+use \Framework\Core\Container;
 
 abstract class BaseModel {
     protected $logger;

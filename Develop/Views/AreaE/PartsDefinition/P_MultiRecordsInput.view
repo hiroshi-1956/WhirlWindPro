@@ -1,0 +1,305 @@
+<div class="designer-base" style="padding: 20px; box-sizing: border-box; background-color: transparent; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px;">
+    <div class="title" style="font-size: 14px; font-weight: bold; margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+        画面パーツ詳細設定 [<?= htmlspecialchars($row_pos ?? '1', ENT_QUOTES, 'UTF-8') ?>,<?= htmlspecialchars($col_pos ?? '1', ENT_QUOTES, 'UTF-8') ?>]
+    </div>
+
+    <div style="background-color: transparent; margin-bottom: 5px; max-width: 1000px;">
+        <table class="detail-config-table" style="border-collapse: collapse; width: 100%; font-size: 13px;">
+            <tr style="height: 35px;">
+                <th style="width: 140px; text-align: left; font-weight: normal; padding: 4px 0; white-space: nowrap;">画面パーツ名称</th>
+                <td colspan="2" style="padding: 4px 0;">
+                    <div style="width: 500px; border: 1px solid #000; padding: 4px 6px; background-color: #e0e0e0; font-size: 13px; box-sizing: border-box; min-height: 26px;">
+                        <?= htmlspecialchars($parts_name ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                </td>
+            </tr>
+            <tr style="height: 35px;">
+                <th style="text-align: left; font-weight: normal; padding: 4px 0; white-space: nowrap;">内容の説明</th>
+                <td colspan="2" style="padding: 4px 0;">
+                    <div style="width: 750px; border: 1px solid #000; padding: 4px 6px; background-color: #e0e0e0; font-size: 13px; box-sizing: border-box; min-height: 26px;">
+                        <?= htmlspecialchars($parts_description ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr style="height: 15px;"><td colspan="3"></td></tr>
+
+            <tr style="height: 35px;">
+                <th style="text-align: left; font-weight: normal; padding: 4px 0;">
+                    [ <?= htmlspecialchars($row_pos ?? '1', ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($col_pos ?? '1', ENT_QUOTES, 'UTF-8') ?> ]
+                </th>
+                <td style="padding: 4px 0; width: 508px;">
+                    <div style="width: 500px; border: 1px solid #000; padding: 4px 6px; background-color: #e0e0e0; font-size: 13px; font-weight: bold; box-sizing: border-box; min-height: 26px;">
+                        <?= ($selected_type === '') ? '--' : htmlspecialchars($selected_type, ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                </td>
+                <td style="padding: 4px 0; text-align: left; vertical-align: middle;">
+                    <button type="button" class="btn-back" style="background-color: #757575; color: white; border: none; padding: 5px 24px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; height: 26px; line-height: 16px; box-sizing: border-box; margin-left: 10px;" onclick="returnToMain();">戻る</button>
+                </td>
+            </tr>
+
+            <tr style="height: 35px;">
+                <th style="text-align: left; font-weight: normal; padding: 4px 0; white-space: nowrap;">参照テーブル</th>
+                <td colspan="2" style="padding: 4px 0;">
+                    <?php 
+                        $current_saved_id = '';
+                        if (!empty($table_id)) { $current_saved_id = $table_id; }
+                        elseif (!empty($selected_table_id)) { $current_saved_id = $selected_table_id; }
+                        elseif (!empty($ref_table)) { $current_saved_id = $ref_table; }
+                    ?>
+                    <select id="ref_table" data-saved-value="<?= htmlspecialchars($current_saved_id, ENT_QUOTES, 'UTF-8') ?>" onchange="onTableSelectChange();" disabled style="width: 500px; border: 1px solid #000; padding: 4px; background: #f5f5f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                        <option value="">-- 種別を先に選択してください --</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr style="height: 35px;">
+                <th style="text-align: left; font-weight: normal; padding: 4px 0; white-space: nowrap;">表示項目選択</th>
+                <td colspan="2" style="padding: 4px 0; vertical-align: middle;">
+                    <label style="margin-right: 20px; cursor: pointer; font-size: 13px;">
+                        <input type="radio" name="display_label_radio" value="physical" checked onchange="renderPreviewGrid();" style="vertical-align: middle; margin-top: -2px;"> 物理名
+                    </label>
+                    <label style="cursor: pointer; font-size: 13px;">
+                        <input type="radio" name="display_label_radio" value="logical" onchange="renderPreviewGrid();" style="vertical-align: middle; margin-top: -2px;"> 日本語名
+                    </label>
+                </td>
+            </tr>
+
+            <tr style="height: 35px;">
+                <th style="text-align: left; font-weight: normal; padding: 4px 0; white-space: nowrap;">最大行数</th>
+                <td colspan="2" style="padding: 4px 0;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <input type="number" id="max_row_count" value="2" min="1" max="99" oninput="syncPreviewRows();" style="width: 100px; border: 1px solid #000; padding: 4px 6px; outline: none; font-size: 13px; box-sizing: border-box;">
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="preview-layout-zone" style="margin-top: 0px; max-width: 100%; display: none;">
+        
+        <div id="layout_type_description" style="font-size: 12px; font-weight: bold; color: #555; margin-top: 5px; margin-bottom: 10px;">▼ 横型複数レコードプレビュー</div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px dashed #ccc; padding-bottom: 8px; max-width: 1000px;">
+            <div style="display: flex; align-items: center; flex: 1; max-width: 480px;">
+                <input type="text" id="preview_header_title" style="width: 100%; border: 1px solid #000; padding: 4px 8px; font-size: 13px; box-sizing: border-box; outline: none; height: 26px;" placeholder="プレビュータイトルの入力">
+            </div>
+            
+            <div style="font-size: 12px; color: #333; white-space: nowrap; margin-left: 15px;">
+                <label style="margin-right: 15px; cursor: pointer;">
+                    <input type="radio" name="column_filter_radio" value="all" checked onchange="renderPreviewGrid();" style="vertical-align: middle; margin-top: -2px;"> 全カラム
+                </label>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="column_filter_radio" value="selected" onchange="renderPreviewGrid();" style="vertical-align: middle; margin-top: -2px;"> 表示カラムだけ
+                </label>
+            </div>
+        </div>
+        
+        <div id="dynamic-grid-container" style="width: 100%; overflow-x: auto; margin-bottom: 15px;"></div>
+    </div>
+</div>
+
+<script>
+if (typeof bridge === 'undefined' && typeof parent !== 'undefined' && typeof parent.bridge === 'function') {
+    var bridge = parent.bridge;
+}
+
+var rawMasterTables = <?= $m_tables_json ?? '[]' ?>;
+var currentColumns = <?= $m_columns_json ?? '[]' ?>;
+var checkedStatusMap = {};
+
+var STORAGE_KEY = 'designer_selected_table_id_backup';
+
+function onLayoutTypeChange() {
+    var typeSelect = '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>';
+    var tableSelect = document.getElementById('ref_table');
+    
+    var savedId = tableSelect.getAttribute('data-saved-value') || localStorage.getItem(STORAGE_KEY) || tableSelect.value || '';
+    
+    tableSelect.innerHTML = '<option value="">-- 選択してください --</option>';
+    tableSelect.disabled = true;
+    tableSelect.style.background = '#f5f5f5';
+
+    if (typeSelect.indexOf('Multi') !== -1 || typeSelect.indexOf('Single') !== -1) {
+        tableSelect.disabled = false;
+        tableSelect.style.background = '#fff';
+        
+        if (rawMasterTables && rawMasterTables.length > 0) {
+            rawMasterTables.forEach(function(table) {
+                var tId   = String(table.table_id ?? '').trim();
+                var pName = String(table.physical_name ?? '').trim();
+                var lName = String(table.logical_name ?? '').trim();
+                
+                if (tId === '' || pName === '') return;
+                
+                var displayText = tId + ' ' + pName + (lName ? ' ' + lName : '');
+                
+                var opt = document.createElement('option');
+                opt.value = tId;
+                opt.textContent = displayText;
+                
+                if (savedId !== '' && tId === savedId) {
+                    opt.selected = true;
+                }
+                
+                tableSelect.appendChild(opt);
+            });
+        }
+    } else if (typeSelect !== '') {
+        tableSelect.innerHTML = '<option value="">-- この種別は参照テーブル不要です --</option>';
+    } else {
+        tableSelect.innerHTML = '<option value="">-- 種別を先に選択してください --</option>';
+    }
+    
+    if (tableSelect.value) {
+        localStorage.setItem(STORAGE_KEY, tableSelect.value);
+    }
+}
+
+function onTableSelectChange() {
+    var tableSelect = document.getElementById('ref_table').value;
+    var zone = document.getElementById('preview-layout-zone');
+    var container = document.getElementById('dynamic-grid-container');
+    
+    if (tableSelect === '') return;
+    
+    localStorage.setItem(STORAGE_KEY, tableSelect);
+    document.getElementById('ref_table').setAttribute('data-saved-value', tableSelect);
+    
+    zone.style.display = 'block';
+    container.innerHTML = '<div style="padding: 10px; color: #666; font-size: 12px;">カラム情報を読み込み中...</div>';
+
+    bridge({
+        code: 'PartsDefinition/getColumns',
+        table_id: tableSelect,
+        selected_table_id: tableSelect,
+        ref_table: tableSelect,
+        row_pos: '<?= htmlspecialchars($row_pos ?? "1", ENT_QUOTES, "UTF-8") ?>',
+        col_pos: '<?= htmlspecialchars($col_pos ?? "1", ENT_QUOTES, "UTF-8") ?>',
+        selected_type: '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>',
+        parts_name: '<?= htmlspecialchars($parts_name ?? "", ENT_QUOTES, "UTF-8") ?>',
+        parts_description: '<?= htmlspecialchars($parts_description ?? "", ENT_QUOTES, "UTF-8") ?>',
+        layout_type: '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>'
+    });
+}
+
+function renderPreviewGrid() {
+    var container = document.getElementById('dynamic-grid-container');
+    if (!currentColumns || currentColumns.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    var labelType = document.querySelector('input[name="display_label_radio"]:checked').value;
+    var filterType = document.querySelector('input[name="column_filter_radio"]:checked').value;
+    
+    var rowCountInput = document.getElementById('max_row_count');
+    var totalRowsToRender = parseInt(rowCountInput.value || 2, 10);
+    if (totalRowsToRender < 1) totalRowsToRender = 1;
+    
+    var validCols = currentColumns.filter(function(col) {
+        if (!col.physical_name) return false;
+        var pName = col.physical_name;
+        if (checkedStatusMap[pName] === undefined) checkedStatusMap[pName] = true;
+        if (filterType === 'selected' && !checkedStatusMap[pName]) return false;
+        return true;
+    });
+
+    if (validCols.length === 0) {
+        container.innerHTML = '<div style="padding:10px; color:#999;">表示対象カラムがありません</div>';
+        return;
+    }
+
+    var html = '';
+    html += '<table style="width: auto; border-collapse: collapse; table-layout: fixed; background-color: #fff;">';
+    
+    html += '  <colgroup>';
+    validCols.forEach(function() {
+        html += '    <col style="width: 130px; min-width: 130px;">';
+    });
+    html += '  </colgroup>';
+
+    // 1. 表示制御行
+    html += '  <tr style="background-color: #fafafa; height: 32px;">';
+    validCols.forEach(function(col) {
+        var pName = col.physical_name;
+        var isChecked = checkedStatusMap[pName];
+        html += '    <td style="border: 1px solid #000; text-align: center; vertical-align: middle; padding: 4px 6px;">';
+        html += '      <label style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; margin: 0; font-size: 11px; color: #555; white-space: nowrap;">';
+        html += '        <input type="checkbox" data-pname="' + escapeHtml(pName) + '" ' + (isChecked ? 'checked' : '') + ' onchange="onColumnCheckChange(this);" style="transform: scale(0.95); cursor: pointer; margin: 0;">';
+        html += '        <span>表示</span>';
+        html += '      </label>';
+        html += '    </td>';
+    });
+    html += '  </tr>';
+
+    // 2. 項目名ヘッダー行
+    html += '  <tr style="background-color: #f5f5f5; height: 35px;">';
+    validCols.forEach(function(col) {
+        var pName = col.physical_name;
+        var displayText = (labelType === 'logical') ? (col.logical_name || pName) : pName;
+        html += '    <th style="border: 1px solid #000; padding: 6px 12px; text-align: center; font-weight: bold; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(displayText) + '</th>';
+    });
+    html += '  </tr>';
+
+    // 3. データ入力行（最大行数分ループ）
+    for (var rowIdx = 1; rowIdx <= totalRowsToRender; rowIdx++) {
+        html += '  <tr style="background-color: #fff; height: 38px;">';
+        validCols.forEach(function() {
+            html += '    <td style="border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle;">';
+            html += '      <input type="text" style="width: 96%; border: 1px solid #ccc; padding: 4px; outline: none; font-size: 12px; box-sizing: border-box; text-align: left;" placeholder="値入力">';
+            html += '    </td>';
+        });
+        html += '  </tr>';
+    }
+    
+    html += '</table>';
+    
+    container.innerHTML = html;
+}
+
+function syncPreviewRows() {
+    renderPreviewGrid();
+}
+
+function onColumnCheckChange(chk) {
+    var pName = chk.getAttribute('data-pname');
+    checkedStatusMap[pName] = chk.checked;
+    renderPreviewGrid();
+}
+
+function clearPreview() {
+    document.getElementById('preview-layout-zone').style.display = 'none';
+    document.getElementById('dynamic-grid-container').innerHTML = '';
+    var titleInput = document.getElementById('preview_header_title');
+    if (titleInput) titleInput.value = '';
+    checkedStatusMap = {};
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function returnToMain() {
+    var backBtn = document.querySelector('.btn-back');
+    if (backBtn) {
+        backBtn.style.backgroundColor = '#aaa';
+        backBtn.disabled = true;
+    }
+    localStorage.removeItem(STORAGE_KEY);
+    bridge({ code: 'PartsDefinition/cancel' });
+}
+
+// ==========================================
+// 初期展開時の制御自動実行
+// ==========================================
+(function() {
+    onLayoutTypeChange();
+    
+    if (currentColumns && currentColumns.length > 0) {
+        document.getElementById('preview-layout-zone').style.display = 'block';
+        renderPreviewGrid();
+    }
+})();
+</script>

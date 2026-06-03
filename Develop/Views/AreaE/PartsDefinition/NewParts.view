@@ -18,6 +18,9 @@
             <option value="1" selected>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
         </select>
         <span>×</span>
         <select id="cols" class="size-select" style="border: 1px solid #000; padding: 4px; font-weight: bold; font-size: 14px; background: #fff; width: 60px;">
@@ -26,95 +29,270 @@
             <option value="3">3</option>
         </select>
         
-        <button type="button" class="btn-decision" style="background-color: #ffccbc; color: #d84315; border: 1px solid #d84315; padding: 6px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;" onclick="
-            var currentTiles = [];
-            document.querySelectorAll('.tile-box').forEach(function(box, i) {
-                var selects = box.querySelectorAll('select');
-                var label = box.previousElementSibling ? box.previousElementSibling.innerText : '';
-                currentTiles.push({ pos: label, type: selects[0].value, sub_type: selects[1].value });
-            });
-            bridge({ 
-                code: 'PartsDefinition/sizeChange', 
-                parts_name: document.getElementById('parts_name').value,
-                parts_description: document.getElementById('parts_description').value,
-                rows: document.getElementById('rows').value,
-                cols: document.getElementById('cols').value,
-                tilesData: JSON.stringify(currentTiles)
-            });
-        ">決定</button>
+        <button type="button" class="btn-decision" style="background-color: #ffccbc; color: #d84315; border: 1px solid #d84315; padding: 6px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;" onclick="rebuildGrid();">決定</button>
     </div>
 
-    <div id="preview-grid" style="display: grid; gap: 10px; width: 100%; max-width: 1200px; margin-top: 20px; margin-bottom: 10px; grid-template-columns: repeat(1, 1fr);">
-        <div class="tile-item" style="display: flex; flex-direction: column;">
-            <div class="tile-label" style="font-size: 11px; margin-bottom: 6px; color: #333;">[1,1]</div>
-            <div class="tile-box" style="border: 1px solid #000; background-color: #fff; box-sizing: border-box; width: 100%; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-bottom: 20px; position: relative;">
-                
-                <button type="button" class="btn-expand" style="position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; background-color: #757575; color: #fff; border: none; border-radius: 2px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;" onclick="
-                    var currentTiles = [];
-                    document.querySelectorAll('.tile-box').forEach(function(box, i) {
-                        var selects = box.querySelectorAll('select');
-                        var label = box.previousElementSibling ? box.previousElementSibling.innerText : '';
-                        currentTiles.push({ pos: label, type: selects[0].value, sub_type: selects[1].value });
-                    });
-                    bridge({ 
-                        code: 'PartsDefinition/screenBigger', 
-                        targetArea: 'AreaE', 
-                        row_pos: '1', 
-                        col_pos: '1', 
-                        parts_name: document.getElementById('parts_name').value,
-                        parts_description: document.getElementById('parts_description').value,
-                        rows: document.getElementById('rows').value,
-                        cols: document.getElementById('cols').value,
-                        tilesData: JSON.stringify(currentTiles)
-                    });
-                ">↗</button>
-
-                <select class="tile-inner-select" style="width: 90%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">
-                    <option>１レコード</option>
-                    <option>複数レコード</option>
-                    <option>郵便番号・住所・氏名</option>
-                    <option>ボタン</option>
-                    <option>テキストボックス</option>
-                    <option>ドロップダウン</option>
-                    <option>ラジオボタン</option>
-                    <option>年月日</option>
-                </select>
-                <select class="tile-inner-select" style="width: 90%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">
-                    <option>プルダウン2</option>
+    <div id="preview-grid" style="display: grid; gap: 15px; width: 100%; max-width: 1200px; margin-top: 20px; margin-bottom: 10px; grid-template-columns: repeat(1, 1fr);">
+        <div class="tile-item" data-pos="[1,1]" style="display: flex; flex-direction: column;">
+            <div class="tile-label" style="font-size: 11px; margin-bottom: 6px; color: #333; font-weight: bold;">[1,1]</div>
+            <div class="tile-box" style="border: 1px solid #000; background-color: #fff; box-sizing: border-box; width: 100%; min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; position: relative; padding: 10px;">
+                <button type="button" class="btn-expand" style="position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; background-color: #757575; color: #fff; border: none; border-radius: 2px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;" onclick="handleExpand(1, 1);">↗</button>
+                <select class="tile-main-select" style="width: 95%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">
+                    <option value="" selected>--</option>
+                    <option value="Single Record 入力">Single Record 入力</option>
+                    <option value="Multi Record 入力">Multi Record 入力</option>
+                    <option value="Single Record 表示">Single Record 表示</option>
+                    <option value="Multi Record 表示">Multi Record 表示</option>
+                    <option value="テキスト表示">テキスト表示</option>
                 </select>
             </div>
         </div>
     </div>
 
     <div class="action-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 20px 0;">
-        <button type="button" class="btn-image" style="background-color: #607d8b; color: white; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="
-            var data = {
-                parts_name: document.getElementById('parts_name').value,
-                rows: document.getElementById('rows').value,
-                cols: document.getElementById('cols').value,
-                tiles: []
-            };
-            document.querySelectorAll('.tile-box').forEach(function(box, i) {
-                var selects = box.querySelectorAll('select');
-                data.tiles.push({ pos: i + 1, type: selects[0].value, sub_type: selects[1].value });
-            });
-            var f = document.createElement('form');
-            f.method = 'POST';
-            f.action = 'PartsDefinition/image';
-            f.target = '_blank';
-            var inp = document.createElement('input');
-            inp.type = 'hidden';
-            inp.name = 'previewData';
-            inp.value = JSON.stringify(data);
-            f.appendChild(inp);
-            document.body.appendChild(f);
-            f.submit();
-            document.body.removeChild(f);
-        ">画面イメージ</button>
+        <button type="button" class="btn-image" style="background-color: #607d8b; color: white; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="sendToImageAction();">画面イメージ</button>
 
         <div class="footer-right" style="display: flex; gap: 20px;">
-            <button type="button" class="btn-cancel" style="background-color: #ff0000; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="return confirm('入力内容は破棄されます。キャンセルしてもよろしいですか？')">キャンセル</button>
-            <button type="button" class="btn-register" style="background-color: #5d8b41; color: white; border: none; padding: 10px 40px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="return confirm('入力した内容で登録してもよろしいですか？')">登録</button>
+            <button type="button" class="btn-cancel" style="background-color: #ff0000; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="if(confirm('入力内容は破棄されます。キャンセルしてもよろしいですか？')){ bridge({ code: 'PartsDefinition/cancel' }); }">キャンセル</button>
+            <button type="button" class="btn-register" style="background-color: #5d8b41; color: white; border: none; padding: 10px 40px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;" onclick="sendToRegisterAction();">登録</button>
         </div>
     </div>
 </div>
+
+<script>
+if (typeof bridge === 'undefined' && typeof parent !== 'undefined' && typeof parent.bridge === 'function') {
+    var bridge = parent.bridge;
+}
+
+function handleExpand(r, c) {
+    var posLabel = '[' + r + ',' + c + ']';
+    var targetTile = document.querySelector('.tile-item[data-pos="' + posLabel + '"]');
+    var selectedType = targetTile ? targetTile.querySelector('.tile-main-select').value : '';
+    
+    if (selectedType === '') {
+        alert('種別を選択してから拡大ボタンを押してください。');
+        return;
+    }
+
+    if (targetTile) {
+        var expandBtn = targetTile.querySelector('.btn-expand');
+        if (expandBtn) {
+            expandBtn.style.backgroundColor = '#333';
+            expandBtn.style.boxShadow = 'inset 1px 1px 3px rgba(0,0,0,0.5)';
+            expandBtn.style.transform = 'scale(0.95)';
+            expandBtn.disabled = true;
+        }
+    }
+    
+    // 💡 常に「PartsDefinition/screenBigger」を叩き、selected_type の値だけをControllerへ送る
+    bridge({ 
+        code: 'PartsDefinition/screenBigger', 
+        targetArea: 'AreaE', 
+        row_pos: r, 
+        col_pos: c, 
+        selected_type: selectedType, // 👈 Controllerのif文はこの値を見てViewを出し分けます
+        parts_name: document.getElementById('parts_name').value,
+        parts_description: document.getElementById('parts_description').value,
+        rows: document.getElementById('rows').value,
+        cols: document.getElementById('cols').value,
+        tilesData: JSON.stringify(collectTilesData())
+    });
+}
+
+function rebuildGrid() {
+    var rows = parseInt(document.getElementById('rows').value) || 1;
+    var cols = parseInt(document.getElementById('cols').value) || 1;
+    var grid = document.getElementById('preview-grid');
+    
+    var savedValues = {};
+    document.querySelectorAll('.tile-item').forEach(function(item) {
+        var pos = item.getAttribute('data-pos');
+        var mainSel = item.querySelector('.tile-main-select');
+        if (pos && mainSel) {
+            savedValues[pos] = { main: mainSel.value };
+        }
+    });
+
+    grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+    
+    var html = '';
+    var options = [
+        { value: '', text: '--' },
+        { value: 'Single Record 入力', text: 'Single Record 入力' },
+        { value: 'Multi Record 入力', text: 'Multi Record 入力' },
+        { value: 'Single Record 表示', text: 'Single Record 表示' },
+        { value: 'Multi Record 表示', text: 'Multi Record 表示' },
+        { value: 'テキスト表示', text: 'テキスト表示' }
+    ];
+    
+    for (var r = 1; r <= rows; r++) {
+        for (var c = 1; c <= cols; c++) {
+            var posLabel = '[' + r + ',' + c + ']';
+            var prevMain = (savedValues[posLabel] && savedValues[posLabel].main !== undefined) ? savedValues[posLabel].main : '';
+            
+            html += '<div class="tile-item" data-pos="' + posLabel + '" style="display: flex; flex-direction: column;">';
+            html += '  <div class="tile-label" style="font-size: 11px; margin-bottom: 6px; color: #333; font-weight: bold;">' + posLabel + '</div>';
+            html += '  <div class="tile-box" style="border: 1px solid #000; background-color: #fff; box-sizing: border-box; width: 100%; min-height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; position: relative; padding: 10px;">';
+            html += '    <button type="button" class="btn-expand" style="position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; background-color: #757575; color: #fff; border: none; border-radius: 2px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;" onclick="handleExpand(' + r + ', ' + c + ');">↗</button>';
+            html += '    <select class="tile-main-select" style="width: 95%; padding: 4px; border: 1px solid #ccc; font-size: 11px;">';
+            
+            options.forEach(function(opt) {
+                var selected = (opt.value === prevMain) ? 'selected' : '';
+                html += '      <option value="' + opt.value + '" ' + selected + '>' + opt.text + '</option>';
+            });
+            
+            html += '    </select>';
+            html += '  </div>';
+            html += '</div>';
+        }
+    }
+    grid.innerHTML = html;
+}
+
+function sendToRegisterAction() {
+    if(!confirm('入力した内容で登録してもよろしいですか？')) return;
+    bridge({
+        code: 'PartsDefinition/register',
+        parts_name: document.getElementById('parts_name').value,
+        parts_description: document.getElementById('parts_description').value,
+        rows: document.getElementById('rows').value,
+        cols: document.getElementById('cols').value,
+        tilesData: JSON.stringify(collectTilesData())
+    });
+}
+
+function sendToImageAction() {
+    var data = {
+        parts_name: document.getElementById('parts_name').value,
+        rows: document.getElementById('rows').value,
+        cols: document.getElementById('cols').value,
+        tiles: collectTilesData()
+    };
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = 'PartsDefinition/image';
+    f.target = '_blank';
+    var inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'previewData';
+    inp.value = JSON.stringify(data);
+    f.appendChild(inp);
+    document.body.appendChild(f);
+    f.submit();
+    document.body.removeChild(f);
+}
+
+function collectTilesData() {
+    var currentTiles = [];
+    document.querySelectorAll('.tile-item').forEach(function(item) {
+        var label = item.getAttribute('data-pos');
+        var mainSel = item.querySelector('.tile-main-select');
+        if(label && mainSel) {
+            currentTiles.push({ pos: label, type: mainSel.value });
+        }
+    });
+    return currentTiles;
+}
+
+// セッションストレージ用のキー
+const STORAGE_KEY_MAIN_FORM = 'wwProject_main_form_backup';
+
+/**
+ * 1. 画面上の全項目をオブジェクトにまとめてセッションストレージに保存する
+ */
+function saveMainForm() {
+    const formData = {
+        parts_name: document.getElementById('main_parts_name')?.value || '',         // 画面パーツ名称
+        parts_description: document.getElementById('main_parts_description')?.value || '', // 内容の説明
+        size_x: document.getElementById('size_x')?.value || '2',                    // サイズ（幅）
+        size_y: document.getElementById('size_y')?.value || '2',                    // サイズ（高さ）
+        grids: {}
+    };
+
+    // 各グリッド [row, col] のセレクトボックスの選択値を全件ループで取得
+    const selectElements = document.querySelectorAll('.grid-cell-select, [id^="grid_select_"]'); // 実際のid/classに合わせて調整してください
+    selectElements.forEach(select => {
+        if (select.id) {
+            formData.grids[select.id] = select.value;
+        }
+    });
+
+    // JSON文字列に変換して保存
+    sessionStorage.setItem(STORAGE_KEY_MAIN_FORM, JSON.stringify(formData));
+}
+
+/**
+ * 2. セッションストレージからデータを読み込んで画面に復元する
+ */
+function loadMainForm() {
+    const sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    if (!sessionData) return; // バックアップがなければ何もしない
+
+    try {
+        const formData = JSON.parse(sessionData);
+
+        // 各入力項目の復元
+        if (document.getElementById('main_parts_name')) {
+            document.getElementById('main_parts_name').value = formData.parts_name;
+        }
+        if (document.getElementById('main_parts_description')) {
+            document.getElementById('main_parts_description').value = formData.parts_description;
+        }
+        if (document.getElementById('size_x')) {
+            document.getElementById('size_x').value = formData.size_x;
+        }
+        if (document.getElementById('size_y')) {
+            document.getElementById('size_y').value = formData.size_y;
+        }
+
+        // 必要に応じてサイズ決定後のグリッド再描画関数をここで実行
+        // if (typeof renderGridCells === 'function') { renderGridCells(formData.size_x, formData.size_y); }
+
+        // 各グリッドの選択状態を復元
+        if (formData.grids) {
+            Object.keys(formData.grids).forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    select.value = formData.grids[id];
+                }
+            });
+        }
+    } catch (e) {
+        console.error("フォームデータの復元に失敗しました:", e);
+    }
+}
+
+/**
+ * 3. 画面拡大ボタンが押された時の処理（既存の処理に割り込ませる）
+ * @param {number} row 行位置
+ * @param {number} col 列位置
+ */
+function onGridExpandClick(row, col) {
+    // 💡 遷移する直前に、現在の画面状態をすべて保存
+    saveMainForm();
+
+    // 既存の遷移処理（bridge等の呼び出し）
+    bridge({
+        code: 'PartsDefinition/openDetail',
+        row_pos: row,
+        col_pos: col,
+        selected_type: document.getElementById(`grid_select_${row}_${col}`)?.value || ''
+        // その他必要なパラメータ
+    });
+}
+
+// ==========================================
+// 4. 画面初期表示（または詳細画面から戻った時）の自動復元実行
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // 画面が表示されたら復元を試みる
+    loadMainForm();
+});
+
+// ※「登録」ボタンや、全体の「キャンセル」ボタンが押されて画面を完全に離れる際は、
+// 不要になった一時データをクリアすることをお勧めします。
+function clearMainFormBackup() {
+    sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
+}
+
+</script>

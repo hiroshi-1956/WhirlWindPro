@@ -112,6 +112,7 @@ class ProjectController extends \Develop\Utils\BaseController {
         $projectMap = \Develop\Utils\Session::get('project_map');
         $projectName = ($projectId && isset($projectMap[$projectId])) ? $projectMap[$projectId] : '';
         \Develop\Utils\Session::set('project_name', $projectName);
+        $this->logger->debug("ProjectController::projectSelectAction() ☆★☆　{$projectName}");
         
         // エリアB更新
         $loginUserName = \Develop\Utils\Session::get('user_name');
@@ -125,7 +126,11 @@ class ProjectController extends \Develop\Utils\BaseController {
         $html .= '</div>';
         $html .= $this->getNaviFooterHtml();
         \Develop\Utils\Screen::updateAreaC('\Develop\Views\AreaC\Area_C.view', [ 'Area_C_Html' => $html ]);
-            
+        
+        // 2026/6/3 処理を追加
+        \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\Area_D_clear.view', []);
+        \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
+        
         $this->logger->debug("ProjectController::projectSelectAction() finish.");
     }
     

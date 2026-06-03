@@ -183,4 +183,26 @@ function executeRowAction(actionType) {
     
     parent.bridge({ code: 'DBDefinition/modifyRows', data: params.toString() });
 }
+
+function handleExpand(r, c) {
+    // 💡【詳細解説】
+    // 引数を (r, c) の数値で直接受け取るようにしたため、文字列置換(replace)の必要がなくなりました。
+    // これにより、全角文字がJavaScriptのインタープリタに干渉して発生していた「関数実行手前での無言のクラッシュ」を根絶します。
+    var posLabel = '[' + r + ',' + c + ']'; // 既存のHTML要素（.tile-item）を検索するためのラベル組み立て
+    var targetTile = document.querySelector('.tile-item[data-pos="' + posLabel + '"]');
+    var selectedType = targetTile ? targetTile.querySelector('.tile-main-select').value : '１レコード';
+
+    bridge({ 
+        code: 'PartsDefinition/screenBigger', 
+        targetArea: 'AreaE', 
+        row_pos: r, 
+        col_pos: c, 
+        selected_type: selectedType, // コントローラー側で P_OneRecord か P_MultiRecord かを分岐させる重要フラグ
+        parts_name: document.getElementById('parts_name').value,
+        parts_description: document.getElementById('parts_description').value,
+        rows: document.getElementById('rows').value,
+        cols: document.getElementById('cols').value,
+        tilesData: JSON.stringify(collectTilesData())
+    });
+}
 </script>
