@@ -1,10 +1,21 @@
 <style>
     [id^="area-d"], [id^="area_d"] { width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important; border-right: none !important; }
     [id^="area-e"], [id^="area_e"] { display: none !important; }
-    .wide-form-container { padding: 40px; max-width: 800px; margin: 0 auto; }
-    .field { margin-bottom: 20px; }
+    
+    /* 画面全体に広く表示するための調整 */
+    .wide-form-container { padding: 40px; max-width: 1200px; margin: 0 auto; }
+    
+    /* 左右2列の幅をさらに広げる */
+    .form-columns { display: flex; gap: 60px; }
+    .form-column-left, .form-column-right { flex: 1; min-width: 0; }
+    
+    .field { margin-bottom: 24px; }
     .field label { display: block; margin-bottom: 8px; font-weight: bold; }
     .field input, .field textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    
+    /* テキストエリアの自動リサイズや余計な隙間を防止 */
+    .field textarea { resize: vertical; }
+    
     .form-actions { margin-top: 40px; text-align: right; }
     .btn { padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .btn-cancel { background-color: #95a5a6; color: white; margin-right: 20px; }
@@ -13,20 +24,44 @@
 
 <div class="wide-form-container">
     <h2>{$title}</h2>
-    <div class="field">
-        <label>プロジェクトID</label>
-        <input type="text" id="new_p_id">
-    </div>
-    <div class="field">
-        <label>プロジェクト名</label>
-        <input type="text" id="new_p_name">
-    </div>
-    <div class="field">
-        <label>詳細説明</label>
-        <textarea id="new_p_desc" rows="10"></textarea>
-    </div>
-    <div class="form-actions">
     
+    <div class="form-columns">
+        <div class="form-column-left">
+            <div class="field">
+                <label>プロジェクトID</label>
+                <input type="text" id="new_p_id">
+            </div>
+            
+            <div class="field">
+                <label>プロジェクト名</label>
+                <input type="text" id="new_p_name">
+            </div>
+        </div>
+        
+        <div class="form-column-right">
+            <div class="field">
+                <label>DSN (接続文字列)</label>
+                <input type="text" id="new_p_dsn">
+            </div>
+            
+            <div class="field">
+                <label>データベースユーザー名</label>
+                <input type="text" id="new_p_username">
+            </div>
+            
+            <div class="field">
+                <label>データベースパスワード</label>
+                <input type="password" id="new_p_password">
+            </div>
+            
+            <div class="field">
+                <label>接続オプション (JSONなど)</label>
+                <textarea id="new_p_options" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
         <button type="button" class="btn btn-cancel" 
             onclick="if(confirm('入力した内容は破棄されます。よろしいですか？')){ bridge({code:'Project/cancelProject'}); }">
             キャンセル
@@ -36,16 +71,24 @@
             onclick="
                 var id = document.getElementById('new_p_id').value;
                 var name = document.getElementById('new_p_name').value;
-                var desc = document.getElementById('new_p_desc').value;
+                var dsn = document.getElementById('new_p_dsn').value;
+                var username = document.getElementById('new_p_username').value;
+                var password = document.getElementById('new_p_password').value;
+                var options = document.getElementById('new_p_options').value;
 
+                if(!id){ alert('プロジェクトIDを入力してください'); return; }
                 if(!name){ alert('プロジェクト名を入力してください'); return; }
+                if(!options){ alert('接続オプションを入力してください'); return; }
 
                 if(confirm('この内容で登録してもよろしいですか？')){
                     bridge({
                         code: 'Project/saveProject',
                         p_id: id,
                         p_name: name,
-                        p_desc: desc
+                        p_dsn: dsn,
+                        p_username: username,
+                        p_password: password,
+                        p_options: options
                     });
                 }
             ">

@@ -120,6 +120,14 @@ class ProjectController extends \Develop\Utils\BaseController {
         $dataB = [ 'User_Name' => $loginUserName, 'Selected_Project_Name' => $displayProject ];
         \Develop\Utils\Screen::updateAreaB('\Develop\Views\AreaB\Area_B.view', $dataB);
         
+        if (!empty($projectId)) {
+            $configProd = require "Config/db_{$projectId}.php";
+            $this->logger->debug("ProjectController::projectSelectAction() $projectId : {$projectId}");
+            $pdoProd = new \PDO($configProd['dsn'], $configProd['username'], $configProd['password'], $configProd['options']);
+            $pdoProd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            \Framework\Core\Container::setDb_product($pdoProd);
+        }
+        
         // エリアC更新：リストボディとフッターの両方をセットにする
         $html = '<div class="navi-list-body">';
         $html .= $this->getProjectListHtml();
@@ -216,14 +224,18 @@ class ProjectController extends \Develop\Utils\BaseController {
         // View側のJavaScriptで定義したキー名と一致させます
         $project_id   = \Develop\Utils\Request::post('p_id');
         $project_name = \Develop\Utils\Request::post('p_name');
-        $description  = \Develop\Utils\Request::post('p_desc');
+        $dsn          = \Develop\Utils\Request::post('p_dsn');
+        $username     = \Develop\Utils\Request::post('p_username');
+        $password     = \Develop\Utils\Request::post('p_password');
+        $options      = \Develop\Utils\Request::post('p_options');
         
-        $this->logger->debug("取り込み確認：ID={$project_id}, Name={$project_name}, Desc={$description}");
+        $this->logger->debug("取り込み確認：ID={$project_id}, Name={$project_name}, DSN={$dsn}, User={$username}");
         
         if (!empty($project_name)) {
             // DB保存処理へ
             $model = new \Develop\Models\ProjectModel();
-            $model->registProject($project_id, $project_name, $description);
+            // 💡 変更：引数を新しい接続情報用の変数群に変更
+            $model->registProject($project_id, $project_name, $dsn, $username, $password, $options);
             
             // 保存成功後にロック解除
             \Develop\Utils\Session::set('project_lock_status', false);

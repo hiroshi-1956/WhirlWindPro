@@ -1,6 +1,6 @@
 <?php
 /**
- * WhirlWindProV1.11 - index.php
+ * WhirlWindProV1.15 - index.php
  */
 
 error_reporting(E_ALL & ~ E_DEPRECATED & ~ E_USER_DEPRECATED & ~ E_NOTICE);
@@ -52,11 +52,11 @@ try {
     Container::setDb_develop($pdoDev);
     
     // DB接続 (product)
-    $configProd = require 'Config/db_product.php';
-    $pdoProd = new \PDO($configProd['dsn'], $configProd['username'], $configProd['password'], $configProd['options']);
-    $pdoProd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    Container::setDb_product($pdoProd);
-    
+//    $configProd = require 'Config/db_product.php';
+//    $pdoProd = new \PDO($configProd['dsn'], $configProd['username'], $configProd['password'], $configProd['options']);
+//    $pdoProd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+//    Container::setDb_product($pdoProd);
+
 } catch (\Exception $e) {
     echo "System Initialization Error: " . $e->getMessage();
     exit;

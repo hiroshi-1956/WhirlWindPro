@@ -21,12 +21,16 @@ class DBDefinitionController extends \Develop\Utils\BaseController {
     // Viewの共通パス定義
     private const VIEW_REGIST = '\Develop\Views\AreaE\DBDefinition\RegistTable.view';
     
+    private const SESSION_PROJECT_KEY = 'project_id';
+    
     public function initialAction() {
         $this->logger->debug("DBDefinitionController::initialAction() start...");
         
+        $project_id = $_SESSION[self::SESSION_PROJECT_KEY];
+        $this->logger->debug("DBDefinitionController::initialAction() project_id : {$project_id}");
         $model = new \Develop\Models\DBDefinitionModel();
         \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\DBDefinition\DBDefinitionList.view', [
-            'table_list' => $model->getTableList()
+            'table_list' => $model->getTableList ($project_id)
         ]);
         \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
         

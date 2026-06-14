@@ -90,10 +90,22 @@ if (typeof bridge === 'undefined' && typeof parent !== 'undefined' && typeof par
     var bridge = parent.bridge;
 }
 
+// PHPから渡される位置情報
+var currentRowPos = '<?= htmlspecialchars($row_pos ?? "1", ENT_QUOTES, "UTF-8") ?>';
+var currentColPos = '<?= htmlspecialchars($col_pos ?? "1", ENT_QUOTES, "UTF-8") ?>';
+
+// 💡 [x,y] 形式の文字列を直接キーとして使用します（例: "[1,1]"）
+var gridKey = '[' + currentRowPos + ',' + currentColPos + ']'; 
+
 var rawMasterTables = <?= $m_tables_json ?? '[]' ?>;
 var currentColumns = <?= $m_columns_json ?? '[]' ?>;
 var checkedStatusMap = {};
 
+const STORAGE_KEY_MAIN_FORM = 'wwProject_main_form_backup';
+
+/**
+ * 💡 種別とテーブル選択セレクトボックスの初期制御
+ */
 function onLayoutTypeChange() {
     var typeSelect = '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>';
     var tableSelect = document.getElementById('ref_table');
@@ -101,7 +113,6 @@ function onLayoutTypeChange() {
     tableSelect.innerHTML = '<option value="">-- 選択してください --</option>';
     tableSelect.disabled = true;
     tableSelect.style.background = '#f5f5f5';
-    clearPreview();
 
     if (typeSelect === 'Single Record 入力' || typeSelect === 'Multi Record 入力') {
         tableSelect.disabled = false;
@@ -130,22 +141,42 @@ function onLayoutTypeChange() {
     }
 }
 
+/**
+ * 💡 テーブル選択が変更されたとき
+ */
 function onTableSelectChange() {
     var tableSelect = document.getElementById('ref_table').value;
     var zone = document.getElementById('preview-layout-zone');
     var container = document.getElementById('dynamic-grid-container');
     
-    clearPreview();
-    if (tableSelect === '') return;
+    if (tableSelect === '') {
+        clearPreview();
+        return;
+    }
     
     zone.style.display = 'block';
     container.innerHTML = '<div style="padding: 10px; color: #666; font-size: 12px;">カラム情報を読み込み中...</div>';
 
+    // 途中でgetColumnsへ遷移する際も、現在のラジオ等の状態を退避
+    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var formData = sessionData ? JSON.parse(sessionData) : { grids_config: {} };
+    if (!formData.grids_config) formData.grids_config = {};
+    
+    formData.grids_config[gridKey] = {
+        layout_type: '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>',
+        table_id: tableSelect,
+        preview_title: document.getElementById('preview_header_title').value || '',
+        display_label: document.querySelector('input[name="display_label_radio"]:checked')?.value || 'physical',
+        column_filter: document.querySelector('input[name="column_filter_radio"]:checked')?.value || 'all',
+        checked_map: checkedStatusMap
+    };
+    sessionStorage.setItem(STORAGE_KEY_MAIN_FORM, JSON.stringify(formData));
+
     bridge({
         code: 'PartsDefinition/getColumns',
         table_id: tableSelect,
-        row_pos: '<?= htmlspecialchars($row_pos ?? "1", ENT_QUOTES, "UTF-8") ?>',
-        col_pos: '<?= htmlspecialchars($col_pos ?? "1", ENT_QUOTES, "UTF-8") ?>',
+        row_pos: currentRowPos,
+        col_pos: currentColPos,
         selected_type: '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>',
         parts_name: '<?= htmlspecialchars($parts_name ?? "", ENT_QUOTES, "UTF-8") ?>',
         parts_description: '<?= htmlspecialchars($parts_description ?? "", ENT_QUOTES, "UTF-8") ?>',
@@ -153,6 +184,9 @@ function onTableSelectChange() {
     });
 }
 
+/**
+ * 💡 縦型プレビューグリッドのレンダリング
+ */
 function renderPreviewGrid() {
     var container = document.getElementById('dynamic-grid-container');
     if (!currentColumns || currentColumns.length === 0) {
@@ -163,30 +197,32 @@ function renderPreviewGrid() {
     var labelType = document.querySelector('input[name="display_label_radio"]:checked').value;
     var filterType = document.querySelector('input[name="column_filter_radio"]:checked').value;
     
-    var gapSize = 0;
     var html = '';
     var renderedCount = 0;
 
     currentColumns.forEach(function(col) {
         if (!col.physical_name) return;
 
-        var pName = col.physical_name;
-        if (checkedStatusMap[pName] === undefined) {
-            checkedStatusMap[pName] = true;
+        // 💡 トリーム処理をかけて正確にキーを一致させる
+        var pName = String(col.physical_name).trim();
+        
+        var isChecked = true;
+        if (checkedStatusMap && checkedStatusMap[pName] !== undefined) {
+            if (checkedStatusMap[pName] === false || checkedStatusMap[pName] === 'false') {
+                isChecked = false;
+            }
+        } else {
+            checkedStatusMap[pName] = true; // デフォルトはON
         }
-
-        var isChecked = checkedStatusMap[pName];
-
-        if (filterType === 'selected' && !isChecked) {
-            return;
-        }
+        
+        // 💡「表示カラムだけ（selected）」ラジオがONのとき、チェックOFFの項目は非表示
+        if (filterType === 'selected' && !isChecked) return;
 
         var displayText = (labelType === 'logical') ? (col.logical_name || pName) : pName;
-        
         var marginTopStyle = (renderedCount > 0) ? 'margin-top: -1px;' : 'margin-top: 0px;';
         renderedCount++;
 
-        html += '<div class="preview-row" style="display: flex; width: 100%; min-height: 40px; align-items: stretch; ' + marginTopStyle + ' margin-bottom: ' + gapSize + 'px;">';
+        html += '<div class="preview-row" style="display: flex; width: 100%; min-height: 40px; align-items: stretch; ' + marginTopStyle + '">';
         html += '  <div style="width: 40px; border: 1px solid #000; background-color: #f9f9f9; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">';
         html += '    <input type="checkbox" data-pname="' + escapeHtml(pName) + '" ' + (isChecked ? 'checked' : '') + ' onchange="onColumnCheckChange(this);" style="transform: scale(1.1); cursor: pointer;">';
         html += '  </div>';
@@ -194,7 +230,7 @@ function renderPreviewGrid() {
         html += '    <div>' + escapeHtml(displayText) + '</div>';
         html += '  </div>';
         html += '  <div style="flex: 1; border: 1px solid #000; border-left: none; background-color: #fff; padding: 6px; box-sizing: border-box; display: flex; align-items: center;">';
-        html += '    <input type="text" style="width: 95%; border: 1px solid #ccc; padding: 4px; outline: none; font-size: 13px;" placeholder="入力してください">';
+        html += '    <input type="text" style="width: 95%; border: 1px solid #ccc; padding: 4px; outline: none; font-size: 13px;" placeholder="入力してください" disabled>';
         html += '  </div>';
         html += '</div>';
     });
@@ -224,7 +260,6 @@ function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
-// 💡 キャンセルボタン押下時の処理
 function cancelAndReturn() {
     var cancelBtn = document.querySelector('.btn-cancel');
     if (cancelBtn) {
@@ -234,53 +269,122 @@ function cancelAndReturn() {
     bridge({ code: 'PartsDefinition/cancel' });
 }
 
-// 💡 保存ボタン押下時の処理（必要に応じて送信データの構成を調整してください）
 function saveConfig() {
     var saveBtn = document.querySelector('.btn-save');
+    var tableSelect = document.getElementById('ref_table');
+    
+    var selectedText = '';
+    if (tableSelect && tableSelect.selectedIndex > 0) {
+        selectedText = tableSelect.options[tableSelect.selectedIndex].text;
+        selectedText = selectedText.replace(/^\d+\s+/, ''); 
+    }
+
+    // 1. ブラウザの sessionStorage に保存
+    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var formData = sessionData ? JSON.parse(sessionData) : { grids_config: {} };
+    if (!formData.grids_config) formData.grids_config = {};
+
+    formData.grids_config[gridKey] = {
+        layout_type: '<?= htmlspecialchars($selected_type ?? "", ENT_QUOTES, "UTF-8") ?>',
+        table_id: tableSelect.value,
+        table_name_text: selectedText,
+        preview_title: document.getElementById('preview_header_title').value || '',
+        display_label: document.querySelector('input[name="display_label_radio"]:checked')?.value || 'physical',
+        column_filter: document.querySelector('input[name="column_filter_radio"]:checked')?.value || 'all',
+        checked_map: checkedStatusMap 
+    };
+
+    var latestJsonStr = JSON.stringify(formData);
+    sessionStorage.setItem(STORAGE_KEY_MAIN_FORM, latestJsonStr);
+
+    // 親のDOM要素へ直接インジェクション
+    var parentHidden = window.parent.document.getElementById('grids_config_json') 
+                    || document.getElementById('grids_config_json')
+                    || window.parent.document.querySelector('input[name="grids_config_json"]');
+    
+    if (parentHidden) {
+        parentHidden.value = JSON.stringify(formData.grids_config);
+    }
+
+    if (window.parent && window.parent.mainFormData) {
+        window.parent.mainFormData.grids_config = formData.grids_config;
+    }
+
     if (saveBtn) {
         saveBtn.style.backgroundColor = '#aaa';
         saveBtn.disabled = true;
     }
-    
-    // チェックボックスの状態等から保存用のカラム配列をパース
-    var columnsData = [];
-    currentColumns.forEach(function(col) {
-        if (!col.physical_name) return;
-        columnsData.push({
-            physical_name: col.physical_name,
-            logical_name: col.logical_name || '',
-            is_checked: (checkedStatusMap[col.physical_name] !== false) ? 1 : 0
-        });
-    });
 
-    bridge({ 
-        code: 'PartsDefinition/save',
-        table_id: document.getElementById('ref_table').value,
-        preview_title: document.getElementById('preview_header_title').value || '',
-        display_label: document.querySelector('input[name="display_label_radio"]:checked').value,
-        columns: columnsData
+var isEditFlag = '<?= !empty($is_edit) || !empty($parts_id) ? "1" : "0" ?>';
+
+    // 🔥【修正】URLSearchParams をやめ、システムが期待するオブジェクト形式で直接 bridge に渡す
+    bridge({
+        code: 'PartsDefinition/sizeChange',
+        is_edit_mode_flag: isEditFlag,
+        parts_id: '<?= htmlspecialchars($parts_id ?? "", ENT_QUOTES, "UTF-8") ?>',
+        parts_name: '<?= htmlspecialchars($parts_name ?? "", ENT_QUOTES, "UTF-8") ?>',
+        parts_description: '<?= htmlspecialchars($parts_description ?? "", ENT_QUOTES, "UTF-8") ?>',
+        rows: '<?= htmlspecialchars($rows ?? "1", ENT_QUOTES, "UTF-8") ?>',
+        cols: '<?= htmlspecialchars($cols ?? "1", ENT_QUOTES, "UTF-8") ?>',
+        grids_config_json: JSON.stringify(formData.grids_config) // 最新の詳細データをここに載せる
     });
 }
 
 // ==========================================
-// 初期展開時の制御自動実行
+// 💡 初期展開ロジック・自動復元
 // ==========================================
 (function() {
     onLayoutTypeChange();
-    
-    if (currentColumns && currentColumns.length > 0) {
-        var tableSelect = document.getElementById('ref_table');
-        if (rawMasterTables && rawMasterTables.length > 0) {
-            for (var i = 0; i < tableSelect.options.length; i++) {
-                if (tableSelect.options[i].value !== "") {
-                    tableSelect.selectedIndex = i; 
-                    break;
-                }
+
+    var hasSavedConfig = false;
+    var savedTableId = "";
+
+    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    if (sessionData) {
+        var formData = JSON.parse(sessionData);
+        if (formData.grids_config && formData.grids_config[gridKey]) {
+            var config = formData.grids_config[gridKey];
+            hasSavedConfig = true;
+            
+            // 1. 参照テーブルの復元
+            if (config.table_id) {
+                savedTableId = config.table_id;
+                document.getElementById('ref_table').value = savedTableId;
+            }
+            // 2. タイトルの復元
+            if (config.preview_title) {
+                document.getElementById('preview_header_title').value = config.preview_title;
+            }
+            // 3. 表示項目（物理名/日本語名）ラジオの復元
+            if (config.display_label) {
+                var radioLabel = document.querySelector('input[name="display_label_radio"][value="' + config.display_label + '"]');
+                if (radioLabel) radioLabel.checked = true;
+            }
+            // 4. フィルタ（全カラム/表示カラムだけ）ラジオの復元
+            if (config.column_filter) {
+                var radioFilter = document.querySelector('input[name="column_filter_radio"][value="' + config.column_filter + '"]');
+                if (radioFilter) radioFilter.checked = true;
+            }
+            // 5. 💡 チェックボックス状態の安全な復元（物理名のトリムズレ回避）
+            if (config.checked_map) {
+                checkedStatusMap = {};
+                Object.keys(config.checked_map).forEach(function(key) {
+                    var cleanKey = String(key).trim();
+                    var val = config.checked_map[key];
+                    checkedStatusMap[cleanKey] = (val === true || val === 'true');
+                });
             }
         }
-        
+    }
+    
+    // プレビュー表示エリアのレンダリング判定
+    if (currentColumns && currentColumns.length > 0) {
         document.getElementById('preview-layout-zone').style.display = 'block';
         renderPreviewGrid();
+    } else if (savedTableId !== "") {
+        setTimeout(function() {
+            onTableSelectChange();
+        }, 30);
     }
 })();
 </script>

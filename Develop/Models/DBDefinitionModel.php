@@ -8,7 +8,7 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
      * 登録済みのテーブル定義一覧を取得する
      * @return array
      */
-    public function getTableList(): array {
+    public function getTableList(string $project_id): array {
         $this->logger->debug("DBDefinitionModel::getTableList() start...");
         
         try {
@@ -17,6 +17,7 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
             
             // 登録されているテーブル情報を物理名の順（または作成日順）で全件取得
             $sql = "SELECT
+                        project_id,
                         table_id,
                         physical_name,
                         logical_name,
@@ -25,9 +26,12 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
                         created_at,
                         updated_at
                     FROM m_tables
+                    WHERE project_id = :project_id
                     ORDER BY physical_name ASC";
             
-            $stmt = $db->query($sql);
+            // 💡 修正：$db->query() から $db->prepare() に修正
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':project_id' => $project_id]);
             $tableList = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
             $this->logger->debug("DBDefinitionModel::getTableList() finish. 取得件数: " . count($tableList));
@@ -45,8 +49,13 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
         $columns = [];
         
         try {
+            $projectId = \Develop\Utils\Session::get('project_id');
             // プロジェクト共通のDB接続インスタンスを取得（例: PDOなど）
-            $db = \Framework\Core\Container::getDb_product ();
+            $configProd = require "Config/db_{$projectId}.php";
+            $pdoProd = new \PDO($configProd['dsn'], $configProd['username'], $configProd['password'], $configProd['options']);
+            $pdoProd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $db = $pdoProd;
+            
             $this->logger->info("DBDefinitionModel::getTableStructure() 1");
             
             // 安全対策：英数字とアンダースコア以外を排除（SQLインジェクション対策）
@@ -85,14 +94,11 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
                 ];
             }
             $this->logger->info(print_r($columns, true));
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[0]['physical']} #{$columns[0]['logical']} #{$columns[0]['type']} #{$columns[0]['length']} #{$columns[0]['null']} #{$columns[0]['unique']} #{$columns[0]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[1]['physical']} #{$columns[1]['logical']} #{$columns[1]['type']} #{$columns[1]['length']} #{$columns[1]['null']} #{$columns[1]['unique']} #{$columns[1]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[2]['physical']} #{$columns[2]['logical']} #{$columns[2]['type']} #{$columns[2]['length']} #{$columns[2]['null']} #{$columns[2]['unique']} #{$columns[2]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[3]['physical']} #{$columns[3]['logical']} #{$columns[3]['type']} #{$columns[3]['length']} #{$columns[3]['null']} #{$columns[3]['unique']} #{$columns[3]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[4]['physical']} #{$columns[4]['logical']} #{$columns[4]['type']} #{$columns[4]['length']} #{$columns[4]['null']} #{$columns[4]['unique']} #{$columns[4]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[5]['physical']} #{$columns[5]['logical']} #{$columns[5]['type']} #{$columns[5]['length']} #{$columns[5]['null']} #{$columns[5]['unique']} #{$columns[5]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[6]['physical']} #{$columns[6]['logical']} #{$columns[6]['type']} #{$columns[6]['length']} #{$columns[6]['null']} #{$columns[6]['unique']} #{$columns[6]['default']}");
-            $this->logger->info("DBDefinitionModel::getTableStructure() #{$columns[7]['physical']} #{$columns[7]['logical']} #{$columns[7]['type']} #{$columns[7]['length']} #{$columns[7]['null']} #{$columns[7]['unique']} #{$columns[7]['default']}");
+            
+            // 💡 修正：カラム数が少ないテーブルを読み込んだ際、配列インデックス超過でエラーになるため、固定のログ出力をループに変更
+            foreach ($columns as $index => $col) {
+                $this->logger->info("DBDefinitionModel::getTableStructure() #{$col['physical']} #{$col['logical']} #{$col['type']} #{$col['length']} #{$col['null']} #{$col['unique']} #{$col['default']}");
+            }
             $this->logger->info("DBDefinitionModel::getTableStructure() 4");
             
         } catch (\Exception $e) {
@@ -123,10 +129,13 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
             $this->logger->debug("DBDefinitionModel::registerTableAndColumns() 12");
             
             // ---- 1. m_tables への処理 ----
-            // すでに同じ物理名のテーブルがあるか確認し、table_id を取得しておく（既存データがある場合の上書き対策）
-            $selectIdSql = "SELECT table_id FROM m_tables WHERE physical_name = :pname";
+            // 💡 修正：すでに同じ物理名かつ同じプロジェクトのテーブルがあるか確認し、table_id を取得しておく
+            $selectIdSql = "SELECT table_id FROM m_tables WHERE physical_name = :pname AND project_id = :project_id";
             $stmt = $db->prepare($selectIdSql);
-            $stmt->execute([':pname' => $tableData['physical_name']]);
+            $stmt->execute([
+                ':pname' => $tableData['physical_name'],
+                ':project_id' => $tableData['project_id'] ?? ''
+            ]);
             $existingTable = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             $tableId = null;
@@ -135,38 +144,40 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
                 // 既に存在する場合はその table_id を利用
                 $tableId = (int)$existingTable['table_id'];
                 
-                // 基本情報をアップデート
+                // 💡 修正：更新条件（WHERE）に project_id を追加
                 $updateTableSql = "UPDATE m_tables SET
                     logical_name = :logical_name,
                     table_type = :table_type,
                     description = :description,
                     updated_at = NOW()
-                    WHERE table_id = :table_id";
+                    WHERE table_id = :table_id AND project_id = :project_id";
                 $stmt = $db->prepare($updateTableSql);
                 $stmt->execute([
                     ':logical_name' => $tableData['logical_name'],
                     ':table_type'    => $tableData['table_type'],
                     ':description'   => $tableData['description'],
-                    ':table_id'      => $tableId
+                    ':table_id'      => $tableId,
+                    ':project_id'    => $tableData['project_id'] ?? ''
                 ]);
                 $this->logger->debug("DBDefinitionModel::registerTableAndColumns() 13 (Updated table_id: {$tableId})");
             } else {
-                // 新規登録
+                // 💡 修正：新規登録の INSERT 文に project_id カラムを追加
                 $insertTableSql = "INSERT INTO m_tables (
-                    physical_name, logical_name, table_type, description, created_at, updated_at
+                    project_id, physical_name, logical_name, table_type, description, created_at, updated_at
                 ) VALUES (
-                    :physical_name, :logical_name, :table_type, :description, NOW(), NOW()
+                    :project_id, :physical_name, :logical_name, :table_type, :description, NOW(), NOW()
                 )";
                 $stmt = $db->prepare($insertTableSql);
                 $stmt->execute([
+                    ':project_id'    => $tableData['project_id'] ?? '',
                     ':physical_name' => $tableData['physical_name'],
                     ':logical_name'  => $tableData['logical_name'],
                     ':table_type'    => $tableData['table_type'],
                     ':description'   => $tableData['description']
                 ]);
                 
-                // 新しく採番された table_id を取得
-                $tableId = (int)$db->lastInsertId();
+                // 💡 修正：新しく採番された table_id（文字列/数値）を取得（intキャストを外す）
+                $tableId = $db->lastInsertId();
                 $this->logger->debug("DBDefinitionModel::registerTableAndColumns() 14 (Inserted table_id: {$tableId})");
             }
             
@@ -194,9 +205,9 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
             
             foreach ($tableData['columns'] as $col) {
                 $stmt->execute([
-                    ':table_id'     => $tableId,                // 親テーブルのID数値
+                    ':table_id'     => $tableId,
                     ':seq_no'       => $col['seq_no'],
-                    ':physical_name'=> $col['physical_name'],     // カラム自身の物理名
+                    ':physical_name'=> $col['physical_name'],
                     ':logical_name' => $col['logical_name'],
                     ':data_type'    => $col['data_type'],
                     ':data_length'  => $col['data_length'],
@@ -247,10 +258,11 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
     
     /**
      * 指定された table_id に紐づくカラム定義一覧を seq_no 順に取得する
-     * @param int $tableId
+     * @param mixed $tableId
      * @return array
      */
-    public function getSavedColumns(int $tableId): array {
+    // 💡 修正：table_id が文字列のケースを考慮し int 型制限を排除
+    public function getSavedColumns($tableId): array {
         $this->logger->debug("DBDefinitionModel::getSavedColumns() start... [TableID: {$tableId}]");
         try {
             $db = \Framework\Core\Container::getDb_develop();

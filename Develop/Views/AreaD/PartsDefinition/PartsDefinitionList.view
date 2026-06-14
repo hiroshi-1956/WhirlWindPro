@@ -1,14 +1,14 @@
 <style>
 /* 1. 全体コンテナ */
 .db-list-container {
-    width: 1; 
+    width: 100%;       /* ★ 1 から 100% に修正して画面幅にフィットさせます */
     height: 99%;       /* 高さを画面の約2/3に固定 */
-    margin: 0px auto;  /* ★中央配置：上下に20px、左右はautoで中央へ */
+    margin: 0px auto;  /* 中央配置：上下に0px、左右はautoで中央へ */
     display: flex;
     flex-direction: column;
     background-color: #ffffff; 
     color: #333;
-    font-size: 16px;    /* ★全体のフォントサイズを大きく(14->16) */
+    font-size: 16px;    /* 全体のフォントサイズを大きく(14->16) */
     border: 1px solid #ccc;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 少し浮き出させて中央感を強調 */
 }
@@ -16,9 +16,9 @@
 /* 2. 先頭：タイトルエリア */
 .db-main-title {
     padding: 10px 10px; /* 余白も少し広く */
-    font-size: 1.00em;  /* ★さらに大きく */
+    font-size: 1.00em;  /* さらに大きく */
     font-weight: bold;
-    /* ★エリアCと同じ背景色(#2c3e50)と文字色(#ecf0f1)に設定 */
+    /* エリアCと同じ背景色(#2c3e50)と文字色(#ecf0f1)に設定 */
     background-color: #2c3e50; 
     color: #ecf0f1;
     border-bottom: 1px solid #1a252f;
@@ -43,7 +43,7 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-    /* ★全体のフォントサイズを 1.1em から 0.95em に微調整 */
+    /* 全体のフォントサイズを 1.1em から 0.95em に微調整 */
     font-size: 0.95em; 
 }
 
@@ -55,7 +55,7 @@
 
 .list-label {
     padding: 10px 15px;
-    font-size: 0.85em;  /* ★大きく */
+    font-size: 0.85em;  /* 大きく */
     color: #777;
     font-weight: bold;
     background-color: #f9f9f9;
@@ -76,14 +76,36 @@
     font-family: 'Consolas', monospace;
     font-weight: bold;
     color: #000;
-    font-size: 1.1em;   /* ★物理名を強調 */
+    font-size: 1.1em;   /* パーツ名を強調 */
     display: block;
     margin-bottom: 4px;
 }
 
 .db-table-card .logical-name {
-    font-size: 0.95em;  /* ★論理名も大きく */
+    font-size: 0.95em;  /* 説明文やサイズも大きく */
     color: #555;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* 5. 💡 パーツサイズを表す専用のグリッドバッジ */
+.table-type-badge {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-weight: bold;
+    margin-right: 14px; /* バッジの右側に隙間を作り、説明文を右にずらす */
+    vertical-align: middle;
+}
+.badge-grid { background-color: #e67e22; } /* 画面パーツ感を表すオレンジ色 */
+
+/* データがない時のメッセージ */
+.no-data-msg {
+    padding: 30px 15px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
 }
 </style>
 
@@ -97,6 +119,34 @@
     </div>
     
     <div class="db-list-scroll">
-        <div class="list-label">登録済み画面定義一覧</div>
+        <div class="list-label">登録済み画面パーツ定義一覧</div>
+        
+        <?php 
+        // 💡 コントローラーから渡されたパーツ一覧データがあるかチェック
+        if (!empty($parts_list) && is_array($parts_list)): 
+            foreach ($parts_list as $parts): 
+                // 各行のデータを安全にエスケープして取得
+                $partsId   = htmlspecialchars($parts['parts_id'] ?? '', ENT_QUOTES);
+                $partsName = htmlspecialchars($parts['parts_name'] ?? '', ENT_QUOTES);
+                $desc      = htmlspecialchars($parts['parts_description'] ?? '', ENT_QUOTES);
+                $rowsCount = intval($parts['rows_count'] ?? 1);
+                $colsCount = intval($parts['cols_count'] ?? 1);
+                
+                // 「縦マス×横マス」のグリッドサイズテキストを作成（例: 2×3）
+                $gridSize  = $rowsCount . '×' . $colsCount;
+        ?>
+            <div class="db-table-card" onclick="bridge({ code: 'PartsDefinition/editParts', partsId: '<?php echo $partsId; ?>' });">
+                <span class="physical-name"><?php echo $partsName; ?></span>
+                <span class="logical-name">
+                    <span class="table-type-badge badge-grid"><?php echo $gridSize; ?>マス</span>
+                    <?php echo $desc ?: '（説明なし）'; ?>
+                </span>
+            </div>
+        <?php 
+            endforeach; 
+        else: 
+        ?>
+            <div class="no-data-msg">登録済みの画面パーツ定義はありません。</div>
+        <?php endif; ?>
     </div>
 </div>

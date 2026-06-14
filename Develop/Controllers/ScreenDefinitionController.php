@@ -8,7 +8,6 @@ class ScreenDefinitionController extends \Develop\Utils\BaseController {
         $this->logger->debug("DBDefinitionController::initialAction() start...");
         
         \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\ScreenDefinition\ScreenDefinitionList.view', []);
-        // \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\Area_D_clear.view', []);
         
         $this->logger->debug("DBDefinitionController::initialAction() end.");
     }
