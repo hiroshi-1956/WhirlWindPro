@@ -103,9 +103,6 @@
 </style>
 
 <div id="area-c-content">
-    <!-- 一旦消してみる -->
-	<!-- <div id="area-c-lock-overlay"></div> -->
-
     <div id="area-c-replaceable-container">
         {$Area_C_Html}
     </div>

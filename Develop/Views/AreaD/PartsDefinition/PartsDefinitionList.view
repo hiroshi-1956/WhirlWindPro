@@ -128,17 +128,16 @@
                 // 各行のデータを安全にエスケープして取得
                 $partsId   = htmlspecialchars($parts['parts_id'] ?? '', ENT_QUOTES);
                 $partsName = htmlspecialchars($parts['parts_name'] ?? '', ENT_QUOTES);
+                $partsType = htmlspecialchars($parts['parts_type'] ?? '', ENT_QUOTES);
                 $desc      = htmlspecialchars($parts['parts_description'] ?? '', ENT_QUOTES);
-                $rowsCount = intval($parts['rows_count'] ?? 1);
-                $colsCount = intval($parts['cols_count'] ?? 1);
-                
-                // 「縦マス×横マス」のグリッドサイズテキストを作成（例: 2×3）
-                $gridSize  = $rowsCount . '×' . $colsCount;
         ?>
-            <div class="db-table-card" onclick="bridge({ code: 'PartsDefinition/editParts', partsId: '<?php echo $partsId; ?>' });">
+            <div class="db-table-card" onclick="bridge({ code: 'PartsDefinition/editParts', parts_id: '<?php echo $partsId; ?>' });">
                 <span class="physical-name"><?php echo $partsName; ?></span>
                 <span class="logical-name">
-                    <span class="table-type-badge badge-grid"><?php echo $gridSize; ?>マス</span>
+                    <?php if ($partsType !== ''): ?>
+                        <span class="table-type-badge badge-grid"><?php echo $partsType; ?></span>
+                    <?php endif; ?>
+                    
                     <?php echo $desc ?: '（説明なし）'; ?>
                 </span>
             </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * db_PRJ-W613KU.php
+ * db_PRJ-WW2024.php
  * このファイルは新規プロジェクト登録時に自動生成されました。
  */
 return [

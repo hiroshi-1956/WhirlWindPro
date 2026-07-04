@@ -1,0 +1,138 @@
+<style>
+    /* 全体コンテナ */
+    .parts-edit-container {
+        padding: 25px;
+        background-color: #ffffff;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #333;
+    }
+
+    /* 基本情報入力テーブル */
+    .parts-info-table {
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        width: auto;
+    }
+
+    .parts-info-table th {
+        width: 120px;
+        padding: 8px 12px;
+        text-align: left;
+        font-weight: normal; /* 画像のイメージに合わせ少し柔らかく */
+        font-size: 14px;
+        color: #333;
+    }
+
+    .parts-info-table td {
+        padding: 5px 10px;
+    }
+
+    /* テキスト入力欄 */
+    .input-text-long {
+        width: 400px;
+        padding: 6px;
+        border: 2px solid #000; /* 画像の太めの線を再現 */
+        font-size: 14px;
+        outline: none;
+    }
+
+    .input-text-full {
+        width: 650px;
+        padding: 6px;
+        border: 2px solid #000;
+        font-size: 14px;
+        outline: none;
+    }
+
+    /* サイズ入力エリア */
+    .size-setting-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        padding-left: 12px;
+        font-size: 14px;
+    }
+
+    .size-label {
+        width: 120px;
+        font-size: 16px;
+    }
+
+    .input-size {
+        width: 60px;
+        padding: 6px;
+        border: 2px solid #000;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .size-separator {
+        font-size: 18px;
+        color: #666;
+    }
+
+    /* 決定ボタン（オレンジ系） */
+    .btn-decision {
+        background-color: #ffccbc; /* 画像の淡いオレンジを再現 */
+        color: #d84315;
+        border: none;
+        padding: 6px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: 20px;
+        transition: opacity 0.2s;
+    }
+
+    .btn-decision:hover {
+        opacity: 0.8;
+    }
+</style>
+
+<div class="parts-edit-container">
+    <!-- フォーム開始 -->
+    <form id="parts-registration-form">
+        <table class="parts-info-table">
+            <tr>
+                <th>画面定義</th>
+                <td><input type="text" name="parts_name" class="input-text-long"></td>
+            </tr>
+            <tr>
+                <th>内容の説明</th>
+                <td><input type="text" name="parts_description" class="input-text-full"></td>
+            </tr>
+        </table>
+
+        <!-- サイズ設定行 -->
+        <div class="size-setting-area">
+            <div class="size-label">サイズ</div>
+            
+            <input type="number" name="rows" class="input-size" value="3">
+            
+            <span class="size-separator">×</span>
+            
+            <input type="number" name="cols" class="input-size" value="3">
+            
+            <button type="button" class="btn-decision" onclick="handleDecision()">
+                決定
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function handleDecision() {
+        const form = document.getElementById('parts-registration-form');
+        const rows = form.rows.value;
+        const cols = form.cols.value;
+
+        if(confirm(`${rows} × ${cols} のサイズで決定してよろしいですか？`)) {
+            // bridge通信などの処理をここに記述
+            console.log("パーツ名:", form.parts_name.value);
+            console.log("行:", rows, "列:", cols);
+        }
+    }
+</script>
+
