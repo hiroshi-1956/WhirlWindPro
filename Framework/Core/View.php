@@ -3,7 +3,7 @@
 namespace Framework\Core;
 
 /**
- * View Class (V1.32)
+ * View Class (V1.34)
  * 1つのインスタンスで1つのHTML成果物を管理・生成するステートフルなViewエンジン。
  * 文字列置換ベースのため、PHPの実行タイミングに縛られない柔軟な操作が可能。
  */

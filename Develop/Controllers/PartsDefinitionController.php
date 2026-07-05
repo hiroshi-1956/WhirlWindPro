@@ -56,7 +56,7 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
     
     public function getTableColumnsAction()
     {
-        $tableName = $this->getParam('table_name');
+        //$tableName = $this->getParam('table_name');
         $columns = [];
         return $this->responseJson([
             'result'  => 'success',
@@ -156,12 +156,13 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'parts_name'           => $targetParts['parts_name'],
             'parts_description'    => $targetParts['parts_description'],
             'parts_type'           => $targetParts['parts_type'],
-            'table_name'           => $tableName,
+            'table_name'           => $targetParts['table_name'],
             'display_label'        => $targetParts['display_label'] ?? 'physical',
             'column_filter'        => $targetParts['column_filter'] ?? 'all',
             'preview_title'        => $targetParts['preview_title'] ?? '',
             'input_rows'           => $targetParts['input_rows'] ?? '1',
             'input_style'          => $targetParts['input_style'] ?? '',
+            'contents'             => $targetParts['contents'] ?? '',
             'm_tables'             => $mTables,
             'm_partsinfo_columns'  => $columns,
             'checked_columns'      => $checkedColumns,
@@ -188,7 +189,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'preview_title'     => $requestParams['preview_title']     ?? $_POST['preview_title']     ?? '',
             'input_rows'        => $requestParams['input_rows']        ?? $_POST['input_rows']        ?? '1',
             'selected_columns'  => $requestParams['selected_columns']  ?? $_POST['selected_columns']  ?? [],
-            'input_style'       => $requestParams['input_style']       ?? $_POST['input_style']       ?? ''
+            'input_style'       => $requestParams['input_style']       ?? $_POST['input_style']       ?? '',
+            'contents'          => $requestParams['contents']          ?? $_POST['contents']          ?? ''
         ];
         
         $model = new \Develop\Models\PartsDefinitionModel();

@@ -3,6 +3,7 @@ namespace Develop\Models;
 
 class PartsDefinitionModel extends \Develop\Utils\BaseModel {
     
+    
     protected $db;
     
     /**
@@ -23,7 +24,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                         preview_title,
                         input_rows,
                         checked_columns_json,
-                        input_style
+                        input_style,
+                        contents
                     FROM
                         m_screenparts
                     WHERE
@@ -151,12 +153,14 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
             
             $pType = $data['parts_type'] ?? '';
             $inputRows = null;
-            if (($pType === 'Multi Record Input' || $pType === 'Text Input') && !empty($data['input_rows'])) {
+            // 💡 条件に 'Text Display' を追加
+            if (($pType === 'Multi Record Input' || $pType === 'Multi Record Confirm' || $pType === 'Text Input' || $pType === 'Text Confirm' || $pType === 'Text Display') && !empty($data['input_rows'])) {
                 $inputRows = (int)$data['input_rows'];
             }
             
-            // 💡 input_style の回収
             $inputStyle = $data['input_style'] ?? null;
+            $contents   = $data['contents'] ?? null;
+            $this->logger->debug("PartsDefinitionModel::saveParts() contents : {$contents}");
             
             if (empty($parts_id) || $parts_id === '0') {
                 $sql = "INSERT INTO m_screenparts (
@@ -170,7 +174,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             column_filter,
                             input_rows,
                             checked_columns_json,
-                            input_style
+                            input_style,
+                            contents
                         ) VALUES (
                             :project_id,
                             :parts_name,
@@ -182,9 +187,10 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             :column_filter,
                             :input_rows,
                             :checked_columns_json,
-                            :input_style
+                            :input_style,
+                            :contents
                         )";
-                
+                $this->logger->debug("PartsDefinitionModel::saveParts() {$sql}");
                 $this->logger->debug("PartsDefinitionModel::saveParts() INSERTを実行します。");
                 $stmt = $this->db->prepare($sql);
                 
@@ -199,7 +205,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':column_filter', $data['column_filter'], \PDO::PARAM_STR);
                 $stmt->bindValue(':input_rows', $inputRows, $inputRows === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
                 $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
-                $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR); // 💡 追加
+                $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->execute();
                 $parts_id = $this->db->lastInsertId();
@@ -215,7 +222,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             column_filter = :column_filter,
                             input_rows = :input_rows,
                             checked_columns_json = :checked_columns_json,
-                            input_style = :input_style
+                            input_style = :input_style,
+                            contents = :contents
                         WHERE
                             project_id = :project_id AND parts_id = :parts_id";
                 
@@ -233,6 +241,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':input_rows', $inputRows, $inputRows === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
                 $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
                 $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);
                 $stmt->bindValue(':parts_id', $parts_id, \PDO::PARAM_STR);
