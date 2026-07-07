@@ -53,9 +53,7 @@ $textinput_configs = $textinput_configs ?? [];
                         <option value="Multi Record Confirm" <?= $current_type === 'Multi Record Confirm' ? 'selected' : '' ?>>Multi Record Confirm</option>
                         <option value="Text Confirm" <?= $current_type === 'Text Confirm' ? 'selected' : '' ?>>Text Confirm</option>
                         <option value="Text Display" <?= $current_type === 'Text Display' ? 'selected' : '' ?>>Text Display</option>
-                        <option value="CheckBox" <?= $current_type === 'CheckBox' ? 'selected' : '' ?>>CheckBox</option>
-                        <option value="RadioButton" <?= $current_type === 'RadioButton' ? 'selected' : '' ?>>RadioButton</option>
-                        <option value="PullDown" <?= $current_type === 'PullDown' ? 'selected' : '' ?>>PullDown</option>
+                        <option value="Style Display" <?= $current_type === 'Style Display' ? 'selected' : '' ?>>Style Display</option>
                     </select>
                 </div>
             </td>
@@ -64,6 +62,21 @@ $textinput_configs = $textinput_configs ?? [];
 
     <div id="single-record-input-fields-container" style="display: none; margin-top: 0;">
         <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
+			
+			<tr id="row-style-display-settings" style="display: none; height: 40px;">
+			    <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">スタイル設定</th>
+			    <td style="padding: 0; vertical-align: middle;">
+			        <div style="display: flex; align-items: center; width: 520px; height: 30px; border: 2px solid #000; background: #fff; box-sizing: border-box; padding: 0;">
+			            <select id="style_display_input" style="width: 100%; height: 100%; border: none; background: transparent; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="saveMainForm();">
+			                <option value="">-- 選択してください --</option>
+			                <option value="pulldown">pulldown</option>
+			                <option value="radiobox">radiobox</option>
+			                <option value="checkbox">checkbox</option>
+			            </select>
+			        </div>
+			    </td>
+			</tr>
+			
             <tr id="row-table-id" style="height: 40px;">
                 <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">参照テーブル</th>
                 <td style="padding: 0; vertical-align: middle;">
@@ -131,20 +144,20 @@ $textinput_configs = $textinput_configs ?? [];
                 </td>
             </tr>
             
-            <tr id="row-text-display-data-type" style="height: 40px; display: none;">
-                <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示データ</th>
-                <td style="padding: 0; vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 10px;">
-                        <?php $current_display_data = $input_style ?? 'fixed'; ?>
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="text_display_data_type" value="fixed" <?= ($current_display_data === 'fixed' || empty($current_display_data)) ? 'checked' : '' ?> onchange="toggleTextDisplayRows(); saveMainForm();" style="transform: scale(1.2);"> 固定
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="text_display_data_type" value="file" <?= $current_display_data === 'file' ? 'checked' : '' ?> onchange="toggleTextDisplayRows(); saveMainForm();" style="transform: scale(1.2);"> ファイル
-                        </label>
-                    </div>
-                </td>
-            </tr>
+            <tr id="row-text-display-data-type" style="display: none; height: 40px;">
+			    <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示データ</th>
+			    <td style="padding: 0; vertical-align: middle; font-size: 14px;">
+			        <label style="cursor: pointer; margin-right: 15px;">
+    					<input type="radio" name="text_display_data_type" value="fixed" checked style="margin-right: 5px; vertical-align: middle;">固定
+					</label>
+					<label style="cursor: pointer; margin-right: 15px;">
+					    <input type="radio" name="text_display_data_type" value="file" style="margin-right: 5px; vertical-align: middle;">ファイル
+					</label>
+			        <label id="text_display_data_type_db_label" style="cursor: pointer;">
+    					<input type="radio" name="text_display_data_type" value="db" style="margin-right: 5px; vertical-align: middle;">DB
+					</label>
+			    </td>
+			</tr>
 
             <!-- 表示内容（固定時：複数行 textarea） -->
             <tr id="row-text-display-content-fixed" style="display: none;">
@@ -448,6 +461,12 @@ function onClickSave() {
             if (partsType === 'Text Display') {
                 var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
                 finalInputStyle = displayRadio ? displayRadio.value : 'fixed';
+            } else if (partsType === 'Style Display') {
+                // 💡 スタイル設定とデータタイプを「::」で結合して保存
+                var styleVal = document.getElementById('style_display_input')?.value || '';
+                var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
+                var dataTypeVal = displayRadio ? displayRadio.value : 'fixed';
+                finalInputStyle = styleVal + '::' + dataTypeVal;
             } else {
                 finalInputStyle = getInputStyleValue();
             }
@@ -477,15 +496,18 @@ function onClickSave() {
             display_label: displayLabel,
             column_filter: columnFilter,
             input_rows: inputRows, 
-            input_style: (partsType === 'Text Display') ? (document.querySelector('input[name="text_display_data_type"]:checked')?.value || 'fixed') : finalInputStyle,       
-            contents: (partsType === 'Text Display') ? (
+            input_style: finalInputStyle,       
+            contents: (partsType === 'Text Display' || partsType === 'Style Display') ? (
                 (document.querySelector('input[name="text_display_data_type"]:checked')?.value === 'file') 
                     ? (document.getElementById('text_display_file_input')?.value || '') 
                     : (document.getElementById('text_display_fixed_textarea')?.value || '')
             ) : '',
             preview_title: document.getElementById('preview_title')?.value || '',
             selected_columns: finalSelectedColumns, 
-            textinput_configs: finalTextinputConfigs
+            textinput_configs: finalTextinputConfigs,
+            
+            style_condition: document.getElementById('condition_input')?.value || '',
+            style_column: document.getElementById('target_column_input')?.value || ''
         };
 
         if (typeof bridge === 'function') {
@@ -512,12 +534,36 @@ function loadColumnsFromDB() {
     var partsType    = document.getElementById('parts_type')?.value || '';
     var previewTitle = document.getElementById('preview_title')?.value || '';
     var inputRows    = (partsType === 'Multi Record Input' || partsType === 'Multi Record Confirm' || partsType === 'Text Input' || partsType === 'Text Confirm') ? (document.getElementById('input_rows')?.value || '1') : '';
-    var inputStyle   = getInputStyleValue(); 
 
     var dispEle = document.querySelector('input[name="display_label"]:checked');
     var displayLabel = dispEle ? dispEle.value : 'physical';
     var filtEle = document.querySelector('input[name="column_filter"]:checked');
     var columnFilter = filtEle ? filtEle.value : 'all';
+
+    // 💡 【重要】Style Display や Text Display 時の input_style と contents を正しく取得
+    var finalInputStyle = '';
+    var finalContents = '';
+    
+    if (partsType === 'Text Display') {
+        var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
+        finalInputStyle = displayRadio ? displayRadio.value : 'fixed';
+    } else if (partsType === 'Style Display') {
+        var styleVal = document.getElementById('style_display_input')?.value || '';
+        var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
+        var dataTypeVal = displayRadio ? displayRadio.value : 'fixed';
+        finalInputStyle = styleVal + '::' + dataTypeVal;
+    } else {
+        finalInputStyle = getInputStyleValue();
+    }
+
+    if (partsType === 'Text Display' || partsType === 'Style Display') {
+        var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
+        if (displayRadio && displayRadio.value === 'file') {
+            finalContents = document.getElementById('text_display_file_input')?.value || '';
+        } else {
+            finalContents = document.getElementById('text_display_fixed_textarea')?.value || '';
+        }
+    }
 
     if (typeof bridge === 'function') {
         bridge({
@@ -530,8 +576,13 @@ function loadColumnsFromDB() {
             display_label: displayLabel,
             column_filter: columnFilter,
             input_rows: inputRows,
-            input_style: inputStyle, 
-            preview_title: previewTitle
+            preview_title: previewTitle,
+            
+            // 💡 コントローラーへ現在の入力値を漏らさず引き渡す
+            input_style: finalInputStyle, 
+            contents: finalContents,
+            style_condition: document.getElementById('condition_input')?.value || '',
+            style_column: document.getElementById('target_column_input')?.value || ''
         });
     }
 }
@@ -562,7 +613,7 @@ function toggleFieldsByType() {
     var countRow = document.getElementById('live-column-count-row');
     var countLabel = document.getElementById('column-count-label');
     
-    var rowTable = document.getElementById('row-table-id');
+    var rowTable = document.getElementById('row-table-id') || document.getElementById('table_name')?.closest('tr');
     var rowDisplay = document.getElementById('row-display-label');
     var rowFilter = document.getElementById('row-column-filter');
 
@@ -573,10 +624,13 @@ function toggleFieldsByType() {
     if (!typeSel || !container) return;
     var targetType = typeSel.value;
 
-    if (targetType === 'Text Display') {
+    // ==========================================
+    // 💡 Text Display または Style Display の場合
+    // ==========================================
+    if (targetType === 'Text Display' || targetType === 'Style Display') {
         container.style.setProperty('display', 'block', 'important');
         
-        if (rowTable) rowTable.style.setProperty('display', 'none', 'important');
+        // 「表示カラム」など不要な行は完全に非表示
         if (rowDisplay) rowDisplay.style.setProperty('display', 'none', 'important');
         if (rowFilter) rowFilter.style.setProperty('display', 'none', 'important');
         if (countRow) countRow.style.setProperty('display', 'none', 'important');
@@ -588,21 +642,50 @@ function toggleFieldsByType() {
         if (layoutHorizontal) layoutHorizontal.style.setProperty('display', 'none', 'important');
         if (layoutTextInput) layoutTextInput.style.setProperty('display', 'none', 'important');
         
+        // 「表示データ」のデータタイプ選択行を表示
         var rowTdDataType = document.getElementById('row-text-display-data-type');
         if (rowTdDataType) rowTdDataType.style.setProperty('display', 'table-row', 'important');
         
+        // スタイル設定行の制御（Style Display の時のみ表示）
+        var rowStyleSettings = document.getElementById('row-style-display-settings');
+        if (rowStyleSettings) {
+            if (targetType === 'Style Display') {
+                rowStyleSettings.style.setProperty('display', 'table-row', 'important');
+                
+                // 💡 HTMLの並び順自体を設計通り（スタイル設定 → 表示データ）に補正
+                if (rowTdDataType && rowStyleSettings.parentNode) {
+                    rowStyleSettings.parentNode.insertBefore(rowTdDataType, rowStyleSettings.nextSibling);
+                }
+            } else {
+                rowStyleSettings.style.setProperty('display', 'none', 'important');
+            }
+        }
+
+        // ラジオボタン（固定/ファイル/DB）の選択状態に応じて行を出し分け＆並び替え
         toggleTextDisplayRows();
         toggleColumnListVisibility();
         return;
     }
 
+    // ==========================================
+    // 通常の入力系パーツタイプ（Single/Multi等）の場合
+    // ==========================================
+    var rowStyleSettings = document.getElementById('row-style-display-settings');
+    if (rowStyleSettings) rowStyleSettings.style.setProperty('display', 'none', 'important');
+
     var rowTdDataType = document.getElementById('row-text-display-data-type');
     if (rowTdDataType) rowTdDataType.style.setProperty('display', 'none', 'important');
     document.getElementById('row-text-display-content-fixed')?.style.setProperty('display', 'none', 'important');
     document.getElementById('row-text-display-content-file')?.style.setProperty('display', 'none', 'important');
+    
     var rowOriginalPreviewTitle = document.getElementById('row-preview-title') || document.getElementById('preview_title')?.closest('tr');
     if (rowOriginalPreviewTitle) rowOriginalPreviewTitle.style.setProperty('display', 'table-row', 'important');
     
+    // 元のテーブル構造に戻す（必要に応じてrowTableを元に戻す処理など）
+    if (rowTable && rowFilter && rowTable.parentNode) {
+        rowTable.parentNode.insertBefore(rowTable, rowFilter);
+    }
+
     if (targetType === 'Single Record Input' || targetType === 'Single Record Confirm' || 
         targetType === 'Multi Record Input' || targetType === 'Multi Record Confirm' || 
         targetType === 'Text Input' || targetType === 'Text Confirm') {
@@ -681,7 +764,7 @@ function toggleColumnListVisibility() {
         return;
     }
 
-    if (targetType === 'Text Display') {
+    if (targetType === 'Text Display' || targetType === 'Style Display') {
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
         return;
     }
@@ -910,62 +993,14 @@ function syncTextInputRows() {
     }
 }
 
-function saveMainForm() {
-    var isEditMode = document.getElementById('is_edit_mode_flag').value === '1';
-    if (!isEditMode) return; 
-
-    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
-    var formData = sessionData ? JSON.parse(sessionData) : {};
-
-    formData.parts_id = document.getElementById('parts_id')?.value || '';
-    formData.parts_name = document.getElementById('parts_name')?.value || '';
-    formData.parts_description = document.getElementById('parts_description')?.value || '';
-    formData.parts_type = document.getElementById('parts_type')?.value || '';
-    formData.table_name = document.getElementById('table_name')?.value || '';
-    
-    if (formData.parts_type === 'Text Display') {
-        var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
-        var currentDataType = displayRadio ? displayRadio.value : 'fixed';
-        formData.input_style = currentDataType;
-        
-        if (currentDataType === 'fixed') {
-            formData.contents_fixed = document.getElementById('text_display_fixed_textarea')?.value || '';
-            formData.contents_file = formData.contents_file || ''; 
-        } else if (currentDataType === 'file') {
-            formData.contents_file = document.getElementById('text_display_file_input')?.value || '';
-            formData.contents_fixed = formData.contents_fixed || ''; 
-        }
-    } else {
-        formData.input_style = getInputStyleValue(); 
-    }
-    
-    var dispEle = document.querySelector('input[name="display_label"]:checked');
-    formData.display_label = dispEle ? dispEle.value : 'physical';
-    
-    var filtEle = document.querySelector('input[name="column_filter"]:checked');
-    formData.column_filter = filtEle ? filtEle.value : 'all';
-    
-    formData.input_rows = (formData.parts_type === 'Multi Record Input' || formData.parts_type === 'Multi Record Confirm' || formData.parts_type === 'Text Input' || formData.parts_type === 'Text Confirm' || formData.parts_type === 'Text Display') ? (document.getElementById('input_rows')?.value || '1') : '';
-    formData.preview_title = document.getElementById('preview_title')?.value || '';
-    
-    var newCols = getSelectedColumnsArray();
-    if (newCols.length > 0 || !formData.selected_columns) {
-        formData.selected_columns = newCols;
-    }
-    
-    formData.textinput_configs = getTextInputConfigsArray();
-    sessionStorage.setItem(STORAGE_KEY_MAIN_FORM, JSON.stringify(formData));
-    
-    var jsonEle = document.getElementById('textinput_configs_json');
-    if (jsonEle) jsonEle.value = JSON.stringify(formData.textinput_configs);
-}
-
 function clearMainFormBackup() {
     sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     var isEditMode = document.getElementById('is_edit_mode_flag')?.value === '1';
+    
+    sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
     
     document.querySelectorAll('input[name="text_display_data_type"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
@@ -975,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('text_display_fixed_textarea')?.addEventListener('input', saveMainForm);
-    document.getElementById('text_display_file_input')?.addEventListener('input', saveMainForm);
+    document.getElementById('style_display_input')?.addEventListener('input', saveMainForm);
 
     if (!isEditMode) {
         clearMainFormBackup();
@@ -1035,11 +1070,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formData.input_rows !== undefined && document.getElementById('input_rows')) document.getElementById('input_rows').value = formData.input_rows;
         if (formData.preview_title !== undefined) document.getElementById('preview_title').value = formData.preview_title;
     
-        if (formData.parts_type === 'Text Display') {
-            if (formData.input_style) {
-                var radDataType = document.querySelector('input[name="text_display_data_type"][value="' + formData.input_style + '"]');
-                if (radDataType) radDataType.checked = true;
+        // Text Display および Style Display のバックアップ復元ロジック
+        if (formData.parts_type === 'Text Display' || formData.parts_type === 'Style Display') {
+            var targetDataType = 'fixed';
+            if (formData.parts_type === 'Style Display') {
+                // セッションバックアップがある場合
+                targetDataType = formData.style_display_data_type || 'fixed';
+                var styleInput = document.getElementById('style_display_input');
+                if (styleInput && formData.input_style !== undefined) {
+                    // セッション内に「::」が含まれているか、単体データかでパース
+                    if (formData.input_style.includes('::')) {
+                        styleInput.value = formData.input_style.split('::')[0];
+                    } else {
+                        styleInput.value = formData.input_style;
+                    }
+                }
+            } else {
+                targetDataType = formData.input_style || 'fixed';
             }
+            
+            // 💡 【重要】DBから直接読み込まれた初期状態（セッションがない場合）の復元ロジックを強化
+            if (!sessionData) {
+			    var dbInputStyle = <?= json_encode($input_style ?? '', JSON_UNESCAPED_UNICODE) ?>;
+			    var currentPartsType = document.getElementById('parts_type')?.value;
+			
+			    if (currentPartsType === 'Style Display' && dbInputStyle) {
+			        var styleInput = document.getElementById('style_display_input');
+			        if (styleInput) {
+			            // 「::」が含まれている場合は前半を、含まれていない場合はそのまま値をセット
+			            styleInput.value = dbInputStyle.includes('::') ? dbInputStyle.split('::')[0] : dbInputStyle;
+			        }
+			    }
+			}
+            
+            var radDataType = document.querySelector('input[name="text_display_data_type"][value="' + targetDataType + '"]');
+            if (radDataType) radDataType.checked = true;
             
             var txtFixed = document.getElementById('text_display_fixed_textarea');
             var txtFile = document.getElementById('text_display_file_input');
@@ -1085,21 +1150,314 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function toggleTextDisplayRows() {
     var typeSel = document.getElementById('parts_type');
-    if (!typeSel || typeSel.value !== 'Text Display') return;
+    if (!typeSel || (typeSel.value !== 'Text Display' && typeSel.value !== 'Style Display')) return;
 
+    // ==========================================================
+    // 💡 初期表示（再表示）時に、DBの値から正しいラジオボタンにチェックを入れる
+    // ==========================================================
+    var sessionDataCheck = sessionStorage.getItem(window.STORAGE_KEY_MAIN_FORM || 'wwProject_main_form_backup');
+    if (!sessionDataCheck) {
+        var dbInputStyle = <?= json_encode($input_style ?? '', JSON_UNESCAPED_UNICODE) ?>;
+        var targetDataType = 'fixed'; // 基本は固定
+
+        if (dbInputStyle) {
+            if (typeSel.value === 'Text Display') {
+                if (dbInputStyle === 'fixed' || dbInputStyle === 'file' || dbInputStyle === 'db') {
+                    targetDataType = dbInputStyle;
+                }
+            } else if (typeSel.value === 'Style Display') {
+                if (dbInputStyle.includes('::')) {
+                    var parts = dbInputStyle.split('::');
+                    if (parts[1] === 'fixed' || parts[1] === 'file' || parts[1] === 'db') {
+                        targetDataType = parts[1];
+                    }
+                } else {
+                    if (dbInputStyle === 'fixed' || dbInputStyle === 'file' || dbInputStyle === 'db') {
+                        targetDataType = dbInputStyle;
+                    }
+                }
+            }
+        }
+
+        var radToCheck = document.querySelector('input[name="text_display_data_type"][value="' + targetDataType + '"]');
+        if (radToCheck) {
+            radToCheck.checked = true;
+        }
+    }
+
+    // ==========================================================
+    // 💡 表示・非表示の切り替え処理
+    // ==========================================================
     var radioEle = document.querySelector('input[name="text_display_data_type"]:checked');
     var dataType = radioEle ? radioEle.value : 'fixed';
 
     var rowFixed = document.getElementById('row-text-display-content-fixed');
     var rowFile = document.getElementById('row-text-display-content-file');
+    var rowTable = document.getElementById('row-table-id') || document.getElementById('table_name')?.closest('tr');
+    var rowTdDataType = document.getElementById('row-text-display-data-type');
+    var dbRadio = document.querySelector('input[name="text_display_data_type"][value="db"]');
 
-    if (dataType === 'file') {
-        if (rowFile) rowFile.style.setProperty('display', 'table-row', 'important');
-        if (rowFixed) rowFixed.style.setProperty('display', 'none', 'important');
-    } else {
-        if (rowFixed) rowFixed.style.setProperty('display', 'table-row', 'important');
-        if (rowFile) rowFile.style.setProperty('display', 'none', 'important');
+    if (dbRadio) {
+        var dbLabel = dbRadio.closest('label') || dbRadio;
+        
+        if (typeSel.value === 'Text Display') {
+            // 1. まず「DB」本体を非表示にする
+            dbLabel.style.setProperty('display', 'none', 'important');
+            
+            // 2. 💡親要素（行）のHTMLを取得し、余計な「>」や「＞」の文字が浮いていたら一括除去する
+            if (rowTdDataType) {
+                // 行全体のHTMLから、DBラベルより後ろにある「 > 」を一時的に見えなくするか、置換します。
+                // より安全に、行全体のHTML文字列から「>」の浮き文字を取り除くため、
+                // ラジオボタン周辺のHTMLを書き換えるのではなく、今回は「ファイル」ラベルの後ろのテキストを特定します。
+                
+                // 【より確実な方法】「ファイル」のラジオボタンを取得
+                var fileRadio = document.querySelector('input[name="text_display_data_type"][value="file"]');
+                if (fileRadio) {
+                    var fileLabel = fileRadio.closest('label') || fileRadio;
+                    // ファイルラベルから数えて次以降のすべてのテキストノードから「>」を消去
+                    var next = fileLabel.nextSibling;
+                    while (next) {
+                        if (next.nodeType === 3 && next.textContent.includes('>')) {
+                            next.textContent = next.textContent.replace(/>/g, '').replace(/＞/g, '');
+                        }
+                        next = next.nextSibling;
+                    }
+                }
+            }
+        } else {
+            // Style Display時は「DB」を表示に戻す
+            dbLabel.style.setProperty('display', 'inline-block', 'important');
+            // 必要に応じて「＞」を再描画する場合はここに記述（今回は表示の復元を優先）
+            var fileRadio = document.querySelector('input[name="text_display_data_type"][value="file"]');
+            if (fileRadio) {
+                var fileLabel = fileRadio.closest('label') || fileRadio;
+                if (fileLabel && !fileLabel.nextSibling?.textContent.includes('>')) {
+                    // Style Displayに切り替わった時に「＞」が消えっぱなしなら補完
+                    // （※もしStyle Display側で消えて困る場合は、画面リロードで初期表示されるため通常は問題ありません）
+                }
+            }
+        }
     }
+
+    var refTr = document.getElementById('row-style-display-settings') || typeSel.closest('tr');
+    var refTh = refTr ? refTr.querySelector('th') : null;
+    var refTd = refTr ? refTr.querySelector('td') : null;
+    
+    var baseTrStyle = refTr ? refTr.getAttribute('style') : '';
+    var baseTrClass = refTr ? refTr.className : '';
+    var baseThStyle = refTh ? refTh.getAttribute('style') : '';
+    var baseTdStyle = refTd ? refTd.getAttribute('style') : '';
+    var baseThClass = refTh ? refTh.className : '';
+    var baseTdClass = refTd ? refTd.className : '';
+
+    var parentForm = typeSel.closest('form');
+    var formAttr = parentForm && parentForm.id ? ' form="' + parentForm.id + '"' : '';
+
+    // 「条件」行の生成
+    var rowCondition = document.getElementById('row-condition-id');
+    if (!rowCondition && rowTable && rowTable.parentNode) {
+        rowCondition = document.createElement('tr');
+        rowCondition.id = 'row-condition-id';
+        if (baseTrStyle) rowCondition.setAttribute('style', baseTrStyle);
+        if (baseTrClass) rowCondition.className = baseTrClass;
+        
+        var th = document.createElement('th');
+        if (baseThStyle) th.setAttribute('style', baseThStyle);
+        if (baseThClass) th.className = baseThClass;
+        th.textContent = '条件';
+        
+        var td = document.createElement('td');
+        if (baseTdStyle) td.setAttribute('style', baseTdStyle);
+        if (baseTdClass) td.className = baseTdClass;
+        
+        td.innerHTML = '<input type="text" id="condition_input" name="style_condition" ' + formAttr + ' style="width: 100%; height: 28px; border: 1px solid #000; padding: 0 6px; box-sizing: border-box;" oninput="saveMainForm();">';
+        
+        rowCondition.appendChild(th);
+        rowCondition.appendChild(td);
+        rowTable.parentNode.appendChild(rowCondition);
+    }
+
+    // 「対象カラム」行の生成
+    var rowTargetColumn = document.getElementById('row-target-column-id');
+    if (!rowTargetColumn && rowTable && rowTable.parentNode) {
+        rowTargetColumn = document.createElement('tr');
+        rowTargetColumn.id = 'row-target-column-id';
+        if (baseTrStyle) rowTargetColumn.setAttribute('style', baseTrStyle);
+        if (baseTrClass) rowTargetColumn.className = baseTrClass;
+        
+        var th = document.createElement('th');
+        if (baseThStyle) th.setAttribute('style', baseThStyle);
+        if (baseThClass) th.className = baseThClass;
+        th.textContent = '対象カラム';
+        
+        var td = document.createElement('td');
+        if (baseTdStyle) td.setAttribute('style', baseTdStyle);
+        if (baseTdClass) td.className = baseTdClass;
+        
+        td.innerHTML = '<input type="text" id="target_column_input" name="style_column" ' + formAttr + ' style="width: 100%; height: 28px; border: 1px solid #000; padding: 0 6px; box-sizing: border-box;" oninput="saveMainForm();">';
+        
+        rowTargetColumn.appendChild(th);
+        rowTargetColumn.appendChild(td);
+        rowTable.parentNode.appendChild(rowTargetColumn);
+    }
+
+    if (rowTable && refTr) {
+        if (baseTrStyle) rowTable.setAttribute('style', baseTrStyle);
+        if (baseTrClass) rowTable.className = baseTrClass;
+        var tTh = rowTable.querySelector('th');
+        var tTd = rowTable.querySelector('td');
+        if (tTh && baseThStyle) tTh.setAttribute('style', baseThStyle);
+        if (tTd && baseTdStyle) tTd.setAttribute('style', baseTdStyle);
+        if (tTh && baseThClass) tTh.className = baseThClass;
+        if (tTd && baseTdClass) tTd.className = baseTdClass;
+    }
+
+    if (rowFixed) rowFixed.style.setProperty('display', 'none', 'important');
+    if (rowFile) rowFile.style.setProperty('display', 'none', 'important');
+    if (rowTable) rowTable.style.setProperty('display', 'none', 'important');
+    if (rowCondition) rowCondition.style.setProperty('display', 'none', 'important');
+    if (rowTargetColumn) rowTargetColumn.style.setProperty('display', 'none', 'important');
+
+    if (dataType === 'fixed') {
+        if (rowFixed) {
+            rowFixed.style.setProperty('display', 'table-row', 'important');
+            if (rowTdDataType && rowTdDataType.parentNode) {
+                rowTdDataType.parentNode.insertBefore(rowFixed, rowTdDataType.nextSibling);
+            }
+        }
+    } else if (dataType === 'file') {
+        if (rowFile) {
+            rowFile.style.setProperty('display', 'table-row', 'important');
+            if (rowTdDataType && rowTdDataType.parentNode) {
+                rowTdDataType.parentNode.insertBefore(rowFile, rowTdDataType.nextSibling);
+            }
+        }
+    } else if (dataType === 'db' && typeSel.value === 'Style Display') {
+        if (rowTable) {
+            var th = rowTable.querySelector('th');
+            if (th) th.textContent = '対象テーブル';
+            rowTable.style.setProperty('display', 'table-row', 'important');
+            if (rowTdDataType && rowTdDataType.parentNode) {
+                rowTdDataType.parentNode.insertBefore(rowTable, rowTdDataType.nextSibling);
+                if (rowCondition) rowTable.parentNode.insertBefore(rowCondition, rowTable.nextSibling);
+                if (rowTargetColumn && rowCondition) rowCondition.parentNode.insertBefore(rowTargetColumn, rowCondition.nextSibling);
+            }
+        }
+        if (rowCondition) rowCondition.style.setProperty('display', 'table-row', 'important');
+        if (rowTargetColumn) rowTargetColumn.style.setProperty('display', 'table-row', 'important');
+    }
+
+    var condInp = document.getElementById('condition_input');
+    var tgtInp = document.getElementById('target_column_input');
+    
+    if (condInp && !condInp.value) {
+        condInp.value = <?= json_encode($style_condition ?? '', JSON_UNESCAPED_UNICODE) ?>;
+    }
+    if (tgtInp && !tgtInp.value) {
+        tgtInp.value = <?= json_encode($style_column ?? '', JSON_UNESCAPED_UNICODE) ?>;
+    }
+    
+    var sessionData = sessionStorage.getItem(window.STORAGE_KEY_MAIN_FORM || 'main_form_data');
+    if (sessionData) {
+        var formData = JSON.parse(sessionData);
+        var condInp = document.getElementById('condition_input');
+        var tgtInp = document.getElementById('target_column_input');
+        if (condInp && formData.style_condition && !condInp.value) condInp.value = formData.style_condition;
+        if (tgtInp && formData.style_column && !tgtInp.value) tgtInp.value = formData.style_column;
+    }
+
+    // ==========================================================
+    // 💡 初期表示時の入力項目（DB値）復元ロジック
+    // ==========================================================
+    if (!sessionData) {
+        var dbInputStyle = <?= json_encode($input_style ?? '', JSON_UNESCAPED_UNICODE) ?>;
+        var dbContents = <?= json_encode($contents ?? '', JSON_UNESCAPED_UNICODE) ?>;
+        
+        if (typeSel.value === 'Style Display' && dbInputStyle) {
+            var styleInput = document.getElementById('style_display_input');
+            if (styleInput && !styleInput.value) {
+                styleInput.value = dbInputStyle.includes('::') ? dbInputStyle.split('::')[0] : dbInputStyle;
+            }
+        }
+
+        if (dataType === 'file') {
+            var fileInp = document.getElementById('text_display_file_input');
+            if (fileInp && !fileInp.value) {
+                fileInp.value = dbContents;
+            }
+        } else if (dataType === 'fixed') {
+            var fixedTxt = document.getElementById('text_display_fixed_textarea');
+            if (fixedTxt && !fixedTxt.value) {
+                fixedTxt.value = dbContents;
+            }
+        }
+    }
+}
+
+function saveMainForm() {
+    var isEditMode = document.getElementById('is_edit_mode_flag')?.value === '1';
+    if (!isEditMode) return; 
+
+    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var formData = sessionData ? JSON.parse(sessionData) : {};
+
+    formData.parts_id = document.getElementById('parts_id')?.value || '';
+    formData.parts_name = document.getElementById('parts_name')?.value || '';
+    formData.parts_description = document.getElementById('parts_description')?.value || '';
+    formData.parts_type = document.getElementById('parts_type')?.value || '';
+    formData.table_name = document.getElementById('table_name')?.value || '';
+    
+    if (formData.parts_type === 'Text Display' || formData.parts_type === 'Style Display') {
+        var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
+        var currentDataType = displayRadio ? displayRadio.value : 'fixed';
+        
+        if (formData.parts_type === 'Style Display') {
+            formData.input_style = document.getElementById('style_display_input')?.value || '';
+            formData.style_display_data_type = currentDataType; 
+        } else {
+            formData.input_style = currentDataType;
+        }
+        
+        if (currentDataType === 'fixed') {
+            formData.contents_fixed = document.getElementById('text_display_fixed_textarea')?.value || '';
+            formData.contents_file = formData.contents_file || ''; 
+            formData.style_condition = '';
+            formData.style_column = '';
+        } else if (currentDataType === 'file') {
+            formData.contents_file = document.getElementById('text_display_file_input')?.value || '';
+            formData.contents_fixed = formData.contents_fixed || ''; 
+            formData.style_condition = '';
+            formData.style_column = '';
+        } else if (currentDataType === 'db' && formData.parts_type === 'Style Display') {
+            // 💡 typeSel.value ではなく、すでに取得済みの formData.parts_type を使うように修正しました
+            formData.style_condition = document.getElementById('condition_input')?.value || '';
+            formData.style_column = document.getElementById('target_column_input')?.value || '';
+            formData.contents_fixed = '';
+            formData.contents_file = '';
+        }
+    } else {
+        formData.input_style = getInputStyleValue(); 
+    }
+    
+    var dispEle = document.querySelector('input[name="display_label"]:checked');
+    formData.display_label = dispEle ? dispEle.value : 'physical';
+    
+    var filtEle = document.querySelector('input[name="column_filter"]:checked');
+    formData.column_filter = filtEle ? filtEle.value : 'all';
+    
+    formData.input_rows = (formData.parts_type === 'Multi Record Input' || formData.parts_type === 'Multi Record Confirm' || formData.parts_type === 'Text Input' || formData.parts_type === 'Text Confirm' || formData.parts_type === 'Text Display') ? (document.getElementById('input_rows')?.value || '1') : '';
+    formData.preview_title = document.getElementById('preview_title')?.value || '';
+    
+    var newCols = getSelectedColumnsArray();
+    if (newCols.length > 0 || !formData.selected_columns) {
+        formData.selected_columns = newCols;
+    }
+    
+    formData.textinput_configs = getTextInputConfigsArray();
+    sessionStorage.setItem(STORAGE_KEY_MAIN_FORM, JSON.stringify(formData));
+    
+    var jsonEle = document.getElementById('textinput_configs_json');
+    if (jsonEle) jsonEle.value = JSON.stringify(formData.textinput_configs);
 }
 
 function syncTextDisplayContents() {

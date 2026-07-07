@@ -25,7 +25,9 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                         input_rows,
                         checked_columns_json,
                         input_style,
-                        contents
+                        contents,
+                        style_condition,
+                        style_column
                     FROM
                         m_screenparts
                     WHERE
@@ -160,7 +162,11 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
             
             $inputStyle = $data['input_style'] ?? null;
             $contents   = $data['contents'] ?? null;
+            $style_condition = $data['style_condition'] ?? null;
+            $style_column    = $data['style_column'] ?? null;
             $this->logger->debug("PartsDefinitionModel::saveParts() contents : {$contents}");
+            $this->logger->debug("PartsDefinitionModel::saveParts() style_condition : {$style_condition}");
+            $this->logger->debug("PartsDefinitionModel::saveParts() style_column : {$style_column}");
             
             if (empty($parts_id) || $parts_id === '0') {
                 $sql = "INSERT INTO m_screenparts (
@@ -175,7 +181,9 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             input_rows,
                             checked_columns_json,
                             input_style,
-                            contents
+                            contents,
+                            style_condition,
+                            style_column
                         ) VALUES (
                             :project_id,
                             :parts_name,
@@ -188,7 +196,9 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             :input_rows,
                             :checked_columns_json,
                             :input_style,
-                            :contents
+                            :contents,
+                            :style_condition,
+                            :style_column
                         )";
                 $this->logger->debug("PartsDefinitionModel::saveParts() {$sql}");
                 $this->logger->debug("PartsDefinitionModel::saveParts() INSERTを実行します。");
@@ -207,6 +217,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
                 $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->execute();
                 $parts_id = $this->db->lastInsertId();
@@ -223,10 +235,13 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             input_rows = :input_rows,
                             checked_columns_json = :checked_columns_json,
                             input_style = :input_style,
-                            contents = :contents
+                            contents = :contents,
+                            style_condition = :style_condition,
+                            style_column = :style_column
                         WHERE
                             project_id = :project_id AND parts_id = :parts_id";
                 
+                $this->logger->debug("PartsDefinitionModel::saveParts() {$sql}");
                 $this->logger->debug("PartsDefinitionModel::saveParts() UPDATEを実行します。Parts ID: {$parts_id}");
                 $stmt = $this->db->prepare($sql);
                 
@@ -242,6 +257,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
                 $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);
                 $stmt->bindValue(':parts_id', $parts_id, \PDO::PARAM_STR);

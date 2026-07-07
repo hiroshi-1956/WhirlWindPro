@@ -62,7 +62,7 @@
 }
 
 .db-table-card {
-    padding: 15px;      /* 余白を増やして見やすく */
+    padding: 8px 15px;  /* ★ 上下の余白を 15px から 8px に縮小し、カード間を詰めました */
     border-bottom: 1px solid #eee;
     cursor: pointer;
     background-color: #ffffff;
@@ -82,10 +82,12 @@
 }
 
 .db-table-card .logical-name {
-    font-size: 0.95em;  /* 説明文やサイズも大きく */
-    color: #555;
-    display: inline-block;
-    margin-top: 2px;
+font-family: 'Consolas', monospace;
+    font-weight: bold;
+    color: #000;
+    font-size: 0.95em;  /* ★ 1.1em から 0.95em に変更し、文字サイズを1回り小さくしました */
+    display: block;
+    margin-bottom: 2px;
 }
 
 /* 5. 💡 パーツサイズを表す専用のグリッドバッジ */
@@ -98,7 +100,7 @@
     margin-right: 14px; /* バッジの右側に隙間を作り、説明文を右にずらす */
     vertical-align: middle;
 }
-.badge-grid { background-color: #e67e22; } /* 画面パーツ感を表すオレンジ色 */
+.badge-grid { background-color: #28a745; }
 
 /* データがない時のメッセージ */
 .no-data-msg {

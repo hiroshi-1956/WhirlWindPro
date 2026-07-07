@@ -80,6 +80,12 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $previewTitle = $requestParams['preview_title'] ?? $_POST['preview_title'] ?? '';
         $inputRows    = $requestParams['input_rows']    ?? $_POST['input_rows']    ?? '1';
         
+        // 💡【最重要修正】テーブル切替時にも入力状態が維持されるよう、リクエストから確実に回収
+        $inputStyle     = $requestParams['input_style']     ?? $_POST['input_style']     ?? '';
+        $contents       = $requestParams['contents']        ?? $_POST['contents']        ?? '';
+        $styleCondition = $requestParams['style_condition'] ?? $_POST['style_condition'] ?? '';
+        $styleColumn    = $requestParams['style_column']    ?? $_POST['style_column']    ?? '';
+        
         $projectId = $this->getProjectId($requestParams);
         $model = new \Develop\Models\PartsDefinitionModel();
         
@@ -102,6 +108,13 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'column_filter'        => $columnFilter,
             'preview_title'        => $previewTitle,
             'input_rows'           => $inputRows,
+            
+            // 💡【最重要修正】回収したデータをそのままビュー（AreaE）へ返還・引き継ぎ
+            'input_style'          => $inputStyle,
+            'contents'             => $contents,
+            'style_condition'      => $styleCondition,
+            'style_column'         => $styleColumn,
+            
             'm_tables'             => $mTables,
             'm_partsinfo_columns'  => $columns,
             'grids_config_json'    => json_encode([], JSON_UNESCAPED_UNICODE)
@@ -121,6 +134,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         
         $projectId = $this->getProjectId();
         $partsId   = $_POST['parts_id'] ?? $_REQUEST['parts_id'] ?? '';
+        
+        unset($_SESSION['wwProject_main_form_backup']);
         
         if (empty($partsId)) {
             $this->logger->error("PartsDefinitionController::editPartsAction() ❌ parts_id が空です");
@@ -163,6 +178,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'input_rows'           => $targetParts['input_rows'] ?? '1',
             'input_style'          => $targetParts['input_style'] ?? '',
             'contents'             => $targetParts['contents'] ?? '',
+            'style_condition'      => $targetParts['style_condition'] ?? '',
+            'style_column'         => $targetParts['style_column'] ?? '',
             'm_tables'             => $mTables,
             'm_partsinfo_columns'  => $columns,
             'checked_columns'      => $checkedColumns,
@@ -178,7 +195,6 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $projectId = $this->getProjectId($requestParams);
         $partsId   = $requestParams['parts_id'] ?? $_POST['parts_id'] ?? '';
         
-        // 💡【最重要】'input_rows' を確実に回収できるように配列内へ追加しました
         $data = [
             'parts_name'        => $requestParams['parts_name']        ?? $_POST['parts_name']        ?? '',
             'parts_description' => $requestParams['parts_description'] ?? $_POST['parts_description'] ?? '',
@@ -190,7 +206,9 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'input_rows'        => $requestParams['input_rows']        ?? $_POST['input_rows']        ?? '1',
             'selected_columns'  => $requestParams['selected_columns']  ?? $_POST['selected_columns']  ?? [],
             'input_style'       => $requestParams['input_style']       ?? $_POST['input_style']       ?? '',
-            'contents'          => $requestParams['contents']          ?? $_POST['contents']          ?? ''
+            'contents'          => $requestParams['contents']          ?? $_POST['contents']          ?? '',
+            'style_condition'   => $requestParams['style_condition']   ?? $_POST['style_condition']   ?? '',
+            'style_column'      => $requestParams['style_column']      ?? $_POST['style_column']      ?? ''
         ];
         
         $model = new \Develop\Models\PartsDefinitionModel();
