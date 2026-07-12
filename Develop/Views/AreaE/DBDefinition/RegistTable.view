@@ -10,6 +10,8 @@
     .radio-group label { font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
     .import-btn-wrap { margin-left: 30px; padding-bottom: 4px; }
     .btn-top-cancel { background-color: #7f8c8d; color: white; border: none; padding: 8px 35px; border-radius: 4px; font-size: 14px; font-weight: bold; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; cursor: pointer; }
+    
+    /* 通常テーブル用 */
     .column-def-table { border-collapse: collapse; width: 100%; max-width: 1100px; margin-bottom: 10px; }
     .column-def-table th { padding: 8px 5px; font-weight: bold; border: 1px solid #ccc; background: #2c3e50; color: #fff; font-size: 13px; }
     .column-def-table td { border: 1px solid #ccc; padding: 4px; text-align: center; background: #fff; }
@@ -17,40 +19,61 @@
     .input-col { width: 95%; border: 1px solid #aaa; padding: 4px; font-size: 13px; }
     .input-short { width: 50px; border: 1px solid #aaa; padding: 4px; text-align: center; font-size: 13px; }
     .select-type { width: 100px; border: 1px solid #aaa; padding: 3px; font-size: 13px; }
-    .edit-footer { max-width: 1100px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; padding-top: 5px; }
-    .note-text { margin-right: auto; color: #666; font-size: 12px; }
+    
+    /* フッター */
+    .edit-footer { max-width: 1100px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 5px; }
+    .row-ctrl-wrap { display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
+    .action-btn-wrap { display: flex; gap: 15px; margin-left: auto; }
+
     .btn-register { background-color: #2e7d32; color: white; border: none; padding: 8px 35px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; }
     .btn-cancel { background-color: #d32f2f; color: white; border: none; padding: 8px 35px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; }
-    .btn-top-cancel:hover, .btn-register:hover, .btn-cancel:hover { opacity: 0.85; }
+
+    /* ビュー専用スタイル */
+    .join-table-layout-flex { display: flex; gap: 40px; margin-top: 5px; align-items: flex-start; }
+    .join-table-column-panel { flex: 1; background: transparent; padding: 0; border: none; }
+    .sql-preview-box { width: 100%; max-width: 1100px; min-height: 140px; background: #222; color: #a9ffaf; font-family: monospace; padding: 12px; border-radius: 4px; font-size: 13px; margin-top: 10px; box-sizing: border-box; resize: vertical; }
+
+    /* テーブルA/BのカラムグリッドUI */
+    .grid-table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #fff; }
+    .grid-table th { background: #2c3e50; color: #fff; font-size: 12px; padding: 6px 4px; border: 1px solid #ccc; font-weight: bold; }
+    .grid-table td { border: 1px solid #ccc; padding: 4px; font-size: 12px; text-align: center; }
+    .grid-input-num { width: 35px; text-align: center; padding: 2px; border: 1px solid #999; border-radius: 2px; }
+    .select-table-dropdown-flat { width: 220px; padding: 4px; border: 1px solid #aaa; font-size: 13px; background-color: #fff; border-radius: 3px; }
+    .empty-row-msg { color: #999; font-style: italic; padding: 10px 0; background-color: #fafafa !important; }
+    .section-sub-title { font-size: 12px; font-weight: bold; color: #2c3e50; background: #ebf3f9; padding: 4px 8px; border-left: 4px solid #3498db; margin-top: 10px; }
 </style>
 
 <?php
-// コントローラーから渡された現在のモードを判定 (trueなら修正モード、falseなら新規登録モード)
 $isEditMode = !empty($is_edit_mode);
+$tType = $table_type ?? 'table';
+$vMeta = $view_info ?? null;
+$jType = $vMeta['join_type'] ?? 'INNER JOIN';
+$tablesMap = $all_tables_map ?? [];
 ?>
 
 <div class="table-edit-container">
     <div class="edit-title"><?php echo $isEditMode ? 'テーブル定義修正' : '新規テーブル登録'; ?></div>
 
     <form id="db-definition-form" onsubmit="return false;">
-        
         <input type="hidden" name="is_edit_mode_flag" value="<?php echo $isEditMode ? '1' : '0'; ?>">
+        <input type="hidden" id="view_keys_a_meta" name="view_keys_a_meta" value="<?php echo htmlspecialchars($vMeta['keys_a'] ?? '', ENT_QUOTES); ?>">
+        <input type="hidden" id="view_keys_b_meta" name="view_keys_b_meta" value="<?php echo htmlspecialchars($vMeta['keys_b'] ?? '', ENT_QUOTES); ?>">
+        <input type="hidden" id="view_select_cols_meta" name="view_select_cols_meta" value="<?php echo htmlspecialchars($vMeta['select_cols'] ?? '', ENT_QUOTES); ?>">
         
         <div class="top-info-area">
             <table class="base-info-table">
                 <tr>
                     <th>テーブル名称</th>
-                    <td><input type="text" class="input-text-full" name="table_name" placeholder="英数物理名" value="<?php echo htmlspecialchars($table_name ?? '', ENT_QUOTES); ?>" <?php echo $isEditMode ? 'readonly style="background-color: #e9ecef;"' : ''; ?>></td>
+                    <td><input type="text" class="input-text-full" name="table_name" placeholder="物理名" value="<?php echo htmlspecialchars($table_name ?? '', ENT_QUOTES); ?>" <?php echo $isEditMode ? 'readonly style="background-color: #e9ecef;"' : ''; ?>></td>
                 </tr>
                 <tr>
-                    <th>日本語名称</th>
-                    <td><input type="text" class="input-text-full" name="logical_name" placeholder="日本語論理名" value="<?php echo htmlspecialchars($logical_name ?? '', ENT_QUOTES); ?>"></td>
+                    <th>日本語名</th>
+                    <td><input type="text" class="input-text-full" name="logical_name" placeholder="日本語名" value="<?php echo htmlspecialchars($logical_name ?? '', ENT_QUOTES); ?>"></td>
                 </tr>
                 <tr>
                     <th>種別</th>
                     <td>
                         <div class="radio-group">
-                            <?php $tType = $table_type ?? 'table'; ?>
                             <label><input type="radio" name="table_type" value="table" <?php echo ($tType === 'table') ? 'checked' : ''; ?>> テーブル</label>
                             <label><input type="radio" name="table_type" value="view" <?php echo ($tType === 'view') ? 'checked' : ''; ?>> ビュー</label>
                         </div>
@@ -60,18 +83,108 @@ $isEditMode = !empty($is_edit_mode);
                     <th>説明</th>
                     <td><input type="text" class="input-text-full" name="description" placeholder="説明文" value="<?php echo htmlspecialchars($description ?? '', ENT_QUOTES); ?>"></td>
                 </tr>
+                
+                <tr class="view-only-rows" style="display: <?php echo ($tType === 'view') ? 'table-row' : 'none'; ?>;">
+                    <th>結合条件</th>
+                    <td>
+                        <div class="radio-group">
+                            <label><input type="radio" name="join_type" value="INNER JOIN" <?php echo ($jType === 'INNER JOIN') ? 'checked' : ''; ?> onchange="generateViewSQL()"> INNER JOIN</label>
+                            <label><input type="radio" name="join_type" value="LEFT JOIN" <?php echo ($jType === 'LEFT JOIN') ? 'checked' : ''; ?> onchange="generateViewSQL()"> LEFT JOIN</label>
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr class="view-only-rows" style="display: <?php echo ($tType === 'view') ? 'table-row' : 'none'; ?>;">
+                    <th>結合テーブル / カラム</th>
+                    <td>
+                        <div style="margin-bottom: 15px; display: flex; gap: 40px;">
+                            <div>
+                                <span style="font-weight: bold; font-size: 13px; margin-right: 8px;">テーブル A:</span>
+                                <select name="view_table_a" id="view_table_a" class="select-table-dropdown-flat select-table-target" onchange="fetchTableColumns('A')">
+                                    <option value="">-- テーブルを選択 --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold; font-size: 13px; margin-right: 8px;">テーブル B:</span>
+                                <select name="view_table_b" id="view_table_b" class="select-table-dropdown-flat select-table-target" onchange="fetchTableColumns('B')">
+                                    <option value="">-- テーブルを選択 --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="join-table-layout-flex">
+                            <div class="join-table-column-panel">
+                                <table class="grid-table" id="table-a-grid">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">結合</th>
+                                            <th>カラム名</th>
+                                            <th>日本語名</th>
+                                            <th style="width: 60px;">型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="join-table-column-panel">
+                                <table class="grid-table" id="table-b-grid">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">結合</th>
+                                            <th>カラム名</th>
+                                            <th>日本語名</th>
+                                            <th style="width: 60px;">型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="join-table-layout-flex">
+                            <div class="join-table-column-panel">
+                                <table class="grid-table" id="table-a-fields-grid">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;"><input type="checkbox" id="all-check-a" onchange="toggleAllSelectFields('A', this)"></th>
+                                            <th>カラム名</th>
+                                            <th>日本語名</th>
+                                            <th style="width: 60px;">型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="join-table-column-panel">
+                                <table class="grid-table" id="table-b-fields-grid">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;"><input type="checkbox" id="all-check-b" onchange="toggleAllSelectFields('B', this)"></th>
+                                            <th>カラム名</th>
+                                            <th>日本語名</th>
+                                            <th style="width: 60px;">型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             </table>
             
-            <div class="import-btn-wrap">
-                <button type="button" 
-                        class="btn-top-cancel" 
-                        onclick="
-                            var form = document.getElementById('db-definition-form');
-                            var params = new URLSearchParams(new FormData(form)).toString();
-                            parent.bridge({ code: 'DBDefinition/importTable', data: params });
-                        ">
-                    読み込み
-                </button>
+            <div class="import-btn-wrap" id="import-btn-container" style="display: <?php echo ($tType === 'view') ? 'none' : 'block'; ?>;">
+                <button type="button" class="btn-top-cancel" onclick="var form = document.getElementById('db-definition-form'); var params = new URLSearchParams(new FormData(form)).toString(); parent.bridge({ code: 'DBDefinition/importTable', data: params });">読み込み</button>
             </div>
         </div>
 
@@ -79,130 +192,344 @@ $isEditMode = !empty($is_edit_mode);
             <?php echo htmlspecialchars($import_error_msg ?? '', ENT_QUOTES); ?>
         </div>
         
-        <table class="column-def-table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>physical</th>
-                    <th>logical</th>
-                    <th>type</th>
-                    <th>Length</th>
-                    <th>primary</th>
-                    <th>Null</th>
-                    <th>Unique</th>
-                    <th>Default</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php 
-                $displayRows = !empty($imported_cols) ? $imported_cols : [];
-                
-                // 💡【修正箇所】強制的に max(8, ...) していたのをやめ、コントローラーから渡された件数をそのまま表示します。
-                // ただし、配列が完全に空っぽ（初期化時など）の場合の安全弁として最小下限「2」に倒します。
-                $rowCount = max(2, count($displayRows));
-                
-                for ($i = 0; $i < $rowCount; $i++): 
-                    $row = $displayRows[$i] ?? [
-                        'physical' => '', 'logical' => '', 'type' => 'varchar', 
-                        'length' => '', 'primary' => '', 'null' => '', 'unique' => '', 'default' => ''
-                    ];
-                ?>
-                <tr>
-                    <td class="row-num"><?php echo ($i + 1); ?></td>
-                    <td><input type="text" class="input-col" name="col_physical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['physical'] ?? '', ENT_QUOTES); ?>"></td>
-                    <td><input type="text" class="input-col" name="col_logical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['logical'] ?? '', ENT_QUOTES); ?>"></td>
-                    <td>
-                        <select class="select-type" name="col_type[<?php echo $i; ?>]">
-                            <option value="int" <?php echo (($row['type'] ?? '') === 'int') ? 'selected' : ''; ?>>int</option>
-                            <option value="varchar" <?php echo (($row['type'] ?? '') === 'varchar') ? 'selected' : ''; ?>>varchar</option>
-                            <option value="text" <?php echo (($row['type'] ?? '') === 'text') ? 'selected' : ''; ?>>text</option>
-                            <option value="datetime" <?php echo (($row['type'] ?? '') === 'datetime') ? 'selected' : ''; ?>>datetime</option>
-                            <option value="timestamp" <?php echo (($row['type'] ?? '') === 'timestamp') ? 'selected' : ''; ?>>timestamp</option>
-                        </select>
-                    </td>
-                    <td><input type="text" class="input-short" name="col_length[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['length'] ?? '', ENT_QUOTES); ?>"></td>
-                    <td>
-                        <input type="hidden" name="col_primary[<?php echo $i; ?>]" value="0">
-                        <input type="checkbox" name="col_primary[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['primary']) && $row['primary'] !== '0') ? 'checked="checked"' : ''; ?>>
-                    </td>
-                    <td>
-                        <input type="hidden" name="col_null[<?php echo $i; ?>]" value="0">
-                        <input type="checkbox" name="col_null[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['null']) && $row['null'] !== '0') ? 'checked="checked"' : ''; ?>>
-                    </td>
-                    <td>
-                        <input type="hidden" name="col_unique[<?php echo $i; ?>]" value="0">
-                        <input type="checkbox" name="col_unique[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['unique']) && $row['unique'] !== '0') ? 'checked="checked"' : ''; ?>>
-                    </td>
-                    <td><input type="text" class="input-col" name="col_default[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['default'] ?? '', ENT_QUOTES); ?>"></td>
-                </tr>
-                <?php endfor; ?>
-            </tbody>
-        </table>
+        <div id="normal-table-container" style="display: <?php echo ($tType === 'table') ? 'block' : 'none'; ?>;">
+            <table class="column-def-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>physical</th>
+                        <th>logical</th>
+                        <th>type</th>
+                        <th>Length</th>
+                        <th>primary</th>
+                        <th>Null</th>
+                        <th>Unique</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $displayRows = !empty($imported_cols) ? $imported_cols : [];
+                    $rowCount = max(2, count($displayRows));
+                    for ($i = 0; $i < $rowCount; $i++): 
+                        $row = $displayRows[$i] ?? ['physical' => '', 'logical' => '', 'type' => 'varchar', 'length' => '', 'primary' => '', 'null' => '', 'unique' => '', 'default' => ''];
+                    ?>
+                    <tr>
+                        <td class="row-num"><?php echo ($i + 1); ?></td>
+                        <td><input type="text" class="input-col" name="col_physical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['physical'] ?? '', ENT_QUOTES); ?>"></td>
+                        <td><input type="text" class="input-col" name="col_logical[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['logical'] ?? '', ENT_QUOTES); ?>"></td>
+                        <td>
+                            <select class="select-type" name="col_type[<?php echo $i; ?>]">
+                                <option value="int" <?php echo (($row['type'] ?? '') === 'int') ? 'selected' : ''; ?>>int</option>
+                                <option value="varchar" <?php echo (($row['type'] ?? '') === 'varchar') ? 'selected' : ''; ?>>varchar</option>
+                                <option value="text" <?php echo (($row['type'] ?? '') === 'text') ? 'selected' : ''; ?>>text</option>
+                                <option value="datetime" <?php echo (($row['type'] ?? '') === 'datetime') ? 'selected' : ''; ?>>datetime</option>
+                                <option value="timestamp" <?php echo (($row['type'] ?? '') === 'timestamp') ? 'selected' : ''; ?>>timestamp</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="input-short" name="col_length[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['length'] ?? '', ENT_QUOTES); ?>"></td>
+                        <td><input type="hidden" name="col_primary[<?php echo $i; ?>]" value="0"><input type="checkbox" name="col_primary[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['primary']) && $row['primary'] !== '0') ? 'checked="checked"' : ''; ?>></td>
+                        <td><input type="hidden" name="col_null[<?php echo $i; ?>]" value="0"><input type="checkbox" name="col_null[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['null']) && $row['null'] !== '0') ? 'checked="checked"' : ''; ?>></td>
+                        <td><input type="hidden" name="col_unique[<?php echo $i; ?>]" value="0"><input type="checkbox" name="col_unique[<?php echo $i; ?>]" value="1" <?php echo (!empty($row['unique']) && $row['unique'] !== '0') ? 'checked="checked"' : ''; ?>></td>
+                        <td><input type="text" class="input-col" name="col_default[<?php echo $i; ?>]" value="<?php echo htmlspecialchars($row['default'] ?? '', ENT_QUOTES); ?>"></td>
+                    </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
 
         <div class="edit-footer">
-            <div style="margin-right: auto; background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; gap: 10px;">
+            <div class="row-ctrl-wrap" id="row-ctrl-container" style="display: <?php echo ($tType === 'table') ? 'flex' : 'none'; ?>;">
                 <input type="number" id="target-row-count" min="1" max="30" style="width: 60px; padding: 4px; text-align: center; border: 1px solid #aaa;" value="1">
                 <span>行</span>
                 <button type="button" style="background-color: #2980b9; color: white; border: none; padding: 5px 15px; border-radius: 3px; font-weight: bold; cursor: pointer;" onclick="executeRowAction('add');">【追加】</button>
                 <button type="button" style="background-color: #e67e22; color: white; border: none; padding: 5px 15px; border-radius: 3px; font-weight: bold; cursor: pointer;" onclick="executeRowAction('delete');">【削除】</button>
             </div>        
-            
-            <button type="button" class="btn-cancel" onclick="if(confirm('入力内容は破棄されます。登録をキャンセルしますか？')){ parent.bridge({ code: 'DBDefinition/cancel' }); }">
-                キャンセル
-            </button>
-            
-            <button type="button" class="btn-register" onclick="
-                if(confirm('入力した内容でテーブルを登録してもよろしいですか？')){ 
-                    var form = document.getElementById('db-definition-form');
-                    var params = new URLSearchParams(new FormData(form)).toString();
-                    parent.bridge({ code: 'DBDefinition/register', data: params }); 
-                }
-            ">
-                <?php echo $isEditMode ? '保存' : '登録'; ?>
-            </button>
+
+            <div class="action-btn-wrap">
+                <button type="button" class="btn-cancel" onclick="if(confirm('入力内容は破棄されます。登録をキャンセルしますか？')){ parent.bridge({ code: 'DBDefinition/cancel' }); }">キャンセル</button>
+                <button type="button" class="btn-register" onclick="prepareAndSubmitForm();">
+                    <?php echo $isEditMode ? '保存' : '登録'; ?>
+                </button>
+            </div>
         </div>
-        
+
+        <div id="sql-preview-container" style="margin-top: 20px; text-align: left; display: <?php echo ($tType === 'view') ? 'block' : 'none'; ?>;">
+            <label style="font-weight: bold; font-size: 14px;">生成されるSQLプレビュー</label>
+            <textarea id="sql-preview" class="sql-preview-box" readonly placeholder="結合カラムを選択すると、ここにSQLが自動生成されます..."></textarea>
+        </div>
     </form>
 </div>
 
 <script>
-function executeRowAction(actionType) {
-    var countInput = document.getElementById('target-row-count');
-    var rowCount = parseInt(countInput.value, 10);
+var savedViewMeta = <?php echo $vMeta ? json_encode($vMeta) : 'null'; ?>;
+window.allTablesColumnMap = <?php echo json_encode($tablesMap); ?>;
+
+document.addEventListener('DOMContentLoaded', function() {
+    function initTableSelectDropdowns() {
+        var tables = Object.keys(window.allTablesColumnMap);
+        document.querySelectorAll('.select-table-target').forEach(function(selectEl) {
+            selectEl.innerHTML = '<option value="">-- テーブルを選択 --</option>';
+            tables.forEach(function(tName) {
+                var opt = document.createElement('option');
+                opt.value = tName;
+                opt.textContent = tName;
+                selectEl.appendChild(opt);
+            });
+        });
+    }
+
+    initTableSelectDropdowns();
+
+    if (savedViewMeta) {
+        if (savedViewMeta.view_table_a) {
+            document.getElementById('view_table_a').value = savedViewMeta.view_table_a;
+            fetchTableColumns('A');
+        }
+        if (savedViewMeta.view_table_b) {
+            document.getElementById('view_table_b').value = savedViewMeta.view_table_b;
+            fetchTableColumns('B');
+        }
+    }
+
+    document.querySelectorAll('input[name="table_type"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            var viewRows = document.querySelectorAll('.view-only-rows');
+            var normalContainer = document.getElementById('normal-table-container');
+            var importBtnContainer = document.getElementById('import-btn-container');
+            var rowCtrlContainer = document.getElementById('row-ctrl-container');
+            var sqlPreviewContainer = document.getElementById('sql-preview-container');
+            
+            if (this.value === 'view') {
+                viewRows.forEach(row => row.style.display = 'table-row');
+                normalContainer.style.display = 'none';
+                importBtnContainer.style.display = 'none';
+                rowCtrlContainer.style.display = 'none';
+                sqlPreviewContainer.style.display = 'block';
+                generateViewSQL();
+            } else {
+                viewRows.forEach(row => row.style.display = 'none');
+                normalContainer.style.display = 'block';
+                importBtnContainer.style.display = 'block';
+                rowCtrlContainer.style.display = 'flex';
+                sqlPreviewContainer.style.display = 'none';
+                document.getElementById('sql-preview').value = '';
+            }
+        });
+    });
+
+    var tableNameInput = document.querySelector('input[name="table_name"]');
+    if (tableNameInput) tableNameInput.addEventListener('input', generateViewSQL);
+});
+
+function fetchTableColumns(tableLetter) {
+    var selectEl = (tableLetter === 'A') ? document.getElementById('view_table_a') : document.getElementById('view_table_b');
+    var targetTable = selectEl.value;
     
-    if (isNaN(rowCount) || rowCount < 1) {
-        alert('有効な行数（1以上）を入力してください。');
+    var tbodyCondition = document.querySelector(tableLetter === 'A' ? '#table-a-grid tbody' : '#table-b-grid tbody');
+    var tbodyFields = document.querySelector(tableLetter === 'A' ? '#table-a-fields-grid tbody' : '#table-b-fields-grid tbody');
+
+    if (!targetTable) {
+        tbodyCondition.innerHTML = '<tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>';
+        tbodyFields.innerHTML = '<tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>';
+        generateViewSQL();
         return;
     }
+
+    var columns = window.allTablesColumnMap[targetTable] || [];
     
-    var form = document.getElementById('db-definition-form');
-    var params = new URLSearchParams(new FormData(form));
-    
-    params.append('row_action_type', actionType);
-    params.append('row_action_count', rowCount);
-    
-    parent.bridge({ code: 'DBDefinition/modifyRows', data: params.toString() });
+    // 1. 結合テーブル（条件指定用リスト）を描画
+    renderConditionGrid(tableLetter, columns);
+    // 2. 結合カラム（出力指定用リスト）を描画
+    renderFieldsGrid(tableLetter, columns);
+
+    generateViewSQL();
 }
 
-function handleExpand(r, c) {
-    // 💡【詳細解説】
-    // 引数を (r, c) の数値で直接受け取るようにしたため、文字列置換(replace)の必要がなくなりました。
-    // これにより、全角文字がJavaScriptのインタープリタに干渉して発生していた「関数実行手前での無言のクラッシュ」を根絶します。
-    var posLabel = '[' + r + ',' + c + ']'; // 既存のHTML要素（.tile-item）を検索するためのラベル組み立て
-    var targetTile = document.querySelector('.tile-item[data-pos="' + posLabel + '"]');
-    var selectedType = targetTile ? targetTile.querySelector('.tile-main-select').value : '１レコード';
-
-    bridge({ 
-        code: 'PartsDefinition/screenBigger', 
-        targetArea: 'AreaE', 
-        row_pos: r, 
-        col_pos: c, 
-        selected_type: selectedType, // コントローラー側で P_OneRecord か P_MultiRecord かを分岐させる重要フラグ
-        parts_name: document.getElementById('parts_name').value,
-        parts_description: document.getElementById('parts_description').value,
-        rows: document.getElementById('rows').value,
-        cols: document.getElementById('cols').value,
-        tilesData: JSON.stringify(collectTilesData())
+function renderConditionGrid(tableLetter, columns) {
+    var tbody = document.querySelector(tableLetter === 'A' ? '#table-a-grid tbody' : '#table-b-grid tbody');
+    tbody.innerHTML = '';
+    if (columns.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-row-msg">カラムが存在しません</td></tr>';
+        return;
+    }
+    var savedKeys = {};
+    if (savedViewMeta && savedViewMeta['keys_' + tableLetter.toLowerCase()]) {
+        try { savedKeys = JSON.parse(savedViewMeta['keys_' + tableLetter.toLowerCase()]); } catch(e){}
+    }
+    
+    columns.forEach(function(colObj) {
+        var colName = colObj.physical;
+        var logName = colObj.logical;
+        var dataType = colObj.type; // 💡 既存の型を使用
+        
+        var initialNum = savedKeys[colName] || '';
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><input type="text" class="grid-input-num join-key" data-table="' + tableLetter + '" data-colname="' + escapeHtml(colName) + '" value="' + initialNum + '" oninput="syncAndGenerateSQL()"></td>' +
+                       '<td><input type="text" class="input-col col-name" value="' + escapeHtml(colName) + '" readonly style="border:none; background:transparent; text-align:left; padding-left:5px;"></td>' +
+                       '<td><input type="text" class="input-col" value="' + escapeHtml(logName) + '" readonly style="border:none; background:transparent; text-align:left; padding-left:5px; color:#555;"></td>' + // 💡 日本語名を追加
+                       '<td style="font-size:12px; color:#666; font-family:monospace;">' + escapeHtml(dataType) + '</td>'; // 💡 既存の型を表示
+        tbody.appendChild(tr);
     });
 }
+
+function renderFieldsGrid(tableLetter, columns) {
+    var tbody = document.querySelector(tableLetter === 'A' ? '#table-a-fields-grid tbody' : '#table-b-fields-grid tbody');
+    tbody.innerHTML = '';
+    document.getElementById('all-check-' + tableLetter.toLowerCase()).checked = true;
+
+    if (columns.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-row-msg">カラムが存在しません</td></tr>';
+        return;
+    }
+
+    var savedSelectFields = null;
+    if (savedViewMeta && savedViewMeta.select_cols) {
+        try { savedSelectFields = JSON.parse(savedViewMeta.select_cols); } catch(e){}
+    }
+
+    columns.forEach(function(colObj) {
+        var colName = colObj.physical;
+        var logName = colObj.logical;
+        var dataType = colObj.type; // 💡 既存の型を使用
+
+        var isChecked = true;
+        if (savedSelectFields && savedSelectFields[tableLetter]) {
+            isChecked = savedSelectFields[tableLetter].includes(colName);
+        }
+
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><input type="checkbox" class="select-field-checkbox" data-table="' + tableLetter + '" data-colname="' + escapeHtml(colName) + '" ' + (isChecked ? 'checked' : '') + ' onchange="syncAndGenerateSQL()"></td>' +
+                       '<td><input type="text" class="input-col" value="' + escapeHtml(colName) + '" readonly style="border:none; background:transparent; text-align:left; padding-left:5px;"></td>' +
+                       '<td><input type="text" class="input-col" value="' + escapeHtml(logName) + '" readonly style="border:none; background:transparent; text-align:left; padding-left:5px; color:#555;"></td>' + // 💡 日本語名を追加
+                       '<td style="font-size:12px; color:#666; font-family:monospace;">' + escapeHtml(dataType) + '</td>'; // 💡 既存の型を表示
+        tbody.appendChild(tr);
+    });
+}
+
+function toggleAllSelectFields(tableLetter, master) {
+    document.querySelectorAll('.select-field-checkbox[data-table="' + tableLetter + '"]').forEach(function(cb) {
+        cb.checked = master.checked;
+    });
+    syncAndGenerateSQL();
+}
+
+function syncAndGenerateSQL() {
+    var metaA = {}, metaB = {};
+    document.querySelectorAll('.join-key').forEach(function(input) {
+        var num = input.value.trim();
+        var tableLetter = input.dataset.table;
+        var cName = input.dataset.colname;
+        if (num !== '' && cName) {
+            if (tableLetter === 'A') metaA[cName] = num;
+            if (tableLetter === 'B') metaB[cName] = num;
+        }
+    });
+    document.getElementById('view_keys_a_meta').value = JSON.stringify(metaA);
+    document.getElementById('view_keys_b_meta').value = JSON.stringify(metaB);
+
+    var selectColsMeta = { 'A': [], 'B': [] };
+    document.querySelectorAll('.select-field-checkbox:checked').forEach(function(cb) {
+        selectColsMeta[cb.dataset.table].push(cb.dataset.colname);
+    });
+    document.getElementById('view_select_cols_meta').value = JSON.stringify(selectColsMeta);
+
+    generateViewSQL();
+}
+
+function generateViewSQL() {
+    var tableTypeActive = document.querySelector('input[name="table_type"]:checked');
+    if (!tableTypeActive || tableTypeActive.value !== 'view') return;
+
+    var tableName = document.querySelector('input[name="table_name"]').value.trim() || 'VIEW_NAME';
+    var joinType = document.querySelector('input[name="join_type"]:checked')?.value || 'INNER JOIN';
+    
+    var tableA = document.getElementById('view_table_a').value || 'table_A';
+    var tableB = document.getElementById('view_table_b').value || 'table_B';
+
+    var keysA = {}, keysB = {};
+    document.querySelectorAll('.join-key').forEach(function(input) {
+        var num = input.value.trim();
+        if (num !== '') {
+            var cName = input.dataset.colname;
+            var tName = (input.dataset.table === 'A') ? tableA : tableB;
+            if (input.dataset.table === 'A') keysA[num] = tName + '.' + cName;
+            if (input.dataset.table === 'B') keysB[num] = tName + '.' + cName;
+        }
+    });
+
+    var joinOnClauses = [];
+    for (var k in keysA) {
+        if (keysB[k]) joinOnClauses.push(keysA[k] + ' = ' + keysB[k]);
+    }
+    var onSentence = joinOnClauses.length > 0 ? joinOnClauses.join(' AND ') : tableA + '.id = ' + tableB + '.id';
+
+    // 💡 選択されたチェックボックスからのみSELECT句を生成
+    var allSelectCols = [];
+    document.querySelectorAll('.select-field-checkbox:checked').forEach(function(cb) {
+        var tName = (cb.dataset.table === 'A') ? tableA : tableB;
+        allSelectCols.push('    ' + tName + '.' + cb.dataset.colname);
+    });
+
+    if (allSelectCols.length === 0) {
+        allSelectCols.push('    *');
+    }
+
+    var sql = 'CREATE OR REPLACE VIEW ' + tableName + ' AS\n' +
+              'SELECT\n' + allSelectCols.join(',\n') + '\n' +
+              'FROM ' + tableA + '\n' +
+              joinType + ' ' + tableB + ' ON ' + onSentence + ';';
+
+    var previewArea = document.getElementById('sql-preview');
+    if (previewArea) previewArea.value = sql;
+}
+
+function prepareAndSubmitForm() {
+    var tableType = document.querySelector('input[name="table_type"]:checked').value;
+    var logicalName = document.querySelector('input[name="logical_name"]').value.trim();
+    
+    if (tableType === 'view') {
+        if (!logicalName) { alert('日本語名称を入力してください。'); return; }
+        if (!confirm('入力した内容でビューを登録してもよろしいですか？')) return;
+        
+        var normalTbody = document.querySelector('.column-def-table tbody');
+        normalTbody.innerHTML = ''; 
+        
+        var idx = 0;
+        // 💡 選択された結合カラム（チェックボックス）をループ処理
+        document.querySelectorAll('.select-field-checkbox:checked').forEach(function(cb) {
+            var colName = cb.dataset.colname;       // カラム名（例: id）
+            var tableLetter = cb.dataset.table;     // 'A' または 'B'
+            
+            // 💡 選択されている実際のテーブル名（例: applicantmaster など）を取得
+            var tableName = (tableLetter === 'A') 
+                ? document.getElementById('view_table_a').value 
+                : document.getElementById('view_table_b').value;
+            
+            // 💡 重複を避けるため「テーブル名_カラム名」という物理名にする
+            var uniquePhysicalName = tableName + '_' + colName; 
+            // 💡 論理名（日本語名）も分かりやすいように「ビュー名 (カラム名)」の形にする
+            var uniqueLogicalName = logicalName + ' (' + colName + ')';
+
+            // システム（PHP）が受け取れる形にhiddenタグを生成して詰め込む
+            normalTbody.innerHTML += '<input type="hidden" name="col_physical[' + idx + ']" value="' + uniquePhysicalName + '">' +
+                                     '<input type="hidden" name="col_logical[' + idx + ']" value="' + uniqueLogicalName + '">' +
+                                     '<input type="hidden" name="col_type[' + idx + ']" value="varchar">';
+            idx++;
+        });
+    } else {
+        if (!confirm('入力した内容でテーブルを登録してもよろしいですか？')) return;
+    }
+
+    var form = document.getElementById('db-definition-form');
+    var params = new URLSearchParams(new FormData(form)).toString();
+    parent.bridge({ code: 'DBDefinition/register', data: params });
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+
 </script>

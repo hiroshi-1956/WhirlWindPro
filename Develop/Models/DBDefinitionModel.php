@@ -76,10 +76,10 @@ class DBDefinitionModel extends \Develop\Utils\BaseModel {
                 $type = $rawType;
                 $length = '';
                 
-//                 if (preg_match('/^([a-z]+)\((.+)\)$/', $rawType, $matches)) {
-//                     $type = $matches[1];
-//                     $length = $matches[2];
-//                 }
+                if (preg_match('/^([a-z]+)\((.+)\)$/', $rawType, $matches)) {
+                    $type = $matches[1];
+                    $length = $matches[2]?? '';
+                }
                 
                 // ビュー側でそのまま使える綺麗な形にマッピング
                 $columns[] = [
