@@ -31,7 +31,22 @@
     /* ビュー専用スタイル */
     .join-table-layout-flex { display: flex; gap: 40px; margin-top: 5px; align-items: flex-start; }
     .join-table-column-panel { flex: 1; background: transparent; padding: 0; border: none; }
-    .sql-preview-box { width: 100%; max-width: 1100px; min-height: 140px; background: #222; color: #a9ffaf; font-family: monospace; padding: 12px; border-radius: 4px; font-size: 13px; margin-top: 10px; box-sizing: border-box; resize: vertical; }
+    .sql-preview-box { 
+        width: 100%; 
+        max-width: 1100px; 
+        height: auto;               /* 固定高さを解除 */
+        min-height: 40px;           /* 初期状態の最小高さ */
+        background: #222; 
+        color: #a9ffaf; 
+        font-family: monospace; 
+        padding: 12px; 
+        border-radius: 4px; 
+        font-size: 13px; 
+        margin-top: 10px; 
+        box-sizing: border-box; 
+        resize: none;               /* 手動のリサイズを無効化 */
+        overflow-y: hidden;         /* スクロールバーを隠す */
+    }
 
     /* テーブルA/BのカラムグリッドUI */
     .grid-table { border-collapse: collapse; width: 100%; margin-top: 8px; background: #fff; }
@@ -54,12 +69,14 @@ $tablesMap = $all_tables_map ?? [];
 <div class="table-edit-container">
     <div class="edit-title"><?php echo $isEditMode ? 'テーブル定義修正' : '新規テーブル登録'; ?></div>
 
-    <form id="db-definition-form" onsubmit="return false;">
+<form id="db-definition-form" onsubmit="return false;">
         <input type="hidden" name="is_edit_mode_flag" value="<?php echo $isEditMode ? '1' : '0'; ?>">
         <input type="hidden" id="view_keys_a_meta" name="view_keys_a_meta" value="<?php echo htmlspecialchars($vMeta['keys_a'] ?? '', ENT_QUOTES); ?>">
         <input type="hidden" id="view_keys_b_meta" name="view_keys_b_meta" value="<?php echo htmlspecialchars($vMeta['keys_b'] ?? '', ENT_QUOTES); ?>">
         <input type="hidden" id="view_select_cols_meta" name="view_select_cols_meta" value="<?php echo htmlspecialchars($vMeta['select_cols'] ?? '', ENT_QUOTES); ?>">
         
+        <div id="view-columns-buffer" style="display: none;"></div>
+                
         <div class="top-info-area">
             <table class="base-info-table">
                 <tr>
@@ -124,7 +141,7 @@ $tablesMap = $all_tables_map ?? [];
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                        <tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -140,7 +157,7 @@ $tablesMap = $all_tables_map ?? [];
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                        <tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -158,7 +175,7 @@ $tablesMap = $all_tables_map ?? [];
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                        <tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -174,7 +191,7 @@ $tablesMap = $all_tables_map ?? [];
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>
+                                        <tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -330,8 +347,9 @@ function fetchTableColumns(tableLetter) {
     var tbodyFields = document.querySelector(tableLetter === 'A' ? '#table-a-fields-grid tbody' : '#table-b-fields-grid tbody');
 
     if (!targetTable) {
-        tbodyCondition.innerHTML = '<tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>';
-        tbodyFields.innerHTML = '<tr><td colspan="3" class="empty-row-msg">テーブルを選択してください</td></tr>';
+        // 💡 colspan="4" に合わせてメッセージエリアの結合幅を修正
+        tbodyCondition.innerHTML = '<tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>';
+        tbodyFields.innerHTML = '<tr><td colspan="4" class="empty-row-msg">テーブルを選択してください</td></tr>';
         generateViewSQL();
         return;
     }
@@ -447,14 +465,24 @@ function generateViewSQL() {
     var tableA = document.getElementById('view_table_a').value || 'table_A';
     var tableB = document.getElementById('view_table_b').value || 'table_B';
 
+    // 各テーブル名の先頭2文字を自動で切り出し、小文字の別名（エイリアス）を生成
+    var aliasA = tableA.substring(0, 2).toLowerCase();
+    var aliasB = tableB.substring(0, 2).toLowerCase();
+    
+    // 万が一、先頭2文字が重複して衝突した場合の回避策 (例: どちらも同じ文字から始まる場合)
+    if (aliasA === aliasB) {
+        aliasA = 't1';
+        aliasB = 't2';
+    }
+
     var keysA = {}, keysB = {};
     document.querySelectorAll('.join-key').forEach(function(input) {
         var num = input.value.trim();
         if (num !== '') {
             var cName = input.dataset.colname;
-            var tName = (input.dataset.table === 'A') ? tableA : tableB;
-            if (input.dataset.table === 'A') keysA[num] = tName + '.' + cName;
-            if (input.dataset.table === 'B') keysB[num] = tName + '.' + cName;
+            var currentAlias = (input.dataset.table === 'A') ? aliasA : aliasB;
+            if (input.dataset.table === 'A') keysA[num] = currentAlias + '.' + cName;
+            if (input.dataset.table === 'B') keysB[num] = currentAlias + '.' + cName;
         }
     });
 
@@ -462,26 +490,39 @@ function generateViewSQL() {
     for (var k in keysA) {
         if (keysB[k]) joinOnClauses.push(keysA[k] + ' = ' + keysB[k]);
     }
-    var onSentence = joinOnClauses.length > 0 ? joinOnClauses.join(' AND ') : tableA + '.id = ' + tableB + '.id';
+    // 未指定時の初期デフォルトON句にも別名を適用
+    var onSentence = joinOnClauses.length > 0 ? joinOnClauses.join(' AND ') : aliasA + '.id = ' + aliasB + '.id';
 
-    // 💡 選択されたチェックボックスからのみSELECT句を生成
+    // 選択された結合カラム（SELECT出力項目）の組み立て
     var allSelectCols = [];
     document.querySelectorAll('.select-field-checkbox:checked').forEach(function(cb) {
-        var tName = (cb.dataset.table === 'A') ? tableA : tableB;
-        allSelectCols.push('    ' + tName + '.' + cb.dataset.colname);
+        var tableLetter = cb.dataset.table;
+        var currentAlias = (tableLetter === 'A') ? aliasA : aliasB;
+        
+        // 💡 修正：m_columnsへの保存名ルール「currentAlias + '_' + colName」と完全一致するようにAS句を設定
+        // 例: 「ap.id AS ap_id」
+        allSelectCols.push('    ' + currentAlias + '.' + cb.dataset.colname + ' AS ' + currentAlias + '_' + cb.dataset.colname);
     });
 
+    // 💡 修正：未選択時のフォールバック処理で発生する定義エラーバグを修正
     if (allSelectCols.length === 0) {
         allSelectCols.push('    *');
     }
 
+    // FROM句、JOIN句の直後に、スペース区切りで別名（エイリアス）を定義
     var sql = 'CREATE OR REPLACE VIEW ' + tableName + ' AS\n' +
               'SELECT\n' + allSelectCols.join(',\n') + '\n' +
-              'FROM ' + tableA + '\n' +
-              joinType + ' ' + tableB + ' ON ' + onSentence + ';';
+              'FROM ' + tableA + ' ' + aliasA + '\n' +
+              joinType + ' ' + tableB + ' ' + aliasB + ' ON ' + onSentence + ';';
 
     var previewArea = document.getElementById('sql-preview');
-    if (previewArea) previewArea.value = sql;
+    if (previewArea) {
+        previewArea.value = sql;
+        
+        // テキストエリアの高さジャストサイズ自動調整
+        previewArea.style.height = 'auto'; 
+        previewArea.style.height = previewArea.scrollHeight + 'px';
+    }
 }
 
 function prepareAndSubmitForm() {
@@ -492,35 +533,63 @@ function prepareAndSubmitForm() {
         if (!logicalName) { alert('日本語名称を入力してください。'); return; }
         if (!confirm('入力した内容でビューを登録してもよろしいですか？')) return;
         
-        var normalTbody = document.querySelector('.column-def-table tbody');
-        normalTbody.innerHTML = ''; 
+        // 💡 確実にフォーム内の送信バッファを取得
+        var bufferArea = document.getElementById('view-columns-buffer');
+        if (!bufferArea) {
+            // 万が一HTML側にコンテナがない場合はフォーム直下に動的生成
+            bufferArea = document.createElement('div');
+            bufferArea.id = 'view-columns-buffer';
+            bufferArea.style.display = 'none';
+            document.getElementById('db-definition-form').appendChild(bufferArea);
+        }
+        bufferArea.innerHTML = ''; 
+        
+        var tableA = document.getElementById('view_table_a').value || 'table_A';
+        var tableB = document.getElementById('view_table_b').value || 'table_B';
+        
+        // SQLプレビューと同じルールで先頭2文字の別名（エイリアス）を算出
+        var aliasA = tableA.substring(0, 2).toLowerCase();
+        var aliasB = tableB.substring(0, 2).toLowerCase();
+        if (aliasA === aliasB) {
+            aliasA = 't1';
+            aliasB = 't2';
+        }
         
         var idx = 0;
-        // 💡 選択された結合カラム（チェックボックス）をループ処理
+        // チェックが入っている「出力対象カラム」だけをループしてhiddenを生成
         document.querySelectorAll('.select-field-checkbox:checked').forEach(function(cb) {
-            var colName = cb.dataset.colname;       // カラム名（例: id）
-            var tableLetter = cb.dataset.table;     // 'A' または 'B'
+            var colName = cb.dataset.colname;       
+            var tableLetter = cb.dataset.table; // 'A' または 'B'
             
-            // 💡 選択されている実際のテーブル名（例: applicantmaster など）を取得
-            var tableName = (tableLetter === 'A') 
-                ? document.getElementById('view_table_a').value 
-                : document.getElementById('view_table_b').value;
+            // 💡 現在のテーブル文字（A/B）に応じた適切な別名（ap / pa）を選択
+            var currentAlias = (tableLetter === 'A') ? aliasA : aliasB;
             
-            // 💡 重複を避けるため「テーブル名_カラム名」という物理名にする
-            var uniquePhysicalName = tableName + '_' + colName; 
-            // 💡 論理名（日本語名）も分かりやすいように「ビュー名 (カラム名)」の形にする
+            // チェックボックスのある行(tr)からデータ型（varchar, intなど）を取得
+            var rowTd = cb.closest('tr').querySelectorAll('td');
+            var existingType = 'varchar';
+            if (rowTd && rowTd.length >= 4) {
+                existingType = rowTd[3].textContent.trim() || 'varchar';
+            }
+            
+            // 💡 物理名を「エイリアス_カラム名」（例: ap_eventType）に統一
+            var uniquePhysicalName = currentAlias + '_' + colName; 
+            
+            // 論理名（日本語名）は「ビューの日本語名 (カラムの物理名)」の形にして見やすく維持
             var uniqueLogicalName = logicalName + ' (' + colName + ')';
 
-            // システム（PHP）が受け取れる形にhiddenタグを生成して詰め込む
-            normalTbody.innerHTML += '<input type="hidden" name="col_physical[' + idx + ']" value="' + uniquePhysicalName + '">' +
-                                     '<input type="hidden" name="col_logical[' + idx + ']" value="' + uniqueLogicalName + '">' +
-                                     '<input type="hidden" name="col_type[' + idx + ']" value="varchar">';
+            // バッファ領域にhiddenタグを書き込み
+            bufferArea.innerHTML += '<input type="hidden" name="col_physical[' + idx + ']" value="' + escapeHtml(uniquePhysicalName) + '">' +
+                                    '<input type="hidden" name="col_logical[' + idx + ']" value="' + escapeHtml(uniqueLogicalName) + '">' +
+                                    '<input type="hidden" name="col_type[' + idx + ']" value="' + escapeHtml(existingType) + '">';
             idx++;
         });
     } else {
         if (!confirm('入力した内容でテーブルを登録してもよろしいですか？')) return;
+        var bufferArea = document.getElementById('view-columns-buffer');
+        if (bufferArea) bufferArea.innerHTML = '';
     }
 
+    // フォームデータを同期して親画面のブリッジ経由でPHPへ送信
     var form = document.getElementById('db-definition-form');
     var params = new URLSearchParams(new FormData(form)).toString();
     parent.bridge({ code: 'DBDefinition/register', data: params });

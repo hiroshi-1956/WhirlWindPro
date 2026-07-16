@@ -1,7 +1,7 @@
 <style>
 /* 1. 全体コンテナ */
 .db-list-container {
-    width: 100%;       /* ★ 1 から 100% に修正して画面幅にフィットさせます */
+    width: 100%;       /* 画面幅にフィット */
     height: 99%;       /* 高さを画面の約2/3に固定 */
     margin: 0px auto;  /* 中央配置：上下に0px、左右はautoで中央へ */
     display: flex;
@@ -62,7 +62,7 @@
 }
 
 .db-table-card {
-    padding: 8px 15px;  /* ★ 上下の余白を 15px から 8px に縮小し、カード間を詰めました */
+    padding: 8px 15px;  /* 上下の余白を縮小し、カード間を配置 */
     border-bottom: 1px solid #eee;
     cursor: pointer;
     background-color: #ffffff;
@@ -82,10 +82,10 @@
 }
 
 .db-table-card .logical-name {
-font-family: 'Consolas', monospace;
+    font-family: 'Consolas', monospace;
     font-weight: bold;
     color: #000;
-    font-size: 0.95em;  /* ★ 1.1em から 0.95em に変更し、文字サイズを1回り小さくしました */
+    font-size: 0.95em;  /* 文字サイズを1回り小さく調整 */
     display: block;
     margin-bottom: 2px;
 }
@@ -99,8 +99,8 @@ font-family: 'Consolas', monospace;
     font-weight: bold;
     margin-right: 14px; /* バッジの右側に隙間を作り、説明文を右にずらす */
     vertical-align: middle;
+    display: inline-block;
 }
-.badge-grid { background-color: #28a745; }
 
 /* データがない時のメッセージ */
 .no-data-msg {
@@ -126,18 +126,49 @@ font-family: 'Consolas', monospace;
         <?php 
         // 💡 コントローラーから渡されたパーツ一覧データがあるかチェック
         if (!empty($parts_list) && is_array($parts_list)): 
+            
+            // 💡 種類(parts_type)ごとの固定カラーマップを定義 (重ならないように厳選した美しいカラーコード)
+            $colorMap = [
+                'SingleRecordInput'   => '#007bff', // 鮮やかな青
+                'SingleRecordConfirm' => '#fd7e14', // 温かみのあるオレンジ
+                'SingleRecordDetail'  => '#17a2b8', // 爽やかなシアン
+                'SingleRecordSave'    => '#28a745', // 安心感のある緑
+                
+                'MultiRecordInput'    => '#6610f2', // 高貴な紫
+                'MultiRecordConfirm'  => '#e83e8c', // 鮮やかなピンク
+                'MultiRecordList'     => '#6f42c1; border: 1px solid #522797', // 深いパープル
+                
+                'Grid'                => '#20c997', // エメラルドグリーン
+                'Form'                => '#ffc107; color: #333;', // 警告にならない綺麗な黄色(文字は黒)
+                'Filter'              => '#495057', // ダークグレー
+            ];
+
             foreach ($parts_list as $parts): 
                 // 各行のデータを安全にエスケープして取得
                 $partsId   = htmlspecialchars($parts['parts_id'] ?? '', ENT_QUOTES);
                 $partsName = htmlspecialchars($parts['parts_name'] ?? '', ENT_QUOTES);
                 $partsType = htmlspecialchars($parts['parts_type'] ?? '', ENT_QUOTES);
                 $desc      = htmlspecialchars($parts['parts_description'] ?? '', ENT_QUOTES);
+
+                // 💡 色決定ロジック
+                if (isset($colorMap[$partsType])) {
+                    // マップに登録されている種類なら、その固定色を使用
+                    $badgeStyle = "background-color: " . $colorMap[$partsType] . ";";
+                } else {
+                    // 💡 もしマップにない新しい種類が来たら、文字列から被らないユニークな色を自動生成
+                    $hash = md5($partsType);
+                    // 文字列のハッシュ値からRGB値を生成 (極端に暗い・明るい色を避けるため100〜220の範囲に調整)
+                    $r = hexdec(substr($hash, 0, 2)) % 120 + 100;
+                    $g = hexdec(substr($hash, 2, 2)) % 120 + 100;
+                    $b = hexdec(substr($hash, 4, 2)) % 120 + 100;
+                    $badgeStyle = "background-color: rgb($r, $g, $b); color: #fff;";
+                }
         ?>
             <div class="db-table-card" onclick="bridge({ code: 'PartsDefinition/editParts', parts_id: '<?php echo $partsId; ?>' });">
                 <span class="physical-name"><?php echo $partsName; ?></span>
                 <span class="logical-name">
                     <?php if ($partsType !== ''): ?>
-                        <span class="table-type-badge badge-grid"><?php echo $partsType; ?></span>
+                        <span class="table-type-badge" style="<?php echo $badgeStyle; ?>"><?php echo $partsType; ?></span>
                     <?php endif; ?>
                     
                     <?php echo $desc ?: '（説明なし）'; ?>

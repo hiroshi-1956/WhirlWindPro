@@ -16,7 +16,7 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
     }
     
     public function initialAction() {
-        $this->logger->debug("DBDefinitionController::initialAction() start...");
+        $this->logger->debug("PartsDefinitionController::initialAction() start...");
         
         $projectId = $this->getProjectId();
         $this->logger->debug("PartsDefinitionController::initialAction() projectId : {$projectId}");
@@ -29,7 +29,7 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         
         \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
         
-        $this->logger->debug("DBDefinitionController::initialAction() end.");
+        $this->logger->debug("PartsDefinitionController::initialAction() end.");
     }
     
     public function newPartsAction() {
@@ -56,7 +56,6 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
     
     public function getTableColumnsAction()
     {
-        //$tableName = $this->getParam('table_name');
         $columns = [];
         return $this->responseJson([
             'result'  => 'success',
@@ -64,40 +63,44 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         ]);
     }
     
+    /**
+     * テーブル切り替え時などにカラム一覧を取得して画面を再描画する
+     */
     public function getColumnsAction($requestParams = [])
     {
-        $this->logger->debug("PartsDefinitionController::getColumnsAction() start...");
-        
-        $tableName = $requestParams['table_name'] ?? $_POST['table_name'] ?? $_REQUEST['table_name'] ?? '';
-        
+        $projectId = $this->getProjectId($requestParams);
         $partsId   = $requestParams['parts_id']   ?? $_POST['parts_id']   ?? '';
         $partsName = $requestParams['parts_name'] ?? $_POST['parts_name'] ?? '';
         $partsDesc = $requestParams['parts_description'] ?? $_POST['parts_description'] ?? '';
-        $partsType = $requestParams['parts_type'] ?? $_POST['parts_type'] ?? 'Single Record Input';
+        $partsType = $requestParams['parts_type'] ?? $_POST['parts_type'] ?? '';
+        $tableName = $requestParams['table_name'] ?? $_POST['table_name'] ?? '';
         
         $displayLabel = $requestParams['display_label'] ?? $_POST['display_label'] ?? 'physical';
         $columnFilter = $requestParams['column_filter'] ?? $_POST['column_filter'] ?? 'all';
         $previewTitle = $requestParams['preview_title'] ?? $_POST['preview_title'] ?? '';
         $inputRows    = $requestParams['input_rows']    ?? $_POST['input_rows']    ?? '1';
         
-        // 💡【最重要修正】テーブル切替時にも入力状態が維持されるよう、リクエストから確実に回収
+        // ✅【MultiFree用追加】
+        $lineCounts      = $requestParams['line_counts']      ?? $_POST['line_counts']      ?? '1';
+        $searchArea      = $requestParams['search_area']      ?? $_POST['search_area']      ?? '無';
+        $informationArea = $requestParams['information_area'] ?? $_POST['information_area'] ?? '無';
+        
         $inputStyle     = $requestParams['input_style']     ?? $_POST['input_style']     ?? '';
         $contents       = $requestParams['contents']        ?? $_POST['contents']        ?? '';
         $styleCondition = $requestParams['style_condition'] ?? $_POST['style_condition'] ?? '';
         $styleColumn    = $requestParams['style_column']    ?? $_POST['style_column']    ?? '';
         
-        $projectId = $this->getProjectId($requestParams);
         $model = new \Develop\Models\PartsDefinitionModel();
+        $mTables = $model->getTableStructure($projectId);
         
+        // 選択されたテーブルからカラム一覧を取得
         $columns = [];
         if (!empty($tableName)) {
             $columns = $model->getColumnsByTableId($tableName);
         }
         
-        $mTables = $model->getTableStructure($projectId);
-        
         \Develop\Utils\Screen::updateAreaE(self::VIEW_REGIST, [
-            'is_edit'              => false,
+            'is_edit'              => (!empty($partsId) && $partsId !== '0'),
             'project_id'           => $projectId,
             'parts_id'             => $partsId,
             'parts_name'           => $partsName,
@@ -109,59 +112,47 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'preview_title'        => $previewTitle,
             'input_rows'           => $inputRows,
             
-            // 💡【最重要修正】回収したデータをそのままビュー（AreaE）へ返還・引き継ぎ
+            'line_counts'          => $lineCounts,
+            'search_area'          => $searchArea,
+            'information_area'     => $informationArea,
+            
             'input_style'          => $inputStyle,
             'contents'             => $contents,
             'style_condition'      => $styleCondition,
             'style_column'         => $styleColumn,
-            
             'm_tables'             => $mTables,
             'm_partsinfo_columns'  => $columns,
             'grids_config_json'    => json_encode([], JSON_UNESCAPED_UNICODE)
         ]);
-        
-        $this->logger->debug("PartsDefinitionController::getColumnsAction() end.");
     }
     
-    public function cancelAction() {
-        $this->logger->debug("PartsDefinitionController::cancelAction() start...");
-        \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
-        $this->logger->debug("PartsDefinitionController::cancelAction() end.");
-    }
-    
-    public function editPartsAction() {
-        $this->logger->debug("PartsDefinitionController::editPartsAction() start...");
-        
-        $projectId = $this->getProjectId();
-        $partsId   = $_POST['parts_id'] ?? $_REQUEST['parts_id'] ?? '';
-        
-        unset($_SESSION['wwProject_main_form_backup']);
-        
-        if (empty($partsId)) {
-            $this->logger->error("PartsDefinitionController::editPartsAction() ❌ parts_id が空です");
-            return;
-        }
+    /**
+     * 既存の画面パーツの編集画面を開く
+     */
+    public function editPartsAction($requestParams = []) {
+        $projectId = $this->getProjectId($requestParams);
+        $partsId   = $requestParams['parts_id'] ?? $_POST['parts_id'] ?? '';
         
         $model = new \Develop\Models\PartsDefinitionModel();
         $targetParts = $model->getPartsById($projectId, $partsId);
         
         if (!$targetParts) {
-            $this->logger->error("PartsDefinitionController::editPartsAction() ❌ データが見つかりません。ID: {$partsId}");
-            return;
+            $this->logger->error("❌ 編集対象のパーツが見つかりません。ID: {$partsId}");
+            return $this->initialAction();
         }
         
-        $tableName = $targetParts['table_name'] ?? '';
-        $columns = [];
-        if (!empty($tableName)) {
-            $columns = $model->getColumnsByTableId($tableName);
-        }
         $mTables = $model->getTableStructure($projectId);
         
+        // 登録されているテーブル名からカラム一覧を取得
+        $columns = [];
+        if (!empty($targetParts['table_name'])) {
+            $columns = $model->getColumnsByTableId($targetParts['table_name']);
+        }
+        
+        // 保存されていたJSONカラムのデコード
         $checkedColumns = [];
         if (!empty($targetParts['checked_columns_json'])) {
-            $rawStr = trim($targetParts['checked_columns_json']);
-            $rawArray = explode(',', $rawStr);
-            $checkedColumns = array_filter(array_map('trim', $rawArray), 'strlen');
+            $checkedColumns = json_decode($targetParts['checked_columns_json'], true) ?: [];
         }
         
         \Develop\Utils\Screen::updateAreaE(self::VIEW_REGIST, [
@@ -176,6 +167,11 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'column_filter'        => $targetParts['column_filter'] ?? 'all',
             'preview_title'        => $targetParts['preview_title'] ?? '',
             'input_rows'           => $targetParts['input_rows'] ?? '1',
+            
+            'line_counts'          => $targetParts['line_counts'] ?? '1',
+            'search_area'          => $targetParts['search_area'] ?? '無',
+            'information_area'     => $targetParts['information_area'] ?? '無',
+            
             'input_style'          => $targetParts['input_style'] ?? '',
             'contents'             => $targetParts['contents'] ?? '',
             'style_condition'      => $targetParts['style_condition'] ?? '',
@@ -185,10 +181,11 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'checked_columns'      => $checkedColumns,
             'grids_config_json'    => json_encode([], JSON_UNESCAPED_UNICODE)
         ]);
-        
-        $this->logger->debug("PartsDefinitionController::editPartsAction() end.");
     }
     
+    /**
+     * 画面パーツ情報をDBに保存する
+     */
     public function saveAction($requestParams = []) {
         $this->logger->debug("PartsDefinitionController::saveAction() start...");
         
@@ -204,6 +201,11 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'column_filter'     => $requestParams['column_filter']     ?? $_POST['column_filter']     ?? 'all',
             'preview_title'     => $requestParams['preview_title']     ?? $_POST['preview_title']     ?? '',
             'input_rows'        => $requestParams['input_rows']        ?? $_POST['input_rows']        ?? '1',
+            
+            'line_counts'        => $requestParams['line_counts']        ?? $_POST['line_counts']        ?? '1',
+            'search_area'        => $requestParams['search_area']        ?? $_POST['search_area']        ?? '無',
+            'information_area'   => $requestParams['information_area']   ?? $_POST['information_area']   ?? '無',
+            
             'selected_columns'  => $requestParams['selected_columns']  ?? $_POST['selected_columns']  ?? [],
             'input_style'       => $requestParams['input_style']       ?? $_POST['input_style']       ?? '',
             'contents'          => $requestParams['contents']          ?? $_POST['contents']          ?? '',
@@ -211,22 +213,20 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'style_column'      => $requestParams['style_column']      ?? $_POST['style_column']      ?? ''
         ];
         
-        $model = new \Develop\Models\PartsDefinitionModel();
-        $resultPartsId = $model->saveParts($projectId, $partsId, $data);
-        
-        if ($resultPartsId !== false) {
-            unset($_SESSION['wwProject_main_form_backup']);
+        try {
+            $model = new \Develop\Models\PartsDefinitionModel();
+            $model->saveParts($projectId, $partsId, $data);
             
-            \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view', [
-                'parts_list' => $model->getAllPartsList($projectId),
-                'project_id' => $projectId
-            ]);
-            
-            \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
-        } else {
-            $this->logger->error("❌ Modelでの保存処理に失敗しました。");
+            // 保存成功後はリスト一覧を再描画して右側エリアをクリア
+            $this->initialAction();
+        } catch (\Exception $e) {
+            $this->logger->error("❌ Parts保存処理でエラーが発生しました: " . $e->getMessage());
         }
-        
-        $this->logger->debug("PartsDefinitionController::saveAction() end.");
+    }
+    
+    public function cancelAction() {
+        $this->logger->debug("PartsDefinitionController::cancelAction() start...");
+        \Develop\Utils\Screen::updateAreaE('\Develop\Views\AreaE\Area_E_clear.view', []);
+        $this->logger->debug("PartsDefinitionController::cancelAction() end.");
     }
 }

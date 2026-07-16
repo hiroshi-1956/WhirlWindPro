@@ -13,25 +13,6 @@ if (!function_exists('convertToDeveloperVariableNamePHP')) {
 
 // Text Input用の設定が渡されてきた場合の初期値（無ければ空配列）
 $textinput_configs = $textinput_configs ?? [];
-
-if (empty($line_counts) && !empty($parts_info)) {
-    $line_counts = $parts_info['line_counts'] ?? '5';
-    $search_area = $parts_info['search_area'] ?? '有';
-    $information_area = $parts_info['information_area'] ?? '有';
-}
-if (empty($line_counts) && !empty($parts)) {
-    $line_counts = $parts['line_counts'] ?? '5';
-    $search_area = $parts['search_area'] ?? '有';
-    $information_area = $parts['information_area'] ?? '有';
-}
-
-// 初期選択カラム判定用の配列をあらかじめPHP側で正規化
-$normalized_checked_columns = [];
-if (!empty($checked_columns) && is_array($checked_columns)) {
-    foreach ($checked_columns as $c) {
-        $normalized_checked_columns[] = strtolower(trim((string)$c));
-    }
-}
 ?>
 
 <div class="designer-base" style="padding: 20px; box-sizing: border-box; background-color: #fff; font-family: 'Hiragino Kaku Gothic ProN', 'Helvetica Neue', Arial, sans-serif; font-size: 14px; color: #000;">
@@ -164,40 +145,24 @@ if (!empty($checked_columns) && is_array($checked_columns)) {
                 </td>
             </tr>
 
-            <tr id="row-multifree-line-counts" style="display: none; height: 40px;">
-                <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">入力列数</th>
+            <tr id="row-multifree-settings" style="display: none; height: 40px;">
+                <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">MultiFree設定</th>
                 <td style="padding: 0; vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 6px; padding-left: 10px;">
-                        <input type="number" id="line_counts" min="1" max="10" style="width: 60px; height: 30px; border: 2px solid #000; text-align: center; font-weight: bold; box-sizing: border-box;" value="<?= htmlspecialchars($line_counts ?? '5', ENT_QUOTES, 'UTF-8'); ?>" oninput="syncMultiFreePreviewTable(); saveMainForm();">
-                        <span style="font-size: 14px; font-weight: bold; color: #000;">列</span>
-                    </div>
-                </td>
-            </tr>
-
-            <tr id="row-multifree-search-area" style="display: none; height: 40px;">
-                <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">検索エリア</th>
-                <td style="padding: 0; vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 10px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="search_area" value="原" <?= ($search_area ?? '有') === '有' ? 'checked' : '' ?> onchange="syncMultiFreePreviewTable(); saveMainForm();" style="transform: scale(1.2);"> 有り
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="search_area" value="無" <?= ($search_area ?? '有') === '無' ? 'checked' : '' ?> onchange="syncMultiFreePreviewTable(); saveMainForm();" style="transform: scale(1.2);"> 無し
-                        </label>
-                    </div>
-                </td>
-            </tr>
-
-            <tr id="row-multifree-information-area" style="display: none; height: 40px;">
-                <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">詳細ボタン</th>
-                <td style="padding: 0; vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 10px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="information_area" value="有" <?= ($information_area ?? '有') === '有' ? 'checked' : '' ?> onchange="syncMultiFreePreviewTable(); saveMainForm();" style="transform: scale(1.2);"> 有り
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                            <input type="radio" name="information_area" value="無" <?= ($information_area ?? '有') === '無' ? 'checked' : '' ?> onchange="syncMultiFreePreviewTable(); saveMainForm();" style="transform: scale(1.2);"> 無し
-                        </label>
+                    <div style="display: flex; align-items: center; gap: 24px; font-size: 14px; padding-left: 10px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span>列数:</span>
+                            <input type="number" id="line_counts" min="1" max="10" style="width: 55px; height: 28px; border: 2px solid #000; text-align: center; font-weight: bold; box-sizing: border-box;" value="<?= htmlspecialchars($line_counts ?? '1', ENT_QUOTES, 'UTF-8'); ?>" oninput="saveMainForm();">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>検索エリア:</span>
+                            <label style="cursor:pointer;"><input type="radio" name="search_area" value="有" <?= ($search_area ?? '無') === '有' ? 'checked' : '' ?> onchange="saveMainForm();"> 有</label>
+                            <label style="cursor:pointer;"><input type="radio" name="search_area" value="無" <?= ($search_area ?? '無') === '無' ? 'checked' : '' ?> onchange="saveMainForm();"> 無</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>詳細エリア:</span>
+                            <label style="cursor:pointer;"><input type="radio" name="information_area" value="有" <?= ($information_area ?? '無') === '有' ? 'checked' : '' ?> onchange="saveMainForm();"> 有</label>
+                            <label style="cursor:pointer;"><input type="radio" name="information_area" value="無" <?= ($information_area ?? '無') === '無' ? 'checked' : '' ?> onchange="saveMainForm();"> 無</label>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -220,14 +185,14 @@ if (!empty($checked_columns) && is_array($checked_columns)) {
             <tr id="row-text-display-content-fixed" style="display: none;">
                 <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 10px 0; vertical-align: top;">表示内容</th>
                 <td style="padding: 10px 0; vertical-align: middle;">
-                    <textarea id="text_display_fixed_textarea" style="width: 780px; height: 120px; border: 2px solid #000; padding: 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; resize: vertical;" oninput="syncTextDisplayContents(); saveMainForm();"><?= htmlspecialchars(($parts_type !== 'Multi Free' ? ($contents ?? '') : ''), ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    <textarea id="text_display_fixed_textarea" style="width: 780px; height: 120px; border: 2px solid #000; padding: 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; resize: vertical;" oninput="syncTextDisplayContents(); saveMainForm();"><?= htmlspecialchars($contents ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
                 </td>
             </tr>
 
             <tr id="row-text-display-content-file" style="height: 40px; display: none;">
                 <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示内容</th>
                 <td style="padding: 0; vertical-align: middle;">
-                    <input type="text" id="text_display_file_input" placeholder="例: filename.txt" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars(($parts_type !== 'Multi Free' ? ($contents ?? '') : ''), ENT_QUOTES, 'UTF-8'); ?>" oninput="syncTextDisplayContents(); saveMainForm();">
+                    <input type="text" id="text_display_file_input" placeholder="例: filename.txt" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($contents ?? '', ENT_QUOTES, 'UTF-8'); ?>" oninput="syncTextDisplayContents(); saveMainForm();">
                 </td>
             </tr>
 
@@ -241,23 +206,6 @@ if (!empty($checked_columns) && is_array($checked_columns)) {
             </tr>
         </table>
 
-        <div id="multifree-preview-wrapper" style="display: none; margin-top: 15px; padding-left: 120px; box-sizing: border-box;">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #333;">イメージプレビュー</div>
-            <div style="display: flex; align-items: flex-start; gap: 10px;">
-                <div style="border: 2px solid #000; background-color: #fff; overflow-x: auto;">
-                    <table id="multifree-preview-table" style="border-collapse: collapse; font-size: 14px; background-color: #fff; text-align: center;">
-                        <thead id="multifree-preview-thead">
-                        </thead>
-                        <tbody id="multifree-preview-tbody">
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="multifree-preview-buttons" style="display: flex; flex-direction: column; gap: 0; justify-content: flex-start;">
-                </div>
-            </div>
-        </div>
-
         <div id="column-list-wrapper" style="display: <?= !empty($table_name) ? 'block' : 'none'; ?>; margin-top: 15px; padding-left: 120px; box-sizing: border-box;">		            
             <div id="container-layout-vertical" style="width: 520px; display: block; border: 2px solid #000; background-color: #fff;">
                 <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff;">
@@ -269,25 +217,18 @@ if (!empty($checked_columns) && is_array($checked_columns)) {
                                 if (empty($l_col) || $l_col === '&nbsp;') { $l_col = $p_col; }
                                 $middle_label = ($current_display === 'physical') ? $p_col : $l_col;
 
-                                // PHP側での初期選択（チェック有無）の厳密な判定
                                 $isChecked = false;
                                 if (empty($is_edit)) {
                                     $isChecked = true;
-                                } else {
-                                    $p_col_lower = strtolower(trim($p_col));
-                                    $v_name_lower = strtolower(trim(convertToDeveloperVariableNamePHP($p_col)));
-                                    $pure_camel_lower = strtolower(trim(str_replace('developers::', '', $v_name_lower)));
-                                    
-                                    if (in_array($p_col_lower, $normalized_checked_columns) || 
-                                        in_array($v_name_lower, $normalized_checked_columns) || 
-                                        in_array($pure_camel_lower, $normalized_checked_columns)) {
+                                } else if (!empty($checked_columns) && is_array($checked_columns)) {
+                                    $lower_checked = array_map('strtolower', $checked_columns);
+                                    if (in_array(strtolower($p_col), $lower_checked)) {
                                         $isChecked = true;
                                     }
                                 }
-                                echo '';
 
                                 $current_style_val = '';
-                                if (!empty($input_style) && $parts_type !== 'Multi Free') {
+                                if (!empty($input_style)) {
                                     $style_array = is_array($input_style) ? $input_style : explode(',', $input_style);
                                     $current_style_val = $style_array[$idx] ?? '';
                                 }
@@ -323,19 +264,17 @@ if (!empty($checked_columns) && is_array($checked_columns)) {
                             <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
                                 <?php 
                                     $p_col = $col['physical_name'] ?? ''; 
-                                    
-                                    // PHP側での初期選択（チェック有無）の厳密な判定
+                                    $variable_name = convertToDeveloperVariableNamePHP($p_col);
+                                    $pure_camel = str_replace('developers::', '', $variable_name);
+
                                     $isChecked = false;
                                     if (empty($is_edit)) {
                                         $isChecked = true;
-                                    } else {
-                                        $p_col_lower = strtolower(trim($p_col));
-                                        $v_name_lower = strtolower(trim(convertToDeveloperVariableNamePHP($p_col)));
-                                        $pure_camel_lower = strtolower(trim(str_replace('developers::', '', $v_name_lower)));
-                                        
-                                        if (in_array($p_col_lower, $normalized_checked_columns) || 
-                                            in_array($v_name_lower, $normalized_checked_columns) || 
-                                            in_array($pure_camel_lower, $normalized_checked_columns)) {
+                                    } else if (!empty($checked_columns) && is_array($checked_columns)) {
+                                        $lower_checked = array_map('strtolower', $checked_columns);
+                                        if (in_array(strtolower($p_col), $lower_checked) || 
+                                            in_array(strtolower($variable_name), $lower_checked) || 
+                                            in_array(strtolower($pure_camel), $lower_checked)) {
                                             $isChecked = true;
                                         }
                                     }
@@ -405,10 +344,6 @@ function getInputStyleValue() {
     var typeSel = document.getElementById('parts_type');
     var targetType = typeSel ? typeSel.value : '';
     
-    if (targetType === 'Multi Free') {
-        return '';
-    }
-
     if (targetType === 'Single Record Input') {
         var styles = [];
         document.querySelectorAll('.single-input-style-select').forEach(function(sel) {
@@ -506,14 +441,13 @@ function onClickSave() {
         alert('画面パーツ名称を入力してください。');
         return;
     }
-
-    var partsType = document.getElementById('parts_type')?.value;
     
     if (!confirm('この内容で画面パーツ情報を保存しますか？')) {
         return;
     }
     
     try {
+        var partsType = document.getElementById('parts_type')?.value;
         var dispEle = document.querySelector('input[name="display_label"]:checked');
         var displayLabel = dispEle ? dispEle.value : 'physical';
         var filtEle = document.querySelector('input[name="column_filter"]:checked');
@@ -571,26 +505,16 @@ function onClickSave() {
             console.error("getTextInputConfigsArrayでエラーが発生:", e);
         }
 
-        // MultiFree用 設定値回収
-        var lineCounts = '5';
-        var searchArea = '有';
-        var informationArea = '有';
-        var finalContents = '';
-
+        // ✅【MultiFree用の設定値回収】
+        var lineCounts = '1';
+        var searchArea = '無';
+        var informationArea = '無';
         if (partsType === 'Multi Free') {
-            lineCounts = document.getElementById('line_counts')?.value || '5';
+            lineCounts = document.getElementById('line_counts')?.value || '1';
             var searchRadio = document.querySelector('input[name="search_area"]:checked');
-            searchArea = searchRadio ? searchRadio.value : '有';
+            searchArea = searchRadio ? searchRadio.value : '無';
             var infoRadio = document.querySelector('input[name="information_area"]:checked');
-            informationArea = infoRadio ? infoRadio.value : '有';
-            finalContents = '';
-        } else if (partsType === 'Text Display' || partsType === 'Style Display') {
-            var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
-            if (displayRadio && displayRadio.value === 'file') {
-                finalContents = document.getElementById('text_display_file_input')?.value || '';
-            } else {
-                finalContents = document.getElementById('text_display_fixed_textarea')?.value || '';
-            }
+            informationArea = infoRadio ? infoRadio.value : '無';
         }
 
         var saveData = {
@@ -604,12 +528,16 @@ function onClickSave() {
             column_filter: columnFilter,
             input_rows: inputRows, 
             input_style: finalInputStyle,       
-            contents: finalContents,
+            contents: (partsType === 'Text Display' || partsType === 'Style Display') ? (
+                (document.querySelector('input[name="text_display_data_type"]:checked')?.value === 'file') 
+                    ? (document.getElementById('text_display_file_input')?.value || '') 
+                    : (document.getElementById('text_display_fixed_textarea')?.value || '')
+            ) : '',
             preview_title: document.getElementById('preview_title')?.value || '',
             selected_columns: finalSelectedColumns, 
             textinput_configs: finalTextinputConfigs,
             
-            // MultiFree用パラメータ
+            // ✅【MultiFree用パラメータ追加】コントローラーへ送信
             line_counts: lineCounts,
             search_area: searchArea,
             information_area: informationArea,
@@ -659,9 +587,6 @@ function loadColumnsFromDB() {
         var displayRadio = document.querySelector('input[name="text_display_data_type"]:checked');
         var dataTypeVal = displayRadio ? displayRadio.value : 'fixed';
         finalInputStyle = styleVal + '::' + dataTypeVal;
-    } else if (partsType === 'Multi Free') {
-        finalInputStyle = '';
-        finalContents = '';
     } else {
         finalInputStyle = getInputStyleValue();
     }
@@ -675,11 +600,12 @@ function loadColumnsFromDB() {
         }
     }
 
-    var lineCounts = document.getElementById('line_counts')?.value || '5';
+    // ✅【MultiFree用の追加パラメータ】
+    var lineCounts = document.getElementById('line_counts')?.value || '1';
     var searchRadio = document.querySelector('input[name="search_area"]:checked');
-    var searchArea = searchRadio ? searchRadio.value : '有';
+    var searchArea = searchRadio ? searchRadio.value : '無';
     var infoRadio = document.querySelector('input[name="information_area"]:checked');
-    var informationArea = infoRadio ? infoRadio.value : '有';
+    var informationArea = infoRadio ? infoRadio.value : '無';
 
     if (typeof bridge === 'function') {
         bridge({
@@ -694,6 +620,7 @@ function loadColumnsFromDB() {
             input_rows: inputRows,
             preview_title: previewTitle,
             
+            // ✅【MultiFree用追加】
             line_counts: lineCounts,
             search_area: searchArea,
             information_area: informationArea,
@@ -735,11 +662,7 @@ function toggleFieldsByType() {
     var rowTable = document.getElementById('row-table-id') || document.getElementById('table_name')?.closest('tr');
     var rowDisplay = document.getElementById('row-display-label');
     var rowFilter = document.getElementById('row-column-filter');
-
-    var rowMfLineCounts = document.getElementById('row-multifree-line-counts');
-    var rowMfSearch = document.getElementById('row-multifree-search-area');
-    var rowMfInfo = document.getElementById('row-multifree-information-area');
-    var wrapperMfPreview = document.getElementById('multifree-preview-wrapper');
+    var rowMultiFree = document.getElementById('row-multifree-settings'); // ✅【追加】
 
     var layoutVertical = document.getElementById('container-layout-vertical');
     var layoutHorizontal = document.getElementById('container-layout-horizontal');
@@ -748,11 +671,12 @@ function toggleFieldsByType() {
     if (!typeSel || !container) return;
     var targetType = typeSel.value;
 
-    if (rowMfLineCounts) rowMfLineCounts.style.setProperty('display', 'none', 'important');
-    if (rowMfSearch) rowMfSearch.style.setProperty('display', 'none', 'important');
-    if (rowMfInfo) rowMfInfo.style.setProperty('display', 'none', 'important');
-    if (wrapperMfPreview) wrapperMfPreview.style.setProperty('display', 'none', 'important');
+    // 非表示リセット
+    if (rowMultiFree) rowMultiFree.style.setProperty('display', 'none', 'important');
 
+    // ==========================================
+    // 💡 Text Display または Style Display の場合
+    // ==========================================
     if (targetType === 'Text Display' || targetType === 'Style Display') {
         container.style.setProperty('display', 'block', 'important');
         
@@ -787,6 +711,9 @@ function toggleFieldsByType() {
         return;
     }
 
+    // ==========================================
+    // 通常の入力系パーツタイプ（Single/Multi等）および Multi Free の場合
+    // ==========================================
     var rowStyleSettings = document.getElementById('row-style-display-settings');
     if (rowStyleSettings) rowStyleSettings.style.setProperty('display', 'none', 'important');
 
@@ -805,7 +732,7 @@ function toggleFieldsByType() {
     if (targetType === 'Single Record Input' || targetType === 'Single Record Confirm' || 
         targetType === 'Multi Record Input' || targetType === 'Multi Record Confirm' || 
         targetType === 'Text Input' || targetType === 'Text Confirm' ||
-        targetType === 'Multi Free') {
+        targetType === 'Multi Free') { // ✅【Multi Free 追加】
         
         container.style.setProperty('display', 'block', 'important');
 
@@ -822,24 +749,20 @@ function toggleFieldsByType() {
             if (layoutTextInput) layoutTextInput.style.setProperty('display', 'block', 'important');
             
             syncTextInputRows();
-        } 
-        // 【Multi Free 専用制御】
-        else if (targetType === 'Multi Free') {
-            if (rowTable) rowTable.style.setProperty('display', 'none', 'important');
-            if (rowDisplay) rowDisplay.style.setProperty('display', 'none', 'important');
-            if (rowFilter) rowFilter.style.setProperty('display', 'none', 'important');
+        } else if (targetType === 'Multi Free') { // ✅【Multi Free 専用制御】
+            if (rowTable) rowTable.style.setProperty('display', 'table-row', 'important');
+            if (rowDisplay) rowDisplay.style.setProperty('display', 'table-row', 'important');
+            if (rowFilter) rowFilter.style.setProperty('display', 'table-row', 'important');
+            
             if (countRow) countRow.style.setProperty('display', 'none', 'important');
+            if (rowMultiFree) rowMultiFree.style.setProperty('display', 'table-row', 'important'); // 専用の列数/検索/詳細エリア行を表示
 
-            if (rowMfLineCounts) rowMfLineCounts.style.setProperty('display', 'table-row', 'important');
-            if (rowMfSearch) rowMfSearch.style.setProperty('display', 'table-row', 'important');
-            if (rowMfInfo) rowMfInfo.style.setProperty('display', 'table-row', 'important');
-            if (wrapperMfPreview) wrapperMfPreview.style.setProperty('display', 'block', 'important');
-
+            // カラムリストは水平レイアウト（テーブル形式）を使用
             if (layoutVertical) layoutVertical.style.setProperty('display', 'none', 'important');
-            if (layoutHorizontal) layoutHorizontal.style.setProperty('display', 'none', 'important');
+            if (layoutHorizontal) layoutHorizontal.style.setProperty('display', 'block', 'important');
             if (layoutTextInput) layoutTextInput.style.setProperty('display', 'none', 'important');
             
-            syncMultiFreePreviewTable();
+            syncDynamicInputRows();
         } else {
             if (rowTable) rowTable.style.setProperty('display', 'table-row', 'important');
             if (rowDisplay) rowDisplay.style.setProperty('display', 'table-row', 'important');
@@ -886,124 +809,6 @@ function toggleFieldsByType() {
     toggleColumnListVisibility();
 }
 
-function syncMultiFreePreviewTable() {
-    var thead = document.getElementById('multifree-preview-thead');
-    var tbody = document.getElementById('multifree-preview-tbody');
-    var buttonsContainer = document.getElementById('multifree-preview-buttons');
-    var lineCountsInput = document.getElementById('line_counts');
-    
-    if (!thead || !tbody || !buttonsContainer) return;
-
-    var cols = parseInt(lineCountsInput ? lineCountsInput.value : '5', 10);
-    if (isNaN(cols) || cols < 1) cols = 1;
-
-    // 検索エリアと詳細ボタンのオンオフ状態の取得
-    var searchRadio = document.querySelector('input[name="search_area"]:checked');
-    var hasSearch = (searchRadio ? searchRadio.value : '有') === '有';
-    var infoRadio = document.querySelector('input[name="information_area"]:checked');
-    var hasInfo = (infoRadio ? infoRadio.value : '有') === '有';
-
-    thead.innerHTML = '';
-
-    // 1. 【検索エリア行】「有り」の場合、ヘッダーの最上行(タイトル行の上)にプルダウンを配置
-    if (hasSearch) {
-        var trSearch = document.createElement('tr');
-        trSearch.style.height = '35px';
-        trSearch.style.borderBottom = '1px solid #000';
-        trSearch.style.backgroundColor = '#fff';
-
-        for (var j = 1; j <= cols; j++) {
-            var tdSearchCell = document.createElement('td');
-            tdSearchCell.style.cssText = 'padding: 4px; border-right: 1px solid #000; background-color: #fff; vertical-align: middle; height: 35px; box-sizing: border-box;';
-            if (j === cols) tdSearchCell.style.borderRight = 'none';
-
-            // 検索用のプルダウン (Text, Pulldown, Checkbox, Radiobutton)
-            var selectHtml = '<select style="width: 100%; height: 26px; font-size: 12px; border: 1px solid #000; background-color: #fff; box-sizing: border-box; padding: 0 2px;">' +
-                             '<option value="Text">Text</option>' +
-                             '<option value="Pulldown">Pulldown</option>' +
-                             '<option value="Checkbox">Checkbox</option>' +
-                             '<option value="Radiobutton">Radiobutton</option>' +
-                             '</select>';
-            tdSearchCell.innerHTML = selectHtml;
-            trSearch.appendChild(tdSearchCell);
-        }
-        thead.appendChild(trSearch);
-    }
-
-    // 2. 【タイトルヘッダー行】 (「タイトル1」〜「タイトルX」)
-    var trHead = document.createElement('tr');
-    trHead.style.height = '35px';
-    trHead.style.borderBottom = '2px solid #000';
-    trHead.style.backgroundColor = '#fff';
-
-    for (var j = 1; j <= cols; j++) {
-        var th = document.createElement('th');
-        th.style.cssText = 'padding: 5px 15px; font-weight: normal; color: #000; border-right: 1px solid #000; white-space: nowrap; min-width: 110px; width: 110px; position: relative;';
-        th.innerHTML = 'タイトル' + j + '<span style="position: absolute; right: 5px; top: 12px; font-size: 8px;">▼</span>';
-        if (j === cols) th.style.borderRight = 'none';
-        trHead.appendChild(th);
-    }
-    thead.appendChild(trHead);
-
-    // 3. 【データ入力行】の構築 (固定5行、すべてプルダウン無しのテキスト入力エリアスタイル)
-    tbody.innerHTML = '';
-    for (var i = 1; i <= 5; i++) {
-        var trBody = document.createElement('tr');
-        trBody.style.height = '35px';
-        trBody.style.borderBottom = (i === 5) ? 'none' : '1px solid #000';
-
-        for (var j = 1; j <= cols; j++) {
-            var td = document.createElement('td');
-            td.style.cssText = 'padding: 4px; border-right: 1px solid #000; background-color: #fff; vertical-align: middle; height: 35px; box-sizing: border-box;';
-            if (j === cols) td.style.borderRight = 'none';
-
-            // プルダウン無しの入力枠エリア
-            td.innerHTML = '<input type="text" disabled style="width: 100%; height: 25px; border: 1px solid #ccc; background-color: #fff; box-sizing: border-box; padding: 0 5px;" />';
-            trBody.appendChild(td);
-        }
-        tbody.appendChild(trBody);
-    }
-
-    // 4. 【右サイドボタンコンテナ】の構築 (高さのズレが起きないよう完全連動)
-    buttonsContainer.innerHTML = '';
-
-    // ① 検索ボタンの配置 (検索エリアが有りの場合、最上行の右隣に表示)
-    if (hasSearch) {
-        var searchBtnRow = document.createElement('div');
-        searchBtnRow.style.cssText = 'height: 36px; display: flex; align-items: center; padding-left: 5px;';
-        
-        var searchBtn = document.createElement('button');
-        searchBtn.type = 'button';
-        searchBtn.style.cssText = 'height: 25px; min-width: 50px; background-color: #4f81bd; border: 1px solid #385d8a; color: #fff; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;';
-        searchBtn.textContent = '検索';
-        searchBtnRow.appendChild(searchBtn);
-        buttonsContainer.appendChild(searchBtnRow);
-    }
-
-    // ② タイトルヘッダーの高さ分スペース確保 (35px + 境界線分)
-    var headerSpace = document.createElement('div');
-    headerSpace.style.height = '37px'; 
-    buttonsContainer.appendChild(headerSpace);
-
-    // ③ 詳細ボタン群の配置 (データ入力用の5行に対応して縦に配置)
-    for (var k = 1; k <= 5; k++) {
-        var detailBtnRow = document.createElement('div');
-        detailBtnRow.style.cssText = 'height: 36px; display: flex; align-items: center; padding-left: 5px;';
-
-        if (hasInfo) {
-            var detailBtn = document.createElement('button');
-            detailBtn.type = 'button';
-            detailBtn.style.cssText = 'height: 25px; min-width: 50px; background-color: #70ad47; border: 1px solid #5b8f39; color: #fff; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;';
-            detailBtn.textContent = '詳細';
-            detailBtnRow.appendChild(detailBtn);
-        } else {
-            // 詳細「無し」の時は透明スペースで高さを維持
-            detailBtnRow.style.height = '36px';
-        }
-        buttonsContainer.appendChild(detailBtnRow);
-    }
-}
-
 function toggleColumnListVisibility() {
     var wrapper = document.getElementById('column-list-wrapper');
     var tableSelect = document.getElementById('table_name');
@@ -1017,8 +822,7 @@ function toggleColumnListVisibility() {
         return;
     }
 
-    // Multi Free時はカラム表示用テーブルを完全非表示にする
-    if (targetType === 'Text Display' || targetType === 'Style Display' || targetType === 'Multi Free') {
+    if (targetType === 'Text Display' || targetType === 'Style Display') {
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
         return;
     }
@@ -1032,7 +836,7 @@ function toggleColumnListVisibility() {
     var filterEle = document.querySelector('input[name="column_filter"]:checked');
     var filterVal = filterEle ? filterEle.value : 'all';
 
-    if (targetType === 'Multi Record Input' || targetType === 'Multi Record Confirm') {
+    if (targetType === 'Multi Record Input' || targetType === 'Multi Record Confirm' || targetType === 'Multi Free') { // ✅【Multi Free 追加】
         var checkedIndexes = [];
         document.querySelectorAll('input[name="selected_columns_horizontal[]"]').forEach(function(chk) {
             if (chk.checked) checkedIndexes.push(chk.getAttribute('data-index'));
@@ -1073,7 +877,10 @@ function syncDynamicInputRows() {
     var targetType = typeSel ? typeSel.value : '';
     var tbody = document.getElementById('target-columns-tbody');
     
+    // ✅【Multi Free 用に処理を回避または制御】
+    // Multi Free の場合は、ヘッダー（行選択・項目名）のみがあればよく、ダイナミックデータ行は不要
     if (!tbody || (targetType !== 'Multi Record Input' && targetType !== 'Multi Record Confirm')) {
+        // Multi Free時など、生成されたダイナミック行がある場合は一度リセット
         document.querySelectorAll('.dynamic-data-row').forEach(function(el) { el.remove(); });
         return;
     }
@@ -1254,11 +1061,173 @@ function clearMainFormBackup() {
     sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    var isEditMode = document.getElementById('is_edit_mode_flag')?.value === '1';
+    
+    sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
+    
+    document.querySelectorAll('input[name="text_display_data_type"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            toggleTextDisplayRows();
+            saveMainForm();
+        });
+    });
+
+    document.getElementById('text_display_fixed_textarea')?.addEventListener('input', saveMainForm);
+    document.getElementById('style_display_input')?.addEventListener('input', saveMainForm);
+
+    if (!isEditMode) {
+        clearMainFormBackup();
+        toggleFieldsByType();
+        return;
+    }
+
+    var tableSelect = document.getElementById('table_name');
+    var verticalTable = document.getElementById('vertical-columns-table');
+    var hasRows = verticalTable && verticalTable.querySelectorAll('.vertical-row-item').length > 0;
+
+    if (tableSelect && tableSelect.value !== '' && !hasRows) {
+        loadColumnsFromDB();
+    }
+
+    var currentPartsId = document.getElementById('parts_id')?.value || '';
+    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var isIdMismatch = false;
+
+    if (sessionData) {
+        try {
+            var parsed = JSON.parse(sessionData);
+            if (parsed.parts_id && String(parsed.parts_id) !== String(currentPartsId)) {
+                isIdMismatch = true;
+            }
+        } catch(e) { isIdMismatch = true; }
+    }
+
+    if (!sessionData || isIdMismatch) {
+        sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
+        toggleFieldsByType();
+        
+        var pType = document.getElementById('parts_type')?.value;
+        if (pType === 'Multi Record Input' || pType === 'Multi Record Confirm') {
+            syncDynamicInputRows();
+        } else if (pType === 'Text Input' || pType === 'Text Confirm') {
+            syncTextInputRows();
+        }
+        return;
+    }
+
+    try {
+        var formData = JSON.parse(sessionData);
+        if (formData.parts_name !== undefined) document.getElementById('parts_name').value = formData.parts_name;
+        if (formData.parts_description !== undefined) document.getElementById('parts_description').value = formData.parts_description;
+        if (formData.parts_type !== undefined) document.getElementById('parts_type').value = formData.parts_type;
+        if (formData.table_name !== undefined && document.getElementById('table_name')) document.getElementById('table_name').value = formData.table_name; 
+        
+        if (formData.display_label) {
+            var rad = document.querySelector('input[name="display_label"][value="' + formData.display_label + '"]');
+            if(rad) { rad.checked = true; switchDisplayLabel(formData.display_label); }
+        }
+        if (formData.column_filter) {
+            var radFilter = document.querySelector('input[name="column_filter"][value="' + formData.column_filter + '"]');
+            if(radFilter) radFilter.checked = true;
+        }
+        if (formData.input_rows !== undefined && document.getElementById('input_rows')) document.getElementById('input_rows').value = formData.input_rows;
+        if (formData.preview_title !== undefined) document.getElementById('preview_title').value = formData.preview_title;
+    
+        // ✅【MultiFree用のバックアップ復元】
+        if (formData.parts_type === 'Multi Free') {
+            if (formData.line_counts !== undefined && document.getElementById('line_counts')) {
+                document.getElementById('line_counts').value = formData.line_counts;
+            }
+            if (formData.search_area) {
+                var radSearch = document.querySelector('input[name="search_area"][value="' + formData.search_area + '"]');
+                if (radSearch) radSearch.checked = true;
+            }
+            if (formData.information_area) {
+                var radInfo = document.querySelector('input[name="information_area"][value="' + formData.information_area + '"]');
+                if (radInfo) radInfo.checked = true;
+            }
+        }
+
+        // Text Display および Style Display のバックアップ復元ロジック
+        if (formData.parts_type === 'Text Display' || formData.parts_type === 'Style Display') {
+            var targetDataType = 'fixed';
+            if (formData.parts_type === 'Style Display') {
+                targetDataType = formData.style_display_data_type || 'fixed';
+                var styleInput = document.getElementById('style_display_input');
+                if (styleInput && formData.input_style !== undefined) {
+                    if (formData.input_style.includes('::')) {
+                        styleInput.value = formData.input_style.split('::')[0];
+                    } else {
+                        styleInput.value = formData.input_style;
+                    }
+                }
+            } else {
+                targetDataType = formData.input_style || 'fixed';
+            }
+            
+            if (!sessionData) {
+			    var dbInputStyle = <?= json_encode($input_style ?? '', JSON_UNESCAPED_UNICODE) ?>;
+			    var currentPartsType = document.getElementById('parts_type')?.value;
+			
+			    if (currentPartsType === 'Style Display' && dbInputStyle) {
+			        var styleInput = document.getElementById('style_display_input');
+			        if (styleInput) {
+			            styleInput.value = dbInputStyle.includes('::') ? dbInputStyle.split('::')[0] : dbInputStyle;
+			        }
+			    }
+			}
+            
+            var radDataType = document.querySelector('input[name="text_display_data_type"][value="' + targetDataType + '"]');
+            if (radDataType) radDataType.checked = true;
+            
+            var txtFixed = document.getElementById('text_display_fixed_textarea');
+            var txtFile = document.getElementById('text_display_file_input');
+    
+            if (txtFixed && formData.contents_fixed !== undefined) {
+                txtFixed.value = formData.contents_fixed;
+            }
+            if (txtFile && formData.contents_file !== undefined) {
+                txtFile.value = formData.contents_file;
+            }
+        } else if (formData.input_style !== undefined) {
+            var stylesArray = formData.input_style.split(',');
+            document.querySelectorAll('.single-input-style-select, .multi-input-style-select').forEach(function(sel) {
+                var idx = sel.getAttribute('data-index');
+                if (stylesArray[idx] !== undefined) sel.value = stylesArray[idx];
+            });
+        }
+    
+        if (formData.selected_columns && Array.isArray(formData.selected_columns)) {
+            var lowerSelected = formData.selected_columns.map(function(v) { return String(v).toLowerCase().trim(); });
+            document.querySelectorAll('input[name="selected_columns_vertical[]"], input[name="selected_columns_horizontal[]"]').forEach(function(chk) {
+                var val = String(chk.value).toLowerCase().trim();
+                chk.checked = lowerSelected.includes(val);
+            });
+        }
+        if (formData.textinput_configs && Array.isArray(formData.textinput_configs)) {
+            var jsonEle = document.getElementById('textinput_configs_json');
+            if (jsonEle) jsonEle.value = JSON.stringify(formData.textinput_configs);
+        }
+    } catch(e) {
+        console.error(e);
+    }
+    
+    toggleFieldsByType();
+    
+    var finalType = document.getElementById('parts_type')?.value;
+    if (finalType === 'Multi Record Input' || finalType === 'Multi Record Confirm') {
+        syncDynamicInputRows();
+    } else if (finalType === 'Text Input' || finalType === 'Text Confirm') {
+        syncTextInputRows();
+    }
+});
+
 function toggleTextDisplayRows() {
     var typeSel = document.getElementById('parts_type');
     if (!typeSel || (typeSel.value !== 'Text Display' && typeSel.value !== 'Style Display')) return;
 
-    var sessionDataCheck = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var sessionDataCheck = sessionStorage.getItem(window.STORAGE_KEY_MAIN_FORM || 'wwProject_main_form_backup');
     if (!sessionDataCheck) {
         var dbInputStyle = <?= json_encode($input_style ?? '', JSON_UNESCAPED_UNICODE) ?>;
         var targetDataType = 'fixed';
@@ -1435,7 +1404,7 @@ function toggleTextDisplayRows() {
         tgtInp.value = <?= json_encode($style_column ?? '', JSON_UNESCAPED_UNICODE) ?>;
     }
     
-    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
+    var sessionData = sessionStorage.getItem(window.STORAGE_KEY_MAIN_FORM || 'main_form_data');
     if (sessionData) {
         var formData = JSON.parse(sessionData);
         var condInp = document.getElementById('condition_input');
@@ -1513,16 +1482,13 @@ function saveMainForm() {
         formData.input_style = getInputStyleValue(); 
     }
     
-    // MultiFreeのセッション保存
+    // ✅【MultiFreeの一時保存（セッションバックアップ）対応】
     if (formData.parts_type === 'Multi Free') {
-        formData.line_counts = document.getElementById('line_counts')?.value || '5';
+        formData.line_counts = document.getElementById('line_counts')?.value || '1';
         var searchRadio = document.querySelector('input[name="search_area"]:checked');
-        formData.search_area = searchRadio ? searchRadio.value : '有';
+        formData.search_area = searchRadio ? searchRadio.value : '無';
         var infoRadio = document.querySelector('input[name="information_area"]:checked');
-        formData.information_area = infoRadio ? infoRadio.value : '有';
-
-        formData.contents = '';
-        formData.input_style = '';
+        formData.information_area = infoRadio ? infoRadio.value : '無';
     }
 
     var dispEle = document.querySelector('input[name="display_label"]:checked');
@@ -1557,218 +1523,11 @@ function syncTextDisplayContents() {
         val = document.getElementById('text_display_fixed_textarea')?.value || '';
     }
     
-    var hiddenContents = document.getElementById('contents_master');
+    var hiddenContents = document.getElementById('contents') || document.getElementById('contents_master') || document.querySelector('input[name="contents"]');
     if (hiddenContents) {
         hiddenContents.value = val;
     }
     
     saveMainForm();
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    var isEditMode = document.getElementById('is_edit_mode_flag')?.value === '1';
-    
-    document.querySelectorAll('input[name="text_display_data_type"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            toggleTextDisplayRows();
-            saveMainForm();
-        });
-    });
-
-    document.getElementById('text_display_fixed_textarea')?.addEventListener('input', saveMainForm);
-    document.getElementById('style_display_input')?.addEventListener('input', saveMainForm);
-
-    if (!isEditMode) {
-        clearMainFormBackup();
-        toggleFieldsByType();
-        return;
-    }
-
-    var tableSelect = document.getElementById('table_name');
-    var verticalTable = document.getElementById('vertical-columns-table');
-    var hasRows = verticalTable && verticalTable.querySelectorAll('.vertical-row-item').length > 0;
-
-    if (tableSelect && tableSelect.value !== '' && !hasRows) {
-        loadColumnsFromDB();
-    }
-
-    var currentPartsId = document.getElementById('parts_id')?.value || '';
-    var sessionData = sessionStorage.getItem(STORAGE_KEY_MAIN_FORM);
-    var isIdMismatch = false;
-    var formData = null;
-
-    if (sessionData) {
-        try {
-            formData = JSON.parse(sessionData);
-            if (formData && formData.parts_id && String(formData.parts_id) !== String(currentPartsId)) {
-                isIdMismatch = true;
-                formData = null;
-            }
-        } catch(e) { 
-            isIdMismatch = true; 
-            formData = null;
-        }
-    }
-
-    // 1. 通常ロード時（セッションデータが無い、またはパーツID不一致の場合）
-    if (!formData || isIdMismatch) {
-        sessionStorage.removeItem(STORAGE_KEY_MAIN_FORM);
-        
-        // Controllerから渡される配列「$checked_columns」を、JSの変数に直展開して紐付けます。
-        var phpCheckedColumns = [];
-        <?php if (!empty($checked_columns) && is_array($checked_columns)): ?>
-            phpCheckedColumns = <?= json_encode($checked_columns, JSON_UNESCAPED_UNICODE) ?>;
-        <?php endif; ?>
-
-        // 保存されていた選択済みのカラム名と一致するチェックボックスにチェック（checked）を入れる（大文字小文字・空白除去・デベロッパー名のブレに完全対応）
-        if (Array.isArray(phpCheckedColumns) && phpCheckedColumns.length > 0) {
-            var lowerChecked = phpCheckedColumns.map(function(v) { 
-                var strVal = String(v).toLowerCase().trim();
-                // 'developers::' プレフィックスのブレにも対応するため、単体物理名バージョンも用意
-                return strVal;
-            });
-
-            document.querySelectorAll('input[name="selected_columns_vertical[]"], input[name="selected_columns_horizontal[]"]').forEach(function(chk) {
-                var chkVal = String(chk.value).toLowerCase().trim();
-                
-                // カメルケース（デベロッパー用変数名）にマッピングされるパターン
-                var words = chkVal.replace(/_/g, ' ').split(' ');
-                for (var i = 1; i < words.length; i++) {
-                    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-                }
-                var camelName = words.join('');
-                var devName = "developers::" + camelName;
-
-                if (lowerChecked.includes(chkVal) || lowerChecked.includes(camelName.toLowerCase()) || lowerChecked.includes(devName.toLowerCase())) {
-                    chk.checked = true;
-                } else {
-                    chk.checked = false; // 初期ロード状態で不要なものがチェックされるのを防ぐ
-                }
-            });
-        }
-
-        toggleFieldsByType();
-        
-        var pType = document.getElementById('parts_type')?.value;
-        if ((pType === 'Multi Record Input' || pType === 'Multi Record Confirm') && typeof syncDynamicInputRows === 'function') {
-            syncDynamicInputRows();
-        } else if (pType === 'Text Input' || pType === 'Text Confirm') {
-            syncTextInputRows();
-        } else if ((pType === 'Multi Free') && typeof syncMultiFreePreviewTable === 'function') {
-            syncMultiFreePreviewTable();
-        }
-        
-        return;
-    }
-
-    // 2. ブラウザバック等の有効なセッションバックアップデータが存在する場合の復元
-    try {
-        if (formData.parts_name !== undefined) document.getElementById('parts_name').value = formData.parts_name;
-        if (formData.parts_description !== undefined) document.getElementById('parts_description').value = formData.parts_description;
-        if (formData.parts_type !== undefined) document.getElementById('parts_type').value = formData.parts_type;
-        if (formData.table_name !== undefined && document.getElementById('table_name')) document.getElementById('table_name').value = formData.table_name; 
-        
-        if (formData.display_label) {
-            var rad = document.querySelector('input[name="display_label"][value="' + formData.display_label + '"]');
-            if(rad) { rad.checked = true; switchDisplayLabel(formData.display_label); }
-        }
-        if (formData.column_filter) {
-            var radFilter = document.querySelector('input[name="column_filter"][value="' + formData.column_filter + '"]');
-            if(radFilter) radFilter.checked = true;
-        }
-        if (formData.input_rows !== undefined && document.getElementById('input_rows')) document.getElementById('input_rows').value = formData.input_rows;
-        if (formData.preview_title !== undefined) document.getElementById('preview_title').value = formData.preview_title;
-    
-        // MultiFree用データの復元
-        if (formData.parts_type === 'Multi Free') {
-            if (formData.line_counts !== undefined && document.getElementById('line_counts')) {
-                document.getElementById('line_counts').value = formData.line_counts;
-            }
-            if (formData.search_area) {
-                var radSearch = document.querySelector('input[name="search_area"][value="' + formData.search_area + '"]');
-                if (radSearch) radSearch.checked = true;
-            }
-            if (formData.information_area) {
-                var radInfo = document.querySelector('input[name="information_area"][value="' + formData.information_area + '"]');
-                if (radInfo) radInfo.checked = true;
-            }
-        }
-
-        if (formData.parts_type === 'Text Display' || formData.parts_type === 'Style Display') {
-            var targetDataType = 'fixed';
-            if (formData.parts_type === 'Style Display') {
-                targetDataType = formData.style_display_data_type || 'fixed';
-                var styleInput = document.getElementById('style_display_input');
-                if (styleInput && formData.input_style !== undefined) {
-                    if (formData.input_style.includes('::')) {
-                        styleInput.value = formData.input_style.split('::')[0];
-                    } else {
-                        styleInput.value = formData.input_style;
-                    }
-                }
-            } else {
-                targetDataType = formData.input_style || 'fixed';
-            }
-            
-            var radDataType = document.querySelector('input[name="text_display_data_type"][value="' + targetDataType + '"]');
-            if (radDataType) radDataType.checked = true;
-            
-            var txtFixed = document.getElementById('text_display_fixed_textarea');
-            var txtFile = document.getElementById('text_display_file_input');
-    
-            if (txtFixed && formData.contents_fixed !== undefined) {
-                txtFixed.value = formData.contents_fixed;
-            }
-            if (txtFile && formData.contents_file !== undefined) {
-                txtFile.value = formData.contents_file;
-            }
-        } else if (formData.input_style !== undefined && formData.parts_type !== 'Multi Free') {
-            var stylesArray = formData.input_style.split(',');
-            document.querySelectorAll('.single-input-style-select, .multi-input-style-select').forEach(function(sel) {
-                var idx = sel.getAttribute('data-index');
-                if (idx !== null && stylesArray[idx] !== undefined) {
-                    sel.value = stylesArray[idx];
-                }
-            });
-        }
-    
-        if (formData.selected_columns && Array.isArray(formData.selected_columns)) {
-            var lowerSelected = formData.selected_columns.map(function(v) { return String(v).toLowerCase().trim(); });
-            document.querySelectorAll('input[name="selected_columns_vertical[]"], input[name="selected_columns_horizontal[]"]').forEach(function(chk) {
-                var val = String(chk.value).toLowerCase().trim();
-                
-                // カメルケース / developers:: プレフィックスの表記のブレもセッション復元用に考慮
-                var words = val.replace(/_/g, ' ').split(' ');
-                for (var i = 1; i < words.length; i++) {
-                    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-                }
-                var camelName = words.join('');
-                var devName = "developers::" + camelName;
-
-                if (lowerSelected.includes(val) || lowerSelected.includes(camelName.toLowerCase()) || lowerSelected.includes(devName.toLowerCase())) {
-                    chk.checked = true;
-                } else {
-                    chk.checked = false;
-                }
-            });
-        }
-        if (formData.textinput_configs && Array.isArray(formData.textinput_configs)) {
-            var jsonEle = document.getElementById('textinput_configs_json');
-            if (jsonEle) jsonEle.value = JSON.stringify(formData.textinput_configs);
-        }
-    } catch(e) {
-        console.error("セッション復元処理中にエラーが発生しました:", e);
-    }
-    
-    toggleFieldsByType();
-    
-    var finalType = document.getElementById('parts_type')?.value;
-    if ((finalType === 'Multi Record Input' || finalType === 'Multi Record Confirm') && typeof syncDynamicInputRows === 'function') {
-        syncDynamicInputRows();
-    } else if (finalType === 'Text Input' || finalType === 'Text Confirm') {
-        syncTextInputRows();
-    } else if ((finalType === 'Multi Free') && typeof syncMultiFreePreviewTable === 'function') {
-        syncMultiFreePreviewTable();
-    }
-});
 </script>
