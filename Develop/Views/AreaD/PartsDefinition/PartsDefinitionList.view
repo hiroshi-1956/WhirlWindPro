@@ -1,28 +1,27 @@
 <style>
 /* 1. 全体コンテナ */
 .db-list-container {
-    width: 100%;       /* 画面幅にフィット */
-    height: 99%;       /* 高さを画面の約2/3に固定 */
-    margin: 0px auto;  /* 中央配置：上下に0px、左右はautoで中央へ */
+    width: 100%;
+    height: 99%;
+    margin: 0px auto;
     display: flex;
     flex-direction: column;
     background-color: #ffffff; 
     color: #333;
-    font-size: 16px;    /* 全体のフォントサイズを大きく(14->16) */
+    font-size: 16px;
     border: 1px solid #ccc;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 少し浮き出させて中央感を強調 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* 2. 先頭：タイトルエリア */
 .db-main-title {
-    padding: 10px 10px; /* 余白も少し広く */
-    font-size: 1.00em;  /* さらに大きく */
+    padding: 10px 10px;
+    font-size: 1.00em;
     font-weight: bold;
-    /* エリアCと同じ背景色(#2c3e50)と文字色(#ecf0f1)に設定 */
     background-color: #2c3e50; 
     color: #ecf0f1;
     border-bottom: 1px solid #1a252f;
-    text-align: center; /* タイトルは中央に */
+    text-align: center;
 }
 
 /* 3. アクションエリア */
@@ -43,7 +42,6 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-    /* 全体のフォントサイズを 1.1em から 0.95em に微調整 */
     font-size: 0.95em; 
 }
 
@@ -55,14 +53,14 @@
 
 .list-label {
     padding: 10px 15px;
-    font-size: 0.85em;  /* 大きく */
+    font-size: 0.85em;
     color: #777;
     font-weight: bold;
     background-color: #f9f9f9;
 }
 
 .db-table-card {
-    padding: 8px 15px;  /* 上下の余白を縮小し、カード間を配置 */
+    padding: 8px 15px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
     background-color: #ffffff;
@@ -76,7 +74,7 @@
     font-family: 'Consolas', monospace;
     font-weight: bold;
     color: #000;
-    font-size: 1.1em;   /* パーツ名を強調 */
+    font-size: 1.1em;
     display: block;
     margin-bottom: 4px;
 }
@@ -85,19 +83,19 @@
     font-family: 'Consolas', monospace;
     font-weight: bold;
     color: #000;
-    font-size: 0.95em;  /* 文字サイズを1回り小さく調整 */
+    font-size: 0.95em;
     display: block;
     margin-bottom: 2px;
 }
 
-/* 5. 💡 パーツサイズを表す専用のグリッドバッジ */
+/* 5. 💡 パーツサイズを表すバッジ */
 .table-type-badge {
     font-size: 0.75em;
     padding: 2px 6px;
     border-radius: 3px;
     color: #fff;
     font-weight: bold;
-    margin-right: 14px; /* バッジの右側に隙間を作り、説明文を右にずらす */
+    margin-right: 14px;
     vertical-align: middle;
     display: inline-block;
 }
@@ -124,51 +122,27 @@
         <div class="list-label">登録済み画面パーツ定義一覧</div>
         
         <?php 
-        // 💡 コントローラーから渡されたパーツ一覧データがあるかチェック
         if (!empty($parts_list) && is_array($parts_list)): 
-            
-            // 💡 種類(parts_type)ごとの固定カラーマップを定義 (重ならないように厳選した美しいカラーコード)
-            $colorMap = [
-                'SingleRecordInput'   => '#007bff', // 鮮やかな青
-                'SingleRecordConfirm' => '#fd7e14', // 温かみのあるオレンジ
-                'SingleRecordDetail'  => '#17a2b8', // 爽やかなシアン
-                'SingleRecordSave'    => '#28a745', // 安心感のある緑
-                
-                'MultiRecordInput'    => '#6610f2', // 高貴な紫
-                'MultiRecordConfirm'  => '#e83e8c', // 鮮やかなピンク
-                'MultiRecordList'     => '#6f42c1; border: 1px solid #522797', // 深いパープル
-                
-                'Grid'                => '#20c997', // エメラルドグリーン
-                'Form'                => '#ffc107; color: #333;', // 警告にならない綺麗な黄色(文字は黒)
-                'Filter'              => '#495057', // ダークグレー
-            ];
-
             foreach ($parts_list as $parts): 
-                // 各行のデータを安全にエスケープして取得
                 $partsId   = htmlspecialchars($parts['parts_id'] ?? '', ENT_QUOTES);
                 $partsName = htmlspecialchars($parts['parts_name'] ?? '', ENT_QUOTES);
                 $partsType = htmlspecialchars($parts['parts_type'] ?? '', ENT_QUOTES);
                 $desc      = htmlspecialchars($parts['parts_description'] ?? '', ENT_QUOTES);
-
-                // 💡 色決定ロジック
-                if (isset($colorMap[$partsType])) {
-                    // マップに登録されている種類なら、その固定色を使用
-                    $badgeStyle = "background-color: " . $colorMap[$partsType] . ";";
-                } else {
-                    // 💡 もしマップにない新しい種類が来たら、文字列から被らないユニークな色を自動生成
-                    $hash = md5($partsType);
-                    // 文字列のハッシュ値からRGB値を生成 (極端に暗い・明るい色を避けるため100〜220の範囲に調整)
-                    $r = hexdec(substr($hash, 0, 2)) % 120 + 100;
-                    $g = hexdec(substr($hash, 2, 2)) % 120 + 100;
-                    $b = hexdec(substr($hash, 4, 2)) % 120 + 100;
-                    $badgeStyle = "background-color: rgb($r, $g, $b); color: #fff;";
-                }
+                
+                // 💡 先頭文字から色を生成するロジック
+                // 先頭1文字の文字コードを取得し、それを色相(Hue)に変換します
+                $firstChar = mb_substr($partsType, 0, 1, 'UTF-8');
+                $code = mb_ord($firstChar, 'UTF-8');
+                // 137は素数で、色相をランダムに散らすための係数です
+                $hue = ($code * 137) % 360; 
+                // 彩度60%、輝度45%で視認性の高い色を作ります
+                $style = "background-color: hsl($hue, 60%, 45%);";
         ?>
             <div class="db-table-card" onclick="bridge({ code: 'PartsDefinition/editParts', parts_id: '<?php echo $partsId; ?>' });">
                 <span class="physical-name"><?php echo $partsName; ?></span>
                 <span class="logical-name">
                     <?php if ($partsType !== ''): ?>
-                        <span class="table-type-badge" style="<?php echo $badgeStyle; ?>"><?php echo $partsType; ?></span>
+                        <span class="table-type-badge" style="<?php echo $style; ?>"><?php echo $partsType; ?></span>
                     <?php endif; ?>
                     
                     <?php echo $desc ?: '（説明なし）'; ?>
