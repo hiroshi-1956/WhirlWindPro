@@ -29,7 +29,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                         style_condition,
                         style_column,
                         search_area,
-                        detail_area
+                        detail_button
                     FROM
                         m_screenparts
                     WHERE
@@ -143,13 +143,13 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
         }
         
         try {
-            $checkedColumnsJson = '';
-            if (!empty($data['selected_columns'])) {
-                if (is_array($data['selected_columns'])) {
-                    $checkedColumnsJson = implode(',', $data['selected_columns']);
-                } else {
-                    $checkedColumnsJson = (string)$data['selected_columns'];
-                }
+            // ★ コントローラーから渡されるキー名 'checked_columns_json'（または互換として 'selected_columns'）を正しく受け取る
+            $rawChecked = $data['checked_columns_json'] ?? $data['selected_columns'] ?? '';
+            
+            if (is_array($rawChecked)) {
+                $checkedColumnsJson = implode(',', $rawChecked);
+            } else {
+                $checkedColumnsJson = (string)$rawChecked;
             }
             $checkedColumnsJson = trim($checkedColumnsJson, " \t\n\r\0\x0B,");
             
@@ -166,12 +166,12 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
             $contents   = $data['contents'] ?? null;
             $style_condition = $data['style_condition'] ?? null;
             $style_column    = $data['style_column'] ?? null;
-            $search_area     = (int)($data['search_area'] ?? 0);
-            $detail_area     = (int)($data['detail_area'] ?? 0);
             
-            $this->logger->debug("PartsDefinitionModel::saveParts() contents : {$contents}");
-            $this->logger->debug("PartsDefinitionModel::saveParts() style_condition : {$style_condition}");
-            $this->logger->debug("PartsDefinitionModel::saveParts() style_column : {$style_column}");
+            $search_area   = $data['search_area'] ?? null;
+            $detail_button = $data['detail_button'] ?? null;
+            
+            $this->logger->debug("PartsDefinitionModel::saveParts() search_area : {$search_area}");
+            $this->logger->debug("PartsDefinitionModel::saveParts() detail_button : {$detail_button}");
             
             if (empty($parts_id) || $parts_id === '0') {
                 $sql = "INSERT INTO m_screenparts (
@@ -190,7 +190,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             style_condition,
                             style_column,
                             search_area,
-                            detail_area
+                            detail_button
                         ) VALUES (
                             :project_id,
                             :parts_name,
@@ -207,7 +207,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             :style_condition,
                             :style_column,
                             :search_area,
-                            :detail_area
+                            :detail_button
                         )";
                 $this->logger->debug("PartsDefinitionModel::saveParts() {$sql}");
                 $this->logger->debug("PartsDefinitionModel::saveParts() INSERTを実行します。");
@@ -228,8 +228,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
-                $stmt->bindValue(':search_area', $search_area, \PDO::PARAM_INT);
-                $stmt->bindValue(':detail_area', $detail_area, \PDO::PARAM_INT);
+                $stmt->bindValue(':search_area', $search_area, $search_area === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':detail_button', $detail_button, $detail_button === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->execute();
                 $parts_id = $this->db->lastInsertId();
@@ -250,7 +250,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             style_condition = :style_condition,
                             style_column = :style_column,
                             search_area = :search_area,
-                            detail_area = :detail_area
+                            detail_button = :detail_button
                         WHERE
                             project_id = :project_id AND parts_id = :parts_id";
                 
@@ -272,8 +272,8 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
-                $stmt->bindValue(':search_area', $search_area, \PDO::PARAM_INT);
-                $stmt->bindValue(':detail_area', $detail_area, \PDO::PARAM_INT);
+                $stmt->bindValue(':search_area', $search_area, $search_area === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':detail_button', $detail_button, $detail_button === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 
                 $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);
                 $stmt->bindValue(':parts_id', $parts_id, \PDO::PARAM_STR);
@@ -292,6 +292,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
      * IDを指定して特定の画面パーツ情報を1件取得する
      */
     public function getPartsById($projectId, $partsId) {
+        // 最初に提示いただいたオリジナルのロジックを100%完全に復元
         $allParts = $this->getAllPartsList($projectId);
         foreach ($allParts as $parts) {
             if ($parts['parts_id'] == $partsId) {

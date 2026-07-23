@@ -1,0 +1,422 @@
+<?php
+/**
+ * multi_record_input.view (Multi Record Input / 完全連動版・横方向グリッド形式)
+ */
+if (!function_exists('convertToDeveloperVariableNamePHP')) {
+    function convertToDeveloperVariableNamePHP($str) {
+        if (empty($str)) return '';
+        $camel = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($str))));
+        $camel = lcfirst($camel);
+        return 'developers::' . $camel;
+    }
+}
+
+$textinput_configs = $textinput_configs ?? [];
+$current_display   = $display_label ?? 'physical';
+$current_filter    = $column_filter ?? 'all';
+$input_rows_val    = max(1, (int)($input_rows ?? 1));
+?>
+
+<input type="hidden" id="is_edit_mode_flag" value="<?= !empty($is_edit) ? '1' : '0'; ?>">
+<input type="hidden" id="grids_config_json" name="grids_config_json" value="<?= htmlspecialchars($grids_config_json ?? '{}', ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="textinput_configs_json" value="<?= htmlspecialchars(json_encode($textinput_configs, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
+
+<div id="multi-record-input-fields-container" style="display: block; margin-top: 0;">
+    <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
+        
+        <!-- 参照テーブル -->
+        <tr id="row-table-id" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">参照テーブル</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; width: 520px; height: 30px; border: 2px solid #000; background: #fff; box-sizing: border-box; padding: 0;">
+                    <select id="table_name" name="table_name" style="width: 100%; height: 100%; border: none; background: transparent; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="loadColumnsFromDB(); saveMainForm();">
+                        <option value="">-- テーブルを選択してください --</option>
+                        <?php if (!empty($m_tables) && is_array($m_tables)): ?>
+                            <?php foreach ($m_tables as $tbl): ?>
+                                <?php 
+                                    $t_id   = $tbl['table_id'] ?? ''; 
+                                    $p_name = $tbl['physical_name'] ?? '';
+                                    $l_name = $tbl['logical_name'] ?? '';
+                                    $display_text = $p_name . ($l_name ? " ({$l_name})" : "");
+                                    
+                                    $selected = '';
+                                    if (isset($table_name) && ((string)$table_name === (string)$t_id || (string)$table_name === (string)$p_name)) {
+                                        $selected = 'selected';
+                                    }
+                                ?>
+                                <option value="<?= htmlspecialchars($p_name, ENT_QUOTES, 'UTF-8') ?>" data-id="<?= htmlspecialchars($t_id, ENT_QUOTES, 'UTF-8') ?>" <?= $selected ?>>
+                                    <?= htmlspecialchars($display_text, ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </td>
+        </tr>
+        
+        <!-- 表示項目選択（物理名 ⇔ 日本語名） -->
+        <tr id="row-display-label" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示項目選択</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="display_label" value="physical" <?= $current_display === 'physical' ? 'checked' : '' ?> onchange="switchDisplayLabel('physical'); saveMainForm();"> 物理名
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="display_label" value="logical" <?= $current_display === 'logical' ? 'checked' : '' ?> onchange="switchDisplayLabel('logical'); saveMainForm();"> 日本語名
+                    </label>
+                </div>
+            </td>
+        </tr>
+        
+        <!-- 表示カラム（全カラム ⇔ 表示カラムだけ） -->
+        <tr id="row-column-filter" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示カラム</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="column_filter" value="all" <?= $current_filter === 'all' ? 'checked' : '' ?> onchange="toggleColumnListVisibility(); saveMainForm();"> 全カラム
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="column_filter" value="selected" <?= $current_filter === 'selected' ? 'checked' : '' ?> onchange="toggleColumnListVisibility(); saveMainForm();"> 表示カラムだけ
+                    </label>
+                </div>
+            </td>
+        </tr>
+        
+        <!-- 入力行数 -->
+        <tr id="live-column-count-row" style="height: 40px;">
+            <th id="column-count-label" style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">入力行数</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div id="wrapper-multi-rows" style="display: flex; align-items: center; gap: 8px; padding-left: 0;">
+                    <input type="number" id="input_rows" name="input_rows" min="1" max="99" style="width: 60px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; font-weight: bold; text-align: center;" value="<?= htmlspecialchars($input_rows_val, ENT_QUOTES, 'UTF-8'); ?>" oninput="syncDynamicInputRows(); saveMainForm();">
+                    <span style="font-size: 14px; font-weight: bold; color: #000;">行</span>
+                </div>
+            </td>
+        </tr>
+
+        <!-- 画面タイトル -->
+        <tr id="row-preview-title" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面タイトル</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="preview_title" name="preview_title" style="width: 520px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($preview_title ?? '', ENT_QUOTES, 'UTF-8'); ?>" oninput="saveMainForm();">
+            </td>
+        </tr>
+    </table>
+
+    <!-- カラムが横向き（列方向）に並ぶグリッド設定エリア（テーブル表示制御と完全連動） -->
+    <div id="column-list-wrapper" style="display: <?= !empty($table_name) ? 'block' : 'none'; ?>; margin-top: 15px; padding-left: 120px; box-sizing: border-box;">		            
+        <div id="container-layout-horizontal" style="width: 780px; display: block; border: 2px solid #000; background-color: #fff; overflow-x: auto;">
+            <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff; border: 2px solid #000;">
+                <thead>
+                    <!-- 第1行：選択（チェックボックスが横に並ぶ） -->
+                    <tr style="height: 36px; border-bottom: 1px solid #000;">
+                        <th style="width: 80px; text-align: center; border-right: 2px solid #000; background-color: #f2f2f2; font-weight: bold; vertical-align: middle;">選択</th>
+                        <?php if (!empty($m_partsinfo_columns)): ?>
+                            <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
+                                <?php 
+                                    $p_col = $col['physical_name'] ?? ''; 
+                                    $isChecked = false;
+                                    if (empty($is_edit)) {
+                                        $isChecked = true;
+                                    } else if (!empty($checked_columns) && is_array($checked_columns)) {
+                                        $lower_checked = array_map('strtolower', $checked_columns);
+                                        if (in_array(strtolower($p_col), $lower_checked)) {
+                                            $isChecked = true;
+                                        }
+                                    }
+                                ?>
+                                <th class="vertical-row-item" data-index="<?= $idx ?>" style="min-width: 130px; text-align: center; border-right: 1px solid #ccc; vertical-align: middle; background-color: #fff;">
+                                    <input type="checkbox" name="selected_columns_horizontal[]" value="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-index="<?= $idx ?>" onchange="syncCheckboxes('horizontal', <?= $idx ?>); toggleColumnListVisibility(); saveMainForm();" <?= $isChecked ? 'checked' : '' ?> style="transform: scale(1.1); cursor: pointer;">
+                                </th>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tr>
+                    <!-- 第2行：項目名（物理名・日本語名が横に並ぶ・JSの切り替え対象クラス付与） -->
+                    <tr style="height: 36px; border-bottom: 2px solid #000;">
+                        <th style="width: 80px; text-align: center; border-right: 2px solid #000; background-color: #f2f2f2; font-weight: bold; vertical-align: middle;">項目名</th>
+                        <?php if (!empty($m_partsinfo_columns)): ?>
+                            <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
+                                <?php 
+                                    $p_col = $col['physical_name'] ?? ''; 
+                                    $l_col = $col['logical_name'] ?? ''; 
+                                    if (empty($l_col) || $l_col === '&nbsp;') { $l_col = $p_col; }
+                                    $middle_label = ($current_display === 'physical') ? $p_col : $l_col;
+                                ?>
+                                <th class="vertical-row-item vertical-label-cell" data-index="<?= $idx ?>" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="min-width: 130px; text-align: center; padding: 0 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; vertical-align: middle; white-space: nowrap; background-color: #f9f9f9;">
+                                    <?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>
+                                </th>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody id="dynamic-input-rows-tbody">
+                    <!-- 第3行以降：入力行（指定された入力行数分だけ動的にプレビュー生成） -->
+                    <?php for ($r = 1; $r <= $input_rows_val; $r++): ?>
+                        <tr class="dynamic-input-row" style="height: 40px; border-bottom: 1px solid #ccc;">
+                            <td style="width: 80px; text-align: center; border-right: 2px solid #000; background-color: #f2f2f2; font-weight: bold; vertical-align: middle;"><?= $r ?></td>
+                            <?php if (!empty($m_partsinfo_columns)): ?>
+                                <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
+                                    <td class="vertical-row-item" data-index="<?= $idx ?>" style="min-width: 130px; text-align: center; padding: 4px 8px; border-right: 1px solid #ccc; vertical-align: middle;">
+                                        <div style="width: 100%; height: 26px; border: 1px dashed #ccc; background: #fff; box-sizing: border-box;"></div>
+                                    </td>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// 1. 表示項目選択（物理名 ⇔ 日本語名 切り替え）
+// ==========================================
+function switchDisplayLabel(type) {
+    console.log('[JS Debug] switchDisplayLabel to:', type);
+    const rows = document.querySelectorAll('.vertical-row-item');
+    
+    rows.forEach(row => {
+        const labelCell = row.querySelector('.vertical-label-cell');
+        if (!labelCell) return;
+
+        const physicalName = labelCell.getAttribute('data-physical');
+        const logicalName = labelCell.getAttribute('data-logical');
+
+        if (type === 'physical') {
+            labelCell.textContent = physicalName;
+        } else {
+            labelCell.textContent = (logicalName && logicalName !== '&nbsp;') ? logicalName : physicalName;
+        }
+    });
+}
+
+// ==========================================
+// 2. 表示カラム（全カラム ⇔ 表示カラムだけ 切り替え）
+// ==========================================
+function toggleColumnListVisibility() {
+    const filterRadio = document.querySelector('input[name="column_filter"]:checked');
+    const filterType = filterRadio ? filterRadio.value : 'all';
+    
+    console.log('[JS Debug] toggleColumnListVisibility mode:', filterType);
+    const rows = document.querySelectorAll('.vertical-row-item');
+
+    rows.forEach(row => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+
+        if (filterType === 'selected') {
+            if (checkbox.checked) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        } else {
+            row.style.display = '';
+        }
+    });
+}
+
+// ==========================================
+// 3. チェックボックス同期用プレースホルダー
+// ==========================================
+function syncCheckboxes(type, index) {
+    console.log('[JS Debug] syncCheckboxes called for index:', index);
+}
+
+// ==========================================
+// 4. 参照テーブル変更時にサーバーからカラムを取得して再描画
+// ==========================================
+function loadColumnsFromDB() {
+    const tableSelect = document.getElementById('table_name');
+    const selectedTableName = tableSelect.value;
+    const columnListWrapper = document.getElementById('column-list-wrapper');
+    const verticalTable = document.getElementById('vertical-columns-table');
+
+    // 新規登録モードかチェック
+    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
+
+    // 編集モードのときのみ、テーブル変更時に他項目の値をバックアップする
+    if (isEditMode) {
+        const formInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+        formInputs.forEach((el, idx) => {
+            const key = 'backup_input_' + (el.id || el.name || idx);
+            if (el.value) {
+                localStorage.setItem(key, el.value);
+            }
+        });
+    }
+
+    if (!selectedTableName) {
+        columnListWrapper.style.display = 'none';
+        verticalTable.innerHTML = '';
+        if (typeof saveMainForm === 'function') saveMainForm();
+        return;
+    }
+
+    console.log('[JS Debug] Loading columns for table:', selectedTableName);
+
+    if (typeof window.bridge === 'function') {
+        window.bridge({
+            code: 'PartsDefinition/getColumns',
+            table_name: selectedTableName
+        }, function(response) {
+            if (response && response.columns) {
+                renderVerticalColumns(response.columns);
+                columnListWrapper.style.display = 'block';
+                toggleColumnListVisibility();
+
+                // 編集モードのときのみバックアップから値を復元する
+                if (isEditMode) {
+                    const currentInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                    currentInputs.forEach((el, idx) => {
+                        const key = 'backup_input_' + (el.id || el.name || idx);
+                        const savedVal = localStorage.getItem(key);
+                        if (savedVal && !el.value) {
+                            el.value = savedVal;
+                        }
+                    });
+                }
+
+                if (typeof saveMainForm === 'function') saveMainForm();
+            }
+        });
+    }
+}
+
+// ==========================================
+// 5. カラム一覧の動的HTML生成
+// ==========================================
+function renderVerticalColumns(columns) {
+    const verticalTable = document.getElementById('vertical-columns-table');
+    const displayLabelRadio = document.querySelector('input[name="display_label"]:checked');
+    const isPhysical = displayLabelRadio ? displayLabelRadio.value === 'physical' : true;
+
+    let html = '';
+    columns.forEach((col, idx) => {
+        const pCol = col.physical_name || '';
+        let lCol = col.logical_name || '';
+        if (!lCol) { lCol = pCol; }
+        const middleLabel = isPhysical ? pCol : lCol;
+
+        html += `
+            <tr class="vertical-row-item" data-index="${idx}" style="height: 40px; border-bottom: 1px solid #ccc;">
+                <td style="width: 50px; text-align: center; border-right: 1px solid #ccc; vertical-align: middle; background-color: #fafafa;">
+                    <input type="checkbox" name="selected_columns_vertical[]" value="${escapeHtml(pCol)}" data-index="${idx}" onchange="syncCheckboxes('vertical', ${idx}); toggleColumnListVisibility(); saveMainForm();" checked style="transform: scale(1.1); cursor: pointer;">
+                </td>
+                <td class="vertical-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="width: 200px; padding: 0 10px; font-weight: bold; color: #000; border-right: 1px solid #ccc; vertical-align: middle; white-space: nowrap;">
+                    ${escapeHtml(middleLabel)}
+                </td>
+                <td style="padding: 0 10px; width: 220px; vertical-align: middle;">
+                    <select class="multi-input-style-select" data-index="${idx}" style="width: 100%; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 14px; cursor: pointer;" onchange="saveMainForm();">
+                        <option value="" selected>-- 処理を選択してください --</option>
+                        <option value="text">text</option>
+                        <option value="pulldown">pulldown</option>
+                        <option value="radiobox">radiobox</option>
+                        <option value="checkbox">checkbox</option>
+                        <option value="button">button</option>
+                    </select>
+                </td>
+            </tr>
+        `;
+    });
+
+    verticalTable.innerHTML = html;
+}
+
+// 簡易エスケープ関数
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&'`<>"]/g, function(match) {
+        return {
+            '&': '&amp;',
+            "'": '&#x27;',
+            '`': '&#x60;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;'
+        }[match];
+    });
+}
+
+// ==========================================
+// 6. ページ読み込み時の初期化処理
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
+
+    if (!isEditMode) {
+        // ★ 新規画面パーツ登録画面を開いたときは、過去のLocalStorageのバックアップを完全にクリアする
+        const formInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+        formInputs.forEach((el, idx) => {
+            const key = 'backup_input_' + (el.id || el.name || idx);
+            localStorage.removeItem(key);
+        });
+    } else {
+        // 編集モードのときのみ、バックアップがあれば復元を試みる
+        const currentInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+        currentInputs.forEach((el, idx) => {
+            const key = 'backup_input_' + (el.id || el.name || idx);
+            const savedVal = localStorage.getItem(key);
+            if (savedVal && !el.value) {
+                el.value = savedVal;
+            }
+        });
+    }
+
+    toggleColumnListVisibility();
+});
+
+function updateSerializedData() {
+    const rows = document.querySelectorAll('.vertical-row-item'); // 各行のラッパーやtr要素を指定
+    const checkedColumns = [];
+    const inputStyles = [];
+
+    // もし上記クラス名が異なる場合は、チェックボックスがある行の要素構造に合わせて調整してください
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="column_checkbox[]"], .column-checkbox'); 
+
+    // 代替として、テーブルの行単位で安全に取得するループ
+    const tableRows = document.querySelectorAll('#vertical-columns-table tr, .vertical-row-item');
+    
+    tableRows.forEach(row => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        // 入力スタイルのセレクトボックスや入力要素を取得
+        const styleSelect = row.querySelector('select.multi-input-style-select, select[name*="input_style"], input[name*="input_style"]');
+
+        if (checkbox && checkbox.checked) {
+            // カラム名（チェックボックスのvalue、または行のデータ）を保持
+            checkedColumns.push(checkbox.value);
+            // 対応する入力スタイルの値を取得
+            inputStyles.push(styleSelect ? styleSelect.value : 'text');
+        }
+    });
+
+    // 隠しフィールドへセット
+    const checkedJsonEl = document.getElementById('checked_columns_json');
+    if (checkedJsonEl) {
+        checkedJsonEl.value = checkedColumns.join(','); // カマ区切り文字列、または JSON.stringify(checkedColumns)
+    }
+
+    const inputStyleEl = document.getElementById('input_style_hidden');
+    if (inputStyleEl) {
+        inputStyleEl.value = inputStyles.join(','); // カンマ区切り
+    }
+
+    console.log('[JS Debug] Collected Checked Columns:', checkedColumns);
+    console.log('[JS Debug] Collected Input Styles:', inputStyles);
+}
+
+function saveMainForm() {
+    // 1. 各種入力値や選択状態を隠しフィールドへ同期する関数を呼ぶ
+    if (typeof updateSerializedData === 'function') {
+        updateSerializedData();
+    }
+    
+    // 2. もし変更時に即座に自動保存（非同期送信など）を行いたい場合はここに記述します
+    // 特に自動保存せず「保存ボタン」でのみ保存する場合は、単に同期データの更新だけでもエラーは解消します
+    console.log('[JS Debug] saveMainForm called and data synchronized.');
+}
+
+</script>
