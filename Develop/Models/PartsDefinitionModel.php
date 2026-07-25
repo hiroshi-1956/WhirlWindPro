@@ -35,7 +35,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                     WHERE
                         project_id = :project_id
                     ORDER BY
-                        parts_id DESC";
+                        parts_id ASC";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);

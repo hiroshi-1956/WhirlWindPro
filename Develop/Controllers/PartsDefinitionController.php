@@ -47,6 +47,7 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'parts_id'          => '',
             'parts_name'        => '',
             'parts_description' => '',
+            'parts_type'        => '', // 初期値は空（未選択）
             'm_tables'          => $mTables,
             'grids_config_json' => json_encode([], JSON_UNESCAPED_UNICODE)
         ]);
@@ -54,9 +55,38 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $this->logger->debug("PartsDefinitionController::newPartsAction() end.");
     }
     
+    /**
+     * パーツ種類（parts_type）が変更された時のアクション
+     */
+    public function changeTypeAction($requestParams = []) {
+        $this->logger->debug("PartsDefinitionController::changeTypeAction() start...");
+        
+        $projectId = $this->getProjectId($requestParams);
+        $partsId   = $requestParams['parts_id']   ?? $_POST['parts_id']   ?? '';
+        $partsName = $requestParams['parts_name'] ?? $_POST['parts_name'] ?? '';
+        $partsDesc = $requestParams['parts_description'] ?? $_POST['parts_description'] ?? '';
+        $partsType = $requestParams['parts_type'] ?? $_POST['parts_type'] ?? '';
+        
+        $model = new \Develop\Models\PartsDefinitionModel();
+        $mTables = $model->getTableStructure($projectId);
+        
+        // 変更された parts_type を反映した状態で登録画面を再描画
+        \Develop\Utils\Screen::updateAreaE(self::VIEW_REGIST, [
+            'is_edit'           => !empty($partsId),
+            'project_id'        => $projectId,
+            'parts_id'          => $partsId,
+            'parts_name'        => $partsName,
+            'parts_description' => $partsDesc,
+            'parts_type'        => $partsType,
+            'm_tables'          => $mTables,
+            'grids_config_json' => json_encode([], JSON_UNESCAPED_UNICODE)
+        ]);
+        
+        $this->logger->debug("PartsDefinitionController::changeTypeAction() end.");
+    }
+    
     public function getTableColumnsAction()
     {
-        //$tableName = $this->getParam('table_name');
         $columns = [];
         return $this->responseJson([
             'result'  => 'success',
@@ -78,9 +108,9 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $displayLabel = $requestParams['display_label'] ?? $_POST['display_label'] ?? 'physical';
         $columnFilter = $requestParams['column_filter'] ?? $_POST['column_filter'] ?? 'all';
         $previewTitle = $requestParams['preview_title'] ?? $_POST['preview_title'] ?? '';
-        $inputRows    = $requestParams['input_rows']    ?? $_POST['input_rows']    ?? '1';
         
-        // 💡【最重要修正】テーブル切替時にも入力状態が維持されるよう、リクエストから確実に回収
+        $inputRows    = $requestParams['input_rows_count'] ?? $_POST['input_rows_count'] ?? $requestParams['input_rows'] ?? $_POST['input_rows'] ?? '3';
+        
         $inputStyle     = $requestParams['input_style']     ?? $_POST['input_style']     ?? '';
         $contents       = $requestParams['contents']        ?? $_POST['contents']        ?? '';
         $styleCondition = $requestParams['style_condition'] ?? $_POST['style_condition'] ?? '';
@@ -110,9 +140,9 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'display_label'        => $displayLabel,
             'column_filter'        => $columnFilter,
             'preview_title'        => $previewTitle,
+            'input_rows_count'     => $inputRows,
             'input_rows'           => $inputRows,
             
-            // 💡【最重要修正】回収したデータをそのままビュー（AreaE）へ返還・引き継ぎ
             'input_style'          => $inputStyle,
             'contents'             => $contents,
             'style_condition'      => $styleCondition,
@@ -170,6 +200,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             $checkedColumns = array_filter(array_map('trim', $rawArray), 'strlen');
         }
         
+        $inputRowsVal = $targetParts['input_rows'] ?? '3';
+        
         \Develop\Utils\Screen::updateAreaE(self::VIEW_REGIST, [
             'is_edit'              => true,
             'project_id'           => $projectId,
@@ -181,7 +213,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'display_label'        => $targetParts['display_label'] ?? 'physical',
             'column_filter'        => $targetParts['column_filter'] ?? 'all',
             'preview_title'        => $targetParts['preview_title'] ?? '',
-            'input_rows'           => $targetParts['input_rows'] ?? '1',
+            'input_rows_count'     => $inputRowsVal,
+            'input_rows'           => $inputRowsVal,
             'input_style'          => $targetParts['input_style'] ?? '',
             'contents'             => $targetParts['contents'] ?? '',
             'style_condition'      => $targetParts['style_condition'] ?? '',
@@ -203,6 +236,18 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $projectId = $this->getProjectId($requestParams);
         $partsId   = $requestParams['parts_id'] ?? $_POST['parts_id'] ?? '';
         
+        $this->logger->debug("🔍送信されたPOSTデータ: " . json_encode($_POST, JSON_UNESCAPED_UNICODE));
+        
+        $rawInputRows = $requestParams['input_rows_count']
+        ?? $_POST['input_rows_count']
+        ?? $requestParams['input_rows']
+        ?? $_POST['input_rows']
+        ?? '';
+        
+        if (empty($rawInputRows) || $rawInputRows === '0') {
+            $rawInputRows = '3';
+        }
+        
         $data = [
             'parts_name'           => $requestParams['parts_name']           ?? $_POST['parts_name']           ?? '',
             'parts_description'    => $requestParams['parts_description']    ?? $_POST['parts_description']    ?? '',
@@ -211,11 +256,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'display_label'        => $requestParams['display_label']        ?? $_POST['display_label']        ?? 'physical',
             'column_filter'        => $requestParams['column_filter']        ?? $_POST['column_filter']        ?? 'all',
             'preview_title'        => $requestParams['preview_title']        ?? $_POST['preview_title']        ?? '',
-            'input_rows'           => $requestParams['input_rows']           ?? $_POST['input_rows']           ?? '1',
-            
-            // ★ JS側から送られるキー名（checked_columns_json）に合わせる
+            'input_rows'           => $rawInputRows,
             'checked_columns_json' => $requestParams['checked_columns_json'] ?? $_POST['checked_columns_json'] ?? '[]',
-            
             'input_style'          => $requestParams['input_style']          ?? $_POST['input_style']          ?? '',
             'contents'             => $requestParams['contents']             ?? $_POST['contents']             ?? '',
             'style_condition'      => $requestParams['style_condition']      ?? $_POST['style_condition']      ?? '',

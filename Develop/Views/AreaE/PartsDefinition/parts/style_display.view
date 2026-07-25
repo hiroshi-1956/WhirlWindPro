@@ -1,0 +1,221 @@
+<?php
+/**
+ * style_display.view (Style Display 拡張設定部分)
+ */
+$m_tables = $m_tables ?? [];
+$style_setting = $style_setting ?? 'pulldown';
+$display_data = $display_data ?? 'fixed'; // fixed, file, db
+$display_contents = $display_contents ?? '';
+$target_table = $target_table ?? '';
+$style_condition = $style_condition ?? '';
+$style_column = $style_column ?? '';
+$isEditMode = !empty($is_edit);
+?>
+
+<input type="hidden" id="is_edit_mode_flag" value="<?= $isEditMode ? '1' : '0'; ?>">
+
+<!-- サーバー送信用の隠しフィールド（StyleDisplay専用のID名に変更して他パーツとの干渉を防止） -->
+<input type="hidden" id="contents" name="contents" value="<?= htmlspecialchars($display_contents, ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="table_name" name="table_name" value="<?= htmlspecialchars($target_table, ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="style_condition" name="style_condition" value="<?= htmlspecialchars($style_condition, ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="style_column" name="style_column" value="<?= htmlspecialchars($style_column, ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="display_data_hidden" name="display_data" value="<?= htmlspecialchars($display_data, ENT_QUOTES, 'UTF-8') ?>">
+
+<div id="style-display-fields-container" style="display: block; margin-top: 0;">
+    <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
+        
+        <!-- スタイル設定 -->
+        <tr id="row-style-setting" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">スタイル設定</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <select id="style_setting" name="style_setting" style="width: 520px; height: 30px; border: 2px solid #000; background: #fff; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="saveStyleDisplayForm();">
+                    <option value="pulldown" <?= $style_setting === 'pulldown' ? 'selected' : '' ?>>pulldown</option>
+                    <option value="radiobox" <?= $style_setting === 'radiobox' ? 'selected' : '' ?>>radiobox</option>
+                    <option value="checkbox" <?= $style_setting === 'checkbox' ? 'selected' : '' ?>>checkbox</option>
+                </select>
+            </td>
+        </tr>
+
+        <!-- 表示データ -->
+        <tr id="row-display-data" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示データ</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 20px; font-size: 14px;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="radio" name="display_data_radio" value="fixed" <?= $display_data === 'fixed' ? 'checked' : '' ?> style="cursor: pointer;" onclick="onChangeStyleDisplayData('fixed'); saveStyleDisplayForm();"> 固定
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="radio" name="display_data_radio" value="file" <?= $display_data === 'file' ? 'checked' : '' ?> style="cursor: pointer;" onclick="onChangeStyleDisplayData('file'); saveStyleDisplayForm();"> ファイル
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="radio" name="display_data_radio" value="db" <?= $display_data === 'db' ? 'checked' : '' ?> style="cursor: pointer;" onclick="onChangeStyleDisplayData('db'); saveStyleDisplayForm();"> DB
+                    </label>
+                </div>
+            </td>
+        </tr>
+
+        <!-- 表示内容（固定 / ファイル選択時のみ表示、DB時は非表示） -->
+        <tr id="row-style-display-contents" style="height: 40px; <?= $display_data === 'db' ? 'display: none;' : '' ?>">
+            <th id="label-style-display-contents" style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示内容</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <!-- 固定用テキストエリア -->
+                <div id="container-style-fixed-contents" style="<?= $display_data === 'fixed' ? 'display: block;' : 'display: none;' ?>">
+                    <textarea id="style_display_contents_textarea" style="width: 780px; height: 120px; border: 2px solid #000; padding: 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; resize: vertical;" oninput="saveStyleDisplayForm();"><?= htmlspecialchars($display_data === 'fixed' ? $display_contents : '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                </div>
+                <!-- ファイル用テキストインプット -->
+                <div id="container-style-file-contents" style="<?= $display_data === 'file' ? 'display: block;' : 'display: none;' ?>">
+                    <input type="text" id="style_display_contents_input" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" placeholder="例: filename.txt" value="<?= htmlspecialchars($display_data === 'file' ? $display_contents : '', ENT_QUOTES, 'UTF-8') ?>" oninput="saveStyleDisplayForm();">
+                </div>
+            </td>
+        </tr>
+
+        <!-- DB選択時の追加行：対象テーブル -->
+        <tr id="row-style-target-table" style="height: 40px; <?= $display_data === 'db' ? '' : 'display: none;' ?>">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">対象テーブル</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <select id="style_select_target_table" style="width: 520px; height: 30px; border: 2px solid #000; background: #fff; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="saveStyleDisplayForm();">
+                    <option value="">-- テーブルを選択してください --</option>
+                    <?php if (!empty($m_tables) && is_array($m_tables)): ?>
+                        <?php foreach ($m_tables as $tbl): ?>
+                            <?>
+                            <?php 
+                                $p_name = is_array($tbl) ? ($tbl['physical_name'] ?? '') : $tbl;
+                                $l_name = is_array($tbl) ? ($tbl['logical_name'] ?? '') : '';
+                                $display_text = $p_name . ($l_name ? " ({$l_name})" : "");
+                            ?>
+                            <option value="<?= htmlspecialchars($p_name, ENT_QUOTES, 'UTF-8') ?>" <?= $target_table === $p_name ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($display_text, ENT_QUOTES, 'UTF-8') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </td>
+        </tr>
+
+        <!-- DB選択時の追加行：条件 -->
+        <tr id="row-style-db-condition" style="height: 40px; <?= $display_data === 'db' ? '' : 'display: none;' ?>">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">条件</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="style_input_style_condition" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($style_condition, ENT_QUOTES, 'UTF-8') ?>" oninput="saveStyleDisplayForm();">
+            </td>
+        </tr>
+
+        <!-- DB選択時の追加行：対象カラム -->
+        <tr id="row-style-db-column" style="height: 40px; <?= $display_data === 'db' ? '' : 'display: none;' ?>">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">対象カラム</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="style_input_style_column" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($style_column, ENT_QUOTES, 'UTF-8') ?>" oninput="saveStyleDisplayForm();">
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+function onChangeStyleDisplayData(type) {
+    const rowDisplayContents = document.getElementById('row-style-display-contents');
+    const fixedContainer = document.getElementById('container-style-fixed-contents');
+    const fileContainer = document.getElementById('container-style-file-contents');
+    const rowTargetTable = document.getElementById('row-style-target-table');
+    const rowStyleCondition = document.getElementById('row-style-db-condition');
+    const rowStyleColumn = document.getElementById('row-style-db-column');
+
+    if (type === 'fixed') {
+        if (rowDisplayContents) rowDisplayContents.style.display = '';
+        if (fixedContainer) fixedContainer.style.display = 'block';
+        if (fileContainer) fileContainer.style.display = 'none';
+        
+        if (rowTargetTable) rowTargetTable.style.display = 'none';
+        if (rowStyleCondition) rowStyleCondition.style.display = 'none';
+        if (rowStyleColumn) rowStyleColumn.style.display = 'none';
+    } else if (type === 'file') {
+        if (rowDisplayContents) rowDisplayContents.style.display = '';
+        if (fixedContainer) fixedContainer.style.display = 'none';
+        if (fileContainer) fileContainer.style.display = 'block';
+        
+        if (rowTargetTable) rowTargetTable.style.display = 'none';
+        if (rowStyleCondition) rowStyleCondition.style.display = 'none';
+        if (rowStyleColumn) rowStyleColumn.style.display = 'none';
+    } else if (type === 'db') {
+        if (rowDisplayContents) rowDisplayContents.style.display = 'none';
+        if (fixedContainer) fixedContainer.style.display = 'none';
+        if (fileContainer) fileContainer.style.display = 'none';
+        
+        if (rowTargetTable) rowTargetTable.style.display = '';
+        if (rowStyleCondition) rowStyleCondition.style.display = '';
+        if (rowStyleColumn) rowStyleColumn.style.display = '';
+    }
+}
+
+function updateStyleDisplaySerializedData() {
+    const displayDataRadio = document.querySelector('input[name="display_data_radio"]:checked');
+    const type = displayDataRadio ? displayDataRadio.value : 'fixed';
+
+    const displayDataHidden = document.getElementById('display_data_hidden');
+    if (displayDataHidden) displayDataHidden.value = type;
+
+    // 表示内容の同期 (contents)
+    const contentsEl = document.getElementById('contents');
+    if (contentsEl) {
+        if (type === 'fixed') {
+            const textarea = document.getElementById('style_display_contents_textarea');
+            contentsEl.value = textarea ? textarea.value : '';
+        } else if (type === 'file') {
+            const input = document.getElementById('style_display_contents_input');
+            contentsEl.value = input ? input.value : '';
+        } else {
+            contentsEl.value = '';
+        }
+    }
+
+    // 対象テーブルの同期 (table_name)
+    const targetTableSelect = document.getElementById('style_select_target_table');
+    const tableNameHidden = document.getElementById('table_name');
+    if (targetTableSelect && tableNameHidden) {
+        tableNameHidden.value = type === 'db' ? targetTableSelect.value : '';
+    }
+
+    // 条件の同期 (style_condition)
+    const styleConditionInput = document.getElementById('style_input_style_condition');
+    const styleConditionHidden = document.getElementById('style_condition');
+    if (styleConditionInput && styleConditionHidden) {
+        styleConditionHidden.value = type === 'db' ? styleConditionInput.value : '';
+    }
+
+    // 対象カラムの同期 (style_column)
+    const styleColumnInput = document.getElementById('style_input_style_column');
+    const styleColumnHidden = document.getElementById('style_column');
+    if (styleColumnInput && styleColumnHidden) {
+        styleColumnHidden.value = type === 'db' ? styleColumnInput.value : '';
+    }
+}
+
+function saveStyleDisplayForm() {
+    if (typeof updateStyleDisplaySerializedData === 'function') {
+        updateStyleDisplaySerializedData();
+    }
+    // 親画面の共通セーブ関数があれば呼び出す
+    if (typeof saveMainForm === 'function') {
+        saveMainForm();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
+
+    if (isEditMode) {
+        const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
+        if (partsTypeEl) {
+            partsTypeEl.disabled = true;
+            partsTypeEl.style.backgroundColor = '#f0f0f0';
+            partsTypeEl.style.cursor = 'not-allowed';
+        }
+    }
+
+    const checkedRadio = document.querySelector('input[name="display_data_radio"]:checked');
+    if (checkedRadio) {
+        onChangeStyleDisplayData(checkedRadio.value);
+    }
+    
+    saveStyleDisplayForm();
+});
+</script>

@@ -2,7 +2,7 @@
 /**
  * RegistParts.view (Main Router / Entry Point)
  */
-$parts_type = $parts_type ?? 'Single Record Input';
+$parts_type = $parts_type ?? '';
 $m_tables = $m_tables ?? [];
 $m_partsinfo_columns = $m_partsinfo_columns ?? [];
 $textinput_configs = $textinput_configs ?? [];
@@ -70,6 +70,36 @@ $textinput_configs = $textinput_configs ?? [];
                 echo '<script>console.log("[PHP Debug] Loaded Module: Multi Record Input");</script>';
                 break;
 
+            case 'Text Input':
+                @include __DIR__ . '/parts/text_input.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Text Input");</script>';
+                break;
+
+            case 'Single Record Confirm':
+                @include __DIR__ . '/parts/single_record_confirm.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Single Record Confirm");</script>';
+                break;
+                
+            case 'Multi Record Confirm':
+                @include __DIR__ . '/parts/multi_record_confirm.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Multi Record Confirm");</script>';
+                break;
+                
+            case 'Text Confirm':
+                @include __DIR__ . '/parts/text_confirm.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Text Confirm");</script>';
+                break;
+                
+            case 'Text Display':
+                @include __DIR__ . '/parts/text_display.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Text Display");</script>';
+                break;
+
+            case 'Style Display':
+                @include __DIR__ . '/parts/style_display.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Style Display");</script>';
+                break;
+
             default:
                 echo '<div style="padding: 20px; color: #666; border: 1px dashed #ccc; width: 780px; margin-top: 10px;">種類を選択すると、対応する専用モジュールが起動します。</div>';
                 break;
@@ -91,26 +121,9 @@ if (typeof window.bridge !== 'function') {
         : function(payload) { console.log('Bridge payload:', payload); };
 }
 
-// 種類の変更に応じて、対応するモジュールペインをJavaScriptで即座に切り替える
+// 種類の変更に応じて、対応するモジュールペインをJavaScriptで即座に切り替えつつバックエンドへ通知
 function onChangePartsType(selectedType) {
     console.log('[JS Debug] onChangePartsType switched to:', selectedType);
-
-    const panes = document.querySelectorAll('.parts-module-pane');
-    panes.forEach(pane => pane.style.display = 'none');
-
-    if (selectedType === 'Single Record Input') {
-        const target = document.getElementById('module-single-record-input');
-        if (target) target.style.display = 'block';
-    } else if (selectedType === 'Multi Record Input') {
-        const target = document.getElementById('module-multi-record-input');
-        if (target) target.style.display = 'block';
-    } else if (selectedType === 'Text Input') {
-        const target = document.getElementById('module-text-input');
-        if (target) target.style.display = 'block';
-    } else {
-        const target = document.getElementById('module-empty');
-        if (target) target.style.display = 'block';
-    }
 
     if (typeof window.bridge === 'function') {
         window.bridge({
@@ -137,9 +150,12 @@ function onClickSave() {
     }
     if (!confirm('保存しますか？')) return;
 
-    // 1. 最新の選択状態を隠しフィールドに同期
+    // 1. 各モジュールの最新シリアライズ関数があれば実行して隠しフィールドに同期
     if (typeof updateSerializedData === 'function') {
         updateSerializedData();
+    }
+    if (typeof updateTextDisplaySerializedData === 'function') {
+        updateTextDisplaySerializedData();
     }
 
     const getRadioValue = (name) => {
@@ -157,11 +173,13 @@ function onClickSave() {
         
         table_name: document.getElementById('table_name') ? document.getElementById('table_name').value : '',
         preview_title: document.getElementById('preview_title') ? document.getElementById('preview_title').value : '',
-        input_rows: document.getElementById('input_rows') ? document.getElementById('input_rows').value : '',
+        input_rows: document.getElementById('input_rows_hidden') ? document.getElementById('input_rows_hidden').value : '',
         display_label: getRadioValue('display_label'),
         column_filter: getRadioValue('column_filter'),
 
-        // ★ ここがDBのカラム名と紐づきます
+        // ★ contents（表示内容）を確実に送信対象に含める
+        contents: document.getElementById('contents') ? document.getElementById('contents').value : '',
+
         checked_columns_json: document.getElementById('checked_columns_json') ? document.getElementById('checked_columns_json').value : '[]',
         input_style: document.getElementById('input_style_hidden') ? document.getElementById('input_style_hidden').value : '[]'
     };

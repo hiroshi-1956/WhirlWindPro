@@ -1,7 +1,7 @@
 <?php
 /**
- * single_record_input.view (Single Record Input / 拡張設定部分)
- * - カラムを縦向き（リスト形式）に変更した版
+ * single_record_confirm.view (Single Record Confirm / 拡張設定部分)
+ * - 参照テーブルと画面タイトルの幅を「画面パーツ名称」などの標準幅（例: 520px）に合わせた版
  */
 if (!function_exists('convertToDeveloperVariableNamePHP')) {
     function convertToDeveloperVariableNamePHP($str) {
@@ -14,41 +14,23 @@ if (!function_exists('convertToDeveloperVariableNamePHP')) {
 
 $textinput_configs = $textinput_configs ?? [];
 $isEditMode = !empty($is_edit);
-
-// JSON形式、または従来のカンマ区切り形式の両方から安全にスタイルマップを復元
-$inputStyleMap = [];
-if (!empty($input_style)) {
-    $decoded = json_decode($input_style, true);
-    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-        $inputStyleMap = $decoded;
-    } else {
-        $rawStyles = explode(',', $input_style);
-        if (!empty($m_partsinfo_columns) && is_array($m_partsinfo_columns)) {
-            foreach ($m_partsinfo_columns as $idx => $col) {
-                $pName = $col['physical_name'] ?? '';
-                if ($pName !== '' && isset($rawStyles[$idx])) {
-                    $inputStyleMap[$pName] = trim($rawStyles[$idx]);
-                }
-            }
-        }
-    }
-}
 ?>
 
 <input type="hidden" id="is_edit_mode_flag" value="<?= $isEditMode ? '1' : '0'; ?>">
 <input type="hidden" id="grids_config_json" name="grids_config_json" value="<?= htmlspecialchars($grids_config_json ?? '{}', ENT_QUOTES, 'UTF-8') ?>">
 <input type="hidden" id="textinput_configs_json" value="<?= htmlspecialchars(json_encode($textinput_configs, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
-<!-- サーバー送信用の隠しフィールド（JSON形式で保存） -->
-<input type="hidden" id="input_style_hidden" name="input_style" value="<?= htmlspecialchars($input_style ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
-<div id="single-record-input-fields-container" style="display: block; margin-top: 0;">
+<!-- 選択されたカラムを確実にサーバーへ送信するための隠しフィールド -->
+<input type="hidden" id="checked_columns_json" name="checked_columns_json" value="<?= htmlspecialchars(is_array($checked_columns ?? null) ? implode(',', $checked_columns) : ($checked_columns ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+
+<div id="single-record-confirm-fields-container" style="display: block; margin-top: 0;">
     <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
         
         <tr id="row-table-id" style="height: 40px;">
             <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">参照テーブル</th>
             <td style="padding: 0; vertical-align: middle;">
                 <div style="display: flex; align-items: center; width: 520px; height: 30px; border: 2px solid #000; background: #fff; box-sizing: border-box; padding: 0;">
-                    <select id="table_name" style="width: 100%; height: 100%; border: none; background: transparent; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="loadColumnsFromDB();">
+                    <select id="table_name" name="table_name" style="width: 100%; height: 100%; border: none; background: transparent; padding: 0 6px; outline: none; font-size: 14px; cursor: pointer;" onchange="loadColumnsFromDB(); saveMainForm();">
                         <option value="">-- テーブルを選択してください --</option>
                         <?php if (!empty($m_tables) && is_array($m_tables)): ?>
                             <?php foreach ($m_tables as $tbl): ?>
@@ -106,15 +88,15 @@ if (!empty($input_style)) {
         <tr id="row-preview-title" style="height: 40px;">
             <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面タイトル</th>
             <td style="padding: 0; vertical-align: middle;">
-                <input type="text" id="preview_title" style="width: 520px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($preview_title ?? '', ENT_QUOTES, 'UTF-8'); ?>" oninput="saveMainForm();">
+                <input type="text" id="preview_title" name="preview_title" style="width: 520px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($preview_title ?? '', ENT_QUOTES, 'UTF-8'); ?>" oninput="saveMainForm();">
             </td>
         </tr>
     </table>
 
-    <!-- 縦向きテーブル表示エリア -->
+    <!-- 3列構成のテーブル表示エリア（横幅を 520px に統一し、横スクロールを抑制） -->
     <div id="column-list-wrapper" style="display: <?= !empty($table_name) ? 'block' : 'none'; ?>; margin-top: 15px; margin-left: 120px; width: 520px; box-sizing: border-box;">		            
-        <div id="container-layout-vertical" style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box; max-height: 400px; overflow-y: auto;">
-            <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff;">
+        <div id="container-layout-vertical" style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box; max-height: 400px; overflow-y: auto; overflow-x: hidden;">
+            <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff; table-layout: fixed;">
                 <tbody>
                     <?php if (!empty($m_partsinfo_columns)): ?>
                         <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
@@ -133,26 +115,18 @@ if (!empty($input_style)) {
                                         $isChecked = true;
                                     }
                                 }
-
-                                $current_style_val = $inputStyleMap[$p_col] ?? '';
                             ?>
                             <tr class="vertical-column-row" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="border-bottom: 1px solid #ccc;">
-                                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">
+                                <!-- 1列目: 選択チェックボックス（幅40px） -->
+                                <td style="width: 40px; text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">
                                     <input type="checkbox" name="selected_columns_horizontal[]" value="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-index="<?= $idx ?>" onchange="toggleColumnListVisibility(); saveMainForm();" <?= $isChecked ? 'checked' : '' ?> style="transform: scale(1.1); cursor: pointer;">
                                 </td>
-                                <td class="vertical-label-cell" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="<?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>">
+                                <!-- 2列目: 項目名（幅240px） -->
+                                <td class="vertical-label-cell" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="width: 240px; padding: 8px 12px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid #ccc;" title="<?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>">
                                     <?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>
                                 </td>
-                                <td style="padding: 6px 8px; text-align: center; vertical-align: middle;">
-                                    <select class="single-input-style-select" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" style="width: 140px; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">
-                                        <option value="" <?= $current_style_val === '' ? 'selected' : '' ?>>-- 選択 --</option>
-                                        <option value="text" <?= $current_style_val === 'text' ? 'selected' : '' ?>>text</option>
-                                        <option value="pulldown" <?= $current_style_val === 'pulldown' ? 'selected' : '' ?>>pulldown</option>
-                                        <option value="radiobox" <?= $current_style_val === 'radiobox' ? 'selected' : '' ?>>radiobox</option>
-                                        <option value="checkbox" <?= $current_style_val === 'checkbox' ? 'selected' : '' ?>>checkbox</option>
-                                        <option value="button" <?= $current_style_val === 'button' ? 'selected' : '' ?>>button</option>
-                                    </select>
-                                </td>
+                                <!-- 3列目: 空白セル（幅240px：合計520pxに収める） -->
+                                <td style="width: 240px; height: 28px; padding: 8px; background-color: #fff; vertical-align: middle;">&nbsp;</td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -202,7 +176,7 @@ function toggleColumnListVisibility() {
 
 function loadColumnsFromDB() {
     const tableSelect = document.getElementById('table_name');
-    const selectedTableName = tableSelect.value;
+    const selectedTableName = tableSelect ? tableSelect.value : '';
     const columnListWrapper = document.getElementById('column-list-wrapper');
     const verticalTableBody = document.querySelector('#vertical-columns-table tbody');
 
@@ -219,8 +193,8 @@ function loadColumnsFromDB() {
     }
 
     if (!selectedTableName) {
-        columnListWrapper.style.display = 'none';
-        verticalTableBody.innerHTML = '';
+        if (columnListWrapper) columnListWrapper.style.display = 'none';
+        if (verticalTableBody) verticalTableBody.innerHTML = '';
         cachedColumnsData = null;
         if (typeof saveMainForm === 'function') saveMainForm();
         return;
@@ -230,7 +204,7 @@ function loadColumnsFromDB() {
         window.bridge({
             code: 'PartsDefinition/getColumns',
             table_name: selectedTableName,
-            parts_type: document.getElementById('parts_type') ? document.getElementById('parts_type').value : 'Single Record Input',
+            parts_type: document.getElementById('parts_type') ? document.getElementById('parts_type').value : 'Single Record Confirm',
             parts_id: document.getElementById('parts_id') ? document.getElementById('parts_id').value : '',
             parts_name: document.getElementById('parts_name') ? document.getElementById('parts_name').value : '',
             parts_description: document.getElementById('parts_description') ? document.getElementById('parts_description').value : '',
@@ -239,7 +213,7 @@ function loadColumnsFromDB() {
             if (response && response.columns) {
                 cachedColumnsData = response.columns;
                 renderVerticalColumns(response.columns);
-                columnListWrapper.style.display = 'block';
+                if (columnListWrapper) columnListWrapper.style.display = 'block';
                 toggleColumnListVisibility();
 
                 if (isEditMode) {
@@ -265,19 +239,13 @@ function renderVerticalColumns(columns) {
     const isPhysical = displayLabelRadio ? displayLabelRadio.value === 'physical' : true;
 
     const existingCheckboxes = {};
-    const existingStyles = {};
 
     if (verticalTableBody) {
         const rows = verticalTableBody.querySelectorAll('tr.vertical-column-row');
         rows.forEach(row => {
             const chk = row.querySelector('input[type="checkbox"]');
-            const sel = row.querySelector('select.single-input-style-select');
             if (chk) {
                 existingCheckboxes[chk.value] = chk.checked;
-            }
-            if (sel) {
-                const physicalName = sel.getAttribute('data-physical');
-                existingStyles[physicalName] = sel.value;
             }
         });
     }
@@ -294,27 +262,21 @@ function renderVerticalColumns(columns) {
             isChecked = existingCheckboxes[pCol];
         }
 
-        let current_style_val = existingStyles[pCol] || '';
-
         html += `<tr class="vertical-column-row" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="border-bottom: 1px solid #ccc;">`;
-        html += `<td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">`;
+        // 1列目: 選択チェックボックス
+        html += `<td style="width: 40px; text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">`;
         html += `<input type="checkbox" name="selected_columns_horizontal[]" value="${escapeHtml(pCol)}" data-index="${idx}" onchange="toggleColumnListVisibility(); saveMainForm();" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer;">`;
         html += `</td>`;
-        html += `<td class="vertical-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="${escapeHtml(middleLabel)}">${escapeHtml(middleLabel)}</td>`;
-        html += `<td style="padding: 6px 8px; text-align: center; vertical-align: middle;">`;
-        html += `<select class="single-input-style-select" data-physical="${escapeHtml(pCol)}" style="width: 140px; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">`;
-        html += `<option value="" ${current_style_val === '' ? 'selected' : ''}>-- 選択 --</option>`;
-        html += `<option value="text" ${current_style_val === 'text' ? 'selected' : ''}>text</option>`;
-        html += `<option value="pulldown" ${current_style_val === 'pulldown' ? 'selected' : ''}>pulldown</option>`;
-        html += `<option value="radiobox" ${current_style_val === 'radiobox' ? 'selected' : ''}>radiobox</option>`;
-        html += `<option value="checkbox" ${current_style_val === 'checkbox' ? 'selected' : ''}>checkbox</option>`;
-        html += `<option value="button" ${current_style_val === 'button' ? 'selected' : ''}>button</option>`;
-        html += `</select>`;
-        html += `</td>`;
+        // 2列目: 項目名
+        html += `<td class="vertical-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="width: 240px; padding: 8px 12px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid #ccc;" title="${escapeHtml(middleLabel)}">${escapeHtml(middleLabel)}</td>`;
+        // 3列目: 空白セル
+        html += `<td style="width: 240px; height: 28px; padding: 8px; background-color: #fff; vertical-align: middle;">&nbsp;</td>`;
         html += `</tr>`;
     });
 
-    verticalTableBody.innerHTML = html;
+    if (verticalTableBody) {
+        verticalTableBody.innerHTML = html;
+    }
 }
 
 function escapeHtml(str) {
@@ -343,13 +305,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 el.value = savedVal;
             }
         });
+    }
 
-        const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
-        if (partsTypeEl) {
-            partsTypeEl.disabled = true;
-            partsTypeEl.style.backgroundColor = '#f0f0f0';
-            partsTypeEl.style.cursor = 'not-allowed';
-        }
+    // 種類（parts_type）のプルダウンを固定（無効化）する処理
+    const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
+    if (partsTypeEl) {
+        partsTypeEl.disabled = true;
+        partsTypeEl.style.backgroundColor = '#f0f0f0';
+        partsTypeEl.style.cursor = 'not-allowed';
     }
 
     const rows = document.querySelectorAll('.vertical-column-row');
@@ -369,29 +332,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateSerializedData() {
     const rows = document.querySelectorAll('.vertical-column-row');
     const checkedColumns = [];
-    const inputStyleMap = {};
 
     rows.forEach(row => {
         const checkbox = row.querySelector('input[type="checkbox"]');
-        const styleSelect = row.querySelector('select.single-input-style-select');
         const physicalName = row.getAttribute('data-physical');
 
         if (!physicalName) return;
 
         if (checkbox && checkbox.checked) {
             checkedColumns.push(physicalName);
-            inputStyleMap[physicalName] = styleSelect ? styleSelect.value : '';
         }
     });
 
     const checkedJsonEl = document.getElementById('checked_columns_json');
     if (checkedJsonEl) {
         checkedJsonEl.value = checkedColumns.join(',');
-    }
-
-    const inputStyleEl = document.getElementById('input_style_hidden');
-    if (inputStyleEl) {
-        inputStyleEl.value = JSON.stringify(inputStyleMap);
     }
 }
 

@@ -1,0 +1,111 @@
+<?php
+/**
+ * text_display.view (Text Display 拡張設定部分)
+ */
+// DBのカラム名に合わせて input_style から値を取得（デフォルトは 'fixed'）
+$input_style = $input_style ?? 'fixed'; 
+$contents = $contents ?? '';
+$isEditMode = !empty($is_edit);
+?>
+
+<input type="hidden" id="is_edit_mode_flag" value="<?= $isEditMode ? '1' : '0'; ?>">
+
+<!-- サーバー送信用の隠しフィールド（DBカラム名と完全に一致させる） -->
+<input type="hidden" id="input_style_hidden" name="input_style" value="<?= htmlspecialchars($input_style, ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="contents" name="contents" value="<?= htmlspecialchars($contents, ENT_QUOTES, 'UTF-8') ?>">
+
+<div id="text-display-fields-container" style="display: block; margin-top: 0;">
+    <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
+        
+        <!-- 表示データ (DBカラム: input_style) -->
+        <tr id="row-display-data" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示データ</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 20px; font-size: 14px;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="radio" name="display_data_radio" value="fixed" <?= $input_style === 'fixed' ? 'checked' : '' ?> style="cursor: pointer;" onclick="onChangeTextDisplayData('fixed'); saveTextDisplayForm();"> 固定
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="radio" name="display_data_radio" value="file" <?= $input_style === 'file' ? 'checked' : '' ?> style="cursor: pointer;" onclick="onChangeTextDisplayData('file'); saveTextDisplayForm();"> ファイル
+                    </label>
+                </div>
+            </td>
+        </tr>
+
+        <!-- 表示内容 (DBカラム: contents) -->
+        <tr id="row-text-display-contents" style="height: 40px;">
+            <th id="label-text-display-contents" style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示内容</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <!-- 固定用テキストエリア -->
+                <div id="container-text-fixed-contents" style="<?= $input_style === 'fixed' ? 'display: block;' : 'display: none;' ?>">
+                    <textarea id="text_display_contents_textarea" style="width: 780px; height: 120px; border: 2px solid #000; padding: 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; resize: vertical;" oninput="saveTextDisplayForm();"><?= htmlspecialchars($input_style === 'fixed' ? $contents : '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                </div>
+                <!-- ファイル用テキストインプット -->
+                <div id="container-text-file-contents" style="<?= $input_style === 'file' ? 'display: block;' : 'display: none;' ?>">
+                    <input type="text" id="text_display_contents_input" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" placeholder="例: filename.txt" value="<?= htmlspecialchars($input_style === 'file' ? $contents : '', ENT_QUOTES, 'UTF-8') ?>" oninput="saveTextDisplayForm();">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+function onChangeTextDisplayData(type) {
+    const fixedContainer = document.getElementById('container-text-fixed-contents');
+    const fileContainer = document.getElementById('container-text-file-contents');
+
+    if (type === 'fixed') {
+        if (fixedContainer) fixedContainer.style.display = 'block';
+        if (fileContainer) fileContainer.style.display = 'none';
+    } else if (type === 'file') {
+        if (fixedContainer) fixedContainer.style.display = 'none';
+        if (fileContainer) fileContainer.style.display = 'block';
+    }
+}
+
+function updateTextDisplaySerializedData() {
+    const displayDataRadio = document.querySelector('input[name="display_data_radio"]:checked');
+    const type = displayDataRadio ? displayDataRadio.value : 'fixed';
+
+    // input_style 隠しフィールドへ反映
+    const inputStyleHidden = document.getElementById('input_style_hidden');
+    if (inputStyleHidden) inputStyleHidden.value = type;
+
+    // contents 隠しフィールドへ反映
+    const contentsEl = document.getElementById('contents');
+    if (contentsEl) {
+        if (type === 'fixed') {
+            const textarea = document.getElementById('text_display_contents_textarea');
+            contentsEl.value = textarea ? textarea.value : '';
+        } else if (type === 'file') {
+            const input = document.getElementById('text_display_contents_input');
+            contentsEl.value = input ? input.value : '';
+        }
+    }
+}
+
+function saveTextDisplayForm() {
+    if (typeof updateTextDisplaySerializedData === 'function') {
+        updateTextDisplaySerializedData();
+    }
+    if (typeof saveMainForm === 'function') {
+        saveMainForm();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 種類（parts_type）のプルダウンを固定（無効化）する処理
+    const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
+    if (partsTypeEl) {
+        partsTypeEl.disabled = true;
+        partsTypeEl.style.backgroundColor = '#f0f0f0';
+        partsTypeEl.style.cursor = 'not-allowed';
+    }
+
+    const checkedRadio = document.querySelector('input[name="display_data_radio"]:checked');
+    if (checkedRadio) {
+        onChangeTextDisplayData(checkedRadio.value);
+    }
+    saveTextDisplayForm();
+});
+</script>

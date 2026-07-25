@@ -1,0 +1,180 @@
+<?php
+/**
+ * text_confirm.view (Text Confirm 拡張設定部分)
+ * - プルダウンの要素（<select>）を削除し、エリア（3列目のセル）を空にした版
+ */
+if (!function_exists('convertToDeveloperVariableNamePHP')) {
+    function convertToDeveloperVariableNamePHP($str) {
+        if (empty($str)) return '';
+        $camel = str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($str))));
+        $camel = lcfirst($camel);
+        return 'developers::' . $camel;
+    }
+}
+
+$textinput_configs = $textinput_configs ?? [];
+$isEditMode = !empty($is_edit);
+
+// 登録データの復元
+$inputStyleMap = [];
+if (!empty($input_style)) {
+    $decoded = json_decode($input_style, true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+        $inputStyleMap = $decoded;
+    }
+}
+?>
+
+<input type="hidden" id="is_edit_mode_flag" value="<?= $isEditMode ? '1' : '0'; ?>">
+<input type="hidden" id="grids_config_json" name="grids_config_json" value="<?= htmlspecialchars($grids_config_json ?? '{}', ENT_QUOTES, 'UTF-8') ?>">
+<input type="hidden" id="textinput_configs_json" name="textinput_configs_json" value="<?= htmlspecialchars(json_encode($textinput_configs, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
+<!-- サーバー送信用の隠しフィールド（input_style） -->
+<input type="hidden" id="input_style_hidden" name="input_style" value="<?= htmlspecialchars($input_style ?? '', ENT_QUOTES, 'UTF-8') ?>">
+<!-- サーバー送信用の隠しフィールド（input_rows用） -->
+<input type="hidden" id="input_rows_hidden" name="input_rows" value="<?= htmlspecialchars($input_rows_count ?? '3', ENT_QUOTES, 'UTF-8') ?>">
+
+<div id="text-confirm-fields-container" style="display: block; margin-top: 0;">
+    <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
+        
+        <!-- 入力桁数（行数）設定行 -->
+        <tr id="row-input-rows" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">入力桁数</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="input_rows_count" name="input_rows_count" min="1" max="10" style="width: 60px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; text-align: center;" value="<?= htmlspecialchars($input_rows_count ?? '3', ENT_QUOTES, 'UTF-8'); ?>" oninput="updateInputRowsTable();" onchange="updateInputRowsTable();">
+                    <span style="font-size: 14px;">行</span>
+                </div>
+            </td>
+        </tr>
+
+        <tr id="row-preview-title" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面タイトル</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="preview_title" style="width: 520px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($preview_title ?? '', ENT_QUOTES, 'UTF-8'); ?>" oninput="saveMainForm();">
+            </td>
+        </tr>
+    </table>
+
+    <!-- テーブル表示エリア（3列構成を維持しつつ、右側のプルダウンエリアを空にする） -->
+    <div id="column-list-wrapper" style="display: block; margin-top: 15px; margin-left: 120px; width: 520px; box-sizing: border-box;">		            
+        <div id="container-layout-vertical" style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box;">
+            <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff;">
+                <tbody>
+                    <?php 
+                        $rowCount = max(1, intval($input_rows_count ?? 3));
+                        for ($i = 1; $i <= $rowCount; $i++):
+                            $colNameKey = "col_name_" . $i;
+                            $currentNameVal = $textinput_configs[$colNameKey] ?? ("カラム" . $i);
+                    ?>
+                        <tr class="text-input-row" data-index="<?= $i ?>" style="border-bottom: <?= ($i < $rowCount) ? '1px solid #ccc' : 'none' ?>;">
+                            <td style="width: 50px; text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fafafa; font-weight: bold;">
+                                <?= $i ?>
+                            </td>
+                            <td style="padding: 6px 8px; border-right: 1px solid #ccc;">
+                                <input type="text" class="text-input-col-name" data-index="<?= $i ?>" style="width: 100%; height: 28px; border: 1px solid #000; padding: 0 6px; box-sizing: border-box; outline: none; font-size: 13px; background: #fff;" value="<?= htmlspecialchars($currentNameVal, ENT_QUOTES, 'UTF-8') ?>" oninput="saveMainForm();">
+                            </td>
+                            <td style="width: 160px; padding: 6px 8px; text-align: center;">
+                                <!-- プルダウンエリアを空にしています -->
+                            </td>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateInputRowsTable() {
+    const rowsInput = document.getElementById('input_rows_count');
+    const tableBody = document.querySelector('#vertical-columns-table tbody');
+    if (!rowsInput || !tableBody) return;
+
+    let count = parseInt(rowsInput.value) || 1;
+    if (count < 1) count = 1;
+    if (count > 20) count = 20;
+
+    const currentValues = {};
+    tableBody.querySelectorAll('tr.text-input-row').forEach(row => {
+        const idx = row.getAttribute('data-index');
+        const nameInput = row.querySelector('.text-input-col-name');
+        if (nameInput) currentValues[idx] = nameInput.value;
+    });
+
+    let html = '';
+    for (let i = 1; i <= count; i++) {
+        const nameVal = currentValues[i] !== undefined ? currentValues[i] : (`カラム` + i);
+        const borderStyle = (i < count) ? '1px solid #ccc' : 'none';
+
+        html += `<tr class="text-input-row" data-index="${i}" style="border-bottom: ${borderStyle};">`;
+        html += `<td style="width: 50px; text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fafafa; font-weight: bold;">${i}</td>`;
+        html += `<td style="padding: 6px 8px; border-right: 1px solid #ccc;">`;
+        html += `<input type="text" class="text-input-col-name" data-index="${i}" style="width: 100%; height: 28px; border: 1px solid #000; padding: 0 6px; box-sizing: border-box; outline: none; font-size: 13px; background: #fff;" value="${escapeHtml(nameVal)}" oninput="saveMainForm();">`;
+        html += `</td>`;
+        html += `<td style="width: 160px; padding: 6px 8px; text-align: center;">`;
+        html += `</td>`;
+        html += `</tr>`;
+    }
+    tableBody.innerHTML = html;
+    saveMainForm();
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&'`<>"]/g, function(match) {
+        return {
+            '&': '&amp;',
+            "'": '&#x27;',
+            '`': '&#x60;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;'
+        }[match];
+    });
+}
+
+function updateSerializedData() {
+    const rows = document.querySelectorAll('tr.text-input-row');
+    const textinputConfigs = {};
+
+    rows.forEach(row => {
+        const idx = row.getAttribute('data-index');
+        const nameInput = row.querySelector('.text-input-col-name');
+
+        if (nameInput) {
+            const colName = nameInput.value;
+            textinputConfigs['col_name_' + idx] = colName;
+        }
+    });
+
+    const textinputJsonEl = document.getElementById('textinput_configs_json');
+    if (textinputJsonEl) {
+        textinputJsonEl.value = JSON.stringify(textinputConfigs);
+    }
+
+    const rowsInput = document.getElementById('input_rows_count');
+    const inputRowsHidden = document.getElementById('input_rows_hidden');
+    if (rowsInput && inputRowsHidden) {
+        inputRowsHidden.value = rowsInput.value;
+    }
+}
+
+function saveMainForm() {
+    if (typeof updateSerializedData === 'function') {
+        updateSerializedData();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
+    if (isEditMode) {
+        const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
+        if (partsTypeEl) {
+            partsTypeEl.disabled = true;
+            partsTypeEl.style.backgroundColor = '#f0f0f0';
+            partsTypeEl.style.cursor = 'not-allowed';
+        }
+    }
+    saveMainForm();
+});
+</script>
