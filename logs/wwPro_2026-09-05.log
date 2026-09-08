@@ -1,0 +1,1292 @@
+[2026-09-05 02:11:21] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:21] [DEBUG] Router::Router() /jemini/wwProjectV1.57/develop/
+[2026-09-05 02:11:21] [DEBUG] Attempting to load: \Develop\Controllers\LoginController::initialAction
+[2026-09-05 02:11:21] [DEBUG] Router: Executing \Develop\Controllers\LoginController->initialAction
+[2026-09-05 02:11:21] [DEBUG] Login::initialAction() start...
+[2026-09-05 02:11:21] [DEBUG] Login::initialAction() errorMessage : 
+[2026-09-05 02:11:21] [DEBUG] Screen::view() path: \Develop\Views\Login\Login.view start...
+[2026-09-05 02:11:21] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:21] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\Login\Login.view
+[2026-09-05 02:11:21] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:21] [DEBUG] Screen::view() path: \Develop\Views\Login\Login.view finish.
+[2026-09-05 02:11:21] [DEBUG] Login::initialAction() finish.
+[2026-09-05 02:11:39] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:39] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Login/authentication/
+[2026-09-05 02:11:39] [DEBUG] Attempting to load: \Develop\Controllers\LoginController::authenticationAction
+[2026-09-05 02:11:39] [DEBUG] Router: Executing \Develop\Controllers\LoginController->authenticationAction
+[2026-09-05 02:11:39] [DEBUG] Login::AuthenticationAction() start...
+[2026-09-05 02:11:39] [DEBUG] Login OK - x
+[2026-09-05 02:11:39] [DEBUG] Session::start()
+[2026-09-05 02:11:39] [DEBUG] Redirect to Console::initialAction()
+[2026-09-05 02:11:39] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:39] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/initial/
+[2026-09-05 02:11:39] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::initialAction
+[2026-09-05 02:11:39] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->initialAction
+[2026-09-05 02:11:39] [DEBUG] Console::initialAction() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\Console\Console.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view finish.
+[2026-09-05 02:11:39] [DEBUG] ConsoleController::initialAction() finish.
+[2026-09-05 02:11:39] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:39] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:11:39] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:11:39] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:11:39] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:11:39] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ConsoleController::areaInitialAction()
+[2026-09-05 02:11:39] [DEBUG] ConsoleController::AreaInitialAction() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaA() path: \Develop\Views\AreaA\Area_A.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::areaView() sending JSON: ["areas"]
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaA\Area_A.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaA() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaB() path: \Develop\Views\AreaB\Area_B.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaB\Area_B.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaB() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\Area_D_clear.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\Area_D_clear.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaF() path: \Develop\Views\AreaF\Area_F.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaF\Area_F.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaF() finish.
+[2026-09-05 02:11:39] [DEBUG] ProjectController::startProjectNabi() start...
+[2026-09-05 02:11:39] [DEBUG] ProjectController::getProjectListHtml() start...
+[2026-09-05 02:11:39] [DEBUG] ProjectModel::getProjectList() start...
+[2026-09-05 02:11:39] [DEBUG] ProjectModel::getProjectList() finish.
+[2026-09-05 02:11:39] [DEBUG] CodeMasterModel：：getCodesByGroup() start...
+[2026-09-05 02:11:39] [DEBUG] CodeMasterModel：：getCodesByGroup() finish.
+[2026-09-05 02:11:39] [DEBUG] ProjectController::getNaviFooterHtml() start...
+[2026-09-05 02:11:39] [DEBUG] ProjectController::getNaviFooterHtml() finish.
+[2026-09-05 02:11:39] [DEBUG] ProjectController::startProjectNabi() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaC() \Develop\Views\AreaC\Area_C.view start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaC\Area_C.view
+[2026-09-05 02:11:39] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::updateAreaC() finish.
+[2026-09-05 02:11:39] [DEBUG] ConsoleController::AreaInitialAction() finish.
+[2026-09-05 02:11:39] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:11:39] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:11:41] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:41] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:11:41] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:11:41] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:11:41] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:11:41] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ProjectController::projectSelectAction()
+[2026-09-05 02:11:41] [DEBUG] ProjectController::projectSelectAction() start...
+[2026-09-05 02:11:41] [DEBUG] ProjectController::projectSelectAction() ☆★☆　SampleProject１
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaB() path: \Develop\Views\AreaB\Area_B.view start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaB\Area_B.view
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaB() finish.
+[2026-09-05 02:11:41] [DEBUG] ProjectController::projectSelectAction() PRJ-D45FEF : PRJ-D45FEF
+[2026-09-05 02:11:41] [DEBUG] ProjectController::getProjectListHtml() start...
+[2026-09-05 02:11:41] [DEBUG] ProjectModel::getProjectList() start...
+[2026-09-05 02:11:41] [DEBUG] ProjectModel::getProjectList() finish.
+[2026-09-05 02:11:41] [DEBUG] CodeMasterModel：：getCodesByGroup() start...
+[2026-09-05 02:11:41] [DEBUG] CodeMasterModel：：getCodesByGroup() finish.
+[2026-09-05 02:11:41] [DEBUG] ProjectController::getNaviFooterHtml() start...
+[2026-09-05 02:11:41] [DEBUG] ProjectController::getNaviFooterHtml() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaC() \Develop\Views\AreaC\Area_C.view start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaC\Area_C.view
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaC() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\Area_D_clear.view start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\Area_D_clear.view
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:11:41] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:11:41] [DEBUG] ProjectController::projectSelectAction() finish.
+[2026-09-05 02:11:41] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:11:41] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:11:43] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:43] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:11:43] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:11:43] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:11:43] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:11:43] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:11:43] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:11:43] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:11:43] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:11:43] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:43] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:11:43] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:11:43] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:43] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:11:43] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:11:43] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:11:43] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:11:44] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:44] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:11:44] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:11:44] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:11:44] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:11:44] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:11:44] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:11:44] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:11:44] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:11:44] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:11:44] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:11:44] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:11:44] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:11:44] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:44] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:11:44] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:11:47] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:11:47] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:11:47] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:11:47] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:11:47] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:11:47] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:11:47] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:11:47] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:11:47] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:11:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:11:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:11:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:11:47] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:11:47] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:11:47] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:11:47] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:12:50] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:12:50] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:12:50] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:12:50] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:12:50] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:12:50] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:12:50] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:12:50] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:12:50] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:12:50] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:12:50] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:12:50] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:12:50] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:12:50] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:12:50] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:12:50] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:14:04] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:04] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:04] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:04] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:04] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:04] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::changeTypeAction()
+[2026-09-05 02:14:04] [DEBUG] PartsDefinitionController::changeTypeAction() start...
+[2026-09-05 02:14:04] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:04] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:14:04] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:04] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:14:05] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:05] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:14:05] [DEBUG] PartsDefinitionController::changeTypeAction() end.
+[2026-09-05 02:14:05] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:14:05] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:14:15] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:15] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:15] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:15] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:15] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:15] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::getColumnsAction()
+[2026-09-05 02:14:15] [DEBUG] PartsDefinitionController::getColumnsAction() start...
+[2026-09-05 02:14:15] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: developers
+[2026-09-05 02:14:15] [DEBUG] 逆引き成功: 物理名 developers -> table_id : 14
+[2026-09-05 02:14:15] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:14:15] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:15] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:14:15] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:15] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:14:15] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:15] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:14:15] [DEBUG] PartsDefinitionController::getColumnsAction() end.
+[2026-09-05 02:14:15] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:14:15] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:14:19] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:19] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:19] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:19] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:19] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:19] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:14:19] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:14:19] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:19] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:14:19] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:14:19] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:14:19] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:19] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:14:19] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:19] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:14:19] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:14:22] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:22] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:22] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:22] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:22] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:22] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ScreenDefinitionController::initialAction()
+[2026-09-05 02:14:22] [DEBUG] ScreenDefinitionController::initialAction() start...
+[2026-09-05 02:14:22] [DEBUG] ScreenDefinitionModel::getAllScreenList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:22] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\ScreenDefinition\ScreenDefinitionList.view start...
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\ScreenDefinition\ScreenDefinitionList.view
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:22] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:14:22] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:14:22] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:22] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:14:22] [DEBUG] ScreenDefinitionController::initialAction() end.
+[2026-09-05 02:14:22] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:14:22] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:14:23] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:23] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:23] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:23] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:23] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:23] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:14:23] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:14:23] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:14:23] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:23] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:23] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:14:23] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:14:23] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:14:23] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:14:23] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:14:23] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:14:23] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:14:27] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:27] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:27] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:27] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:27] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:27] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:14:27] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:14:27] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:27] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:14:27] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:14:27] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:14:27] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:27] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:14:27] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:27] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:14:27] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:14:45] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:14:45] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:14:45] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:14:45] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:14:45] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:14:45] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:14:45] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:14:45] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:45] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:14:45] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:14:45] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:14:45] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:14:45] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:14:45] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:14:45] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:14:45] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:26:58] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:26:58] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/initial/
+[2026-09-05 02:26:58] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::initialAction
+[2026-09-05 02:26:58] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->initialAction
+[2026-09-05 02:26:58] [DEBUG] Console::initialAction() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\Console\Console.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view finish.
+[2026-09-05 02:26:58] [DEBUG] ConsoleController::initialAction() finish.
+[2026-09-05 02:26:58] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:26:58] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:26:58] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:26:58] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:26:58] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:26:58] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ConsoleController::areaInitialAction()
+[2026-09-05 02:26:58] [DEBUG] ConsoleController::AreaInitialAction() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaA() path: \Develop\Views\AreaA\Area_A.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::areaView() sending JSON: ["areas"]
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaA\Area_A.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaA() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaB() path: \Develop\Views\AreaB\Area_B.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaB\Area_B.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaB() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\Area_D_clear.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\Area_D_clear.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaF() path: \Develop\Views\AreaF\Area_F.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaF\Area_F.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaF() finish.
+[2026-09-05 02:26:58] [DEBUG] ProjectController::startProjectNabi() start...
+[2026-09-05 02:26:58] [DEBUG] ProjectController::getProjectListHtml() start...
+[2026-09-05 02:26:58] [DEBUG] ProjectModel::getProjectList() start...
+[2026-09-05 02:26:58] [DEBUG] ProjectModel::getProjectList() finish.
+[2026-09-05 02:26:58] [DEBUG] CodeMasterModel：：getCodesByGroup() start...
+[2026-09-05 02:26:58] [DEBUG] CodeMasterModel：：getCodesByGroup() finish.
+[2026-09-05 02:26:58] [DEBUG] ProjectController::getNaviFooterHtml() start...
+[2026-09-05 02:26:58] [DEBUG] ProjectController::getNaviFooterHtml() finish.
+[2026-09-05 02:26:58] [DEBUG] ProjectController::startProjectNabi() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaC() \Develop\Views\AreaC\Area_C.view start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaC\Area_C.view
+[2026-09-05 02:26:58] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::updateAreaC() finish.
+[2026-09-05 02:26:58] [DEBUG] ConsoleController::AreaInitialAction() finish.
+[2026-09-05 02:26:58] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:26:58] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:27:01] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:01] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:01] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:01] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:01] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:01] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:27:01] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:27:01] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:27:01] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:01] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:01] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:27:01] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:27:01] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:01] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:27:01] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:27:01] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:27:01] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:27:02] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:02] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:02] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:02] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:02] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:02] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:27:02] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:27:02] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:02] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:27:02] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:02] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:27:02] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:02] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:27:02] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:27:02] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:27:02] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:27:06] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:06] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:06] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:06] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:06] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:06] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::changeTypeAction()
+[2026-09-05 02:27:06] [DEBUG] PartsDefinitionController::changeTypeAction() start...
+[2026-09-05 02:27:06] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:06] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:27:06] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:06] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:27:06] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:06] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:27:06] [DEBUG] PartsDefinitionController::changeTypeAction() end.
+[2026-09-05 02:27:06] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:27:06] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:27:09] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:09] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:09] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:09] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:09] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:09] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:27:09] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:27:09] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:09] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:27:09] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:27:09] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:27:09] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:09] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:27:09] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:09] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:27:09] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:27:12] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:12] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:12] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:12] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:12] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:12] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:27:12] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:27:12] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:27:12] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:12] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:12] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:27:12] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:27:12] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:27:12] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:27:12] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:27:12] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:27:12] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:27:13] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:13] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:13] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:13] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:13] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:13] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:27:13] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:27:13] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:13] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:27:13] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:27:13] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:27:13] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:13] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:27:13] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:13] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:27:13] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:27:14] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:27:14] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:27:14] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:27:14] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:27:14] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:27:14] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:27:14] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:27:14] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:14] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:27:14] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:27:14] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:27:14] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:27:14] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:27:14] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:27:14] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:27:14] [ERROR] ConsoleController::ServerBridge Fatal: htmlspecialchars(): Argument #1 ($string) must be of type string, array given
+[2026-09-05 02:29:53] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:29:53] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/initial/
+[2026-09-05 02:29:53] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::initialAction
+[2026-09-05 02:29:53] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->initialAction
+[2026-09-05 02:29:53] [DEBUG] Console::initialAction() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\Console\Console.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view finish.
+[2026-09-05 02:29:53] [DEBUG] ConsoleController::initialAction() finish.
+[2026-09-05 02:29:53] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:29:53] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:29:53] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:29:53] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:29:53] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:29:53] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ConsoleController::areaInitialAction()
+[2026-09-05 02:29:53] [DEBUG] ConsoleController::AreaInitialAction() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaA() path: \Develop\Views\AreaA\Area_A.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::areaView() sending JSON: ["areas"]
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaA\Area_A.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaA() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaB() path: \Develop\Views\AreaB\Area_B.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaB\Area_B.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaB() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\Area_D_clear.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\Area_D_clear.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaF() path: \Develop\Views\AreaF\Area_F.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaF\Area_F.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaF() finish.
+[2026-09-05 02:29:53] [DEBUG] ProjectController::startProjectNabi() start...
+[2026-09-05 02:29:53] [DEBUG] ProjectController::getProjectListHtml() start...
+[2026-09-05 02:29:53] [DEBUG] ProjectModel::getProjectList() start...
+[2026-09-05 02:29:53] [DEBUG] ProjectModel::getProjectList() finish.
+[2026-09-05 02:29:53] [DEBUG] CodeMasterModel：：getCodesByGroup() start...
+[2026-09-05 02:29:53] [DEBUG] CodeMasterModel：：getCodesByGroup() finish.
+[2026-09-05 02:29:53] [DEBUG] ProjectController::getNaviFooterHtml() start...
+[2026-09-05 02:29:53] [DEBUG] ProjectController::getNaviFooterHtml() finish.
+[2026-09-05 02:29:53] [DEBUG] ProjectController::startProjectNabi() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaC() \Develop\Views\AreaC\Area_C.view start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaC\Area_C.view
+[2026-09-05 02:29:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::updateAreaC() finish.
+[2026-09-05 02:29:53] [DEBUG] ConsoleController::AreaInitialAction() finish.
+[2026-09-05 02:29:53] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:29:53] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:29:55] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:29:55] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:29:55] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:29:55] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:29:55] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:29:55] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:29:55] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:29:55] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:29:55] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:29:55] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:55] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:29:55] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:29:55] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:55] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:29:55] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:29:55] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:29:55] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:29:56] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:29:56] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:29:56] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:29:56] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:29:56] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:29:56] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:29:56] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:29:56] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:29:56] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:29:56] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:29:56] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:29:56] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:29:56] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:29:56] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:29:56] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:29:56] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:47] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:47] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/initial/
+[2026-09-05 02:30:47] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::initialAction
+[2026-09-05 02:30:47] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->initialAction
+[2026-09-05 02:30:47] [DEBUG] Console::initialAction() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\Console\Console.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::view() path: \Develop\Views\Console\Console.view finish.
+[2026-09-05 02:30:47] [DEBUG] ConsoleController::initialAction() finish.
+[2026-09-05 02:30:47] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:47] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:47] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:47] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:47] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:47] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ConsoleController::areaInitialAction()
+[2026-09-05 02:30:47] [DEBUG] ConsoleController::AreaInitialAction() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaA() path: \Develop\Views\AreaA\Area_A.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::areaView() sending JSON: ["areas"]
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaA\Area_A.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaA() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaB() path: \Develop\Views\AreaB\Area_B.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaB\Area_B.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaB() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\Area_D_clear.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\Area_D_clear.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaF() path: \Develop\Views\AreaF\Area_F.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaF\Area_F.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaF() finish.
+[2026-09-05 02:30:47] [DEBUG] ProjectController::startProjectNabi() start...
+[2026-09-05 02:30:47] [DEBUG] ProjectController::getProjectListHtml() start...
+[2026-09-05 02:30:47] [DEBUG] ProjectModel::getProjectList() start...
+[2026-09-05 02:30:47] [DEBUG] ProjectModel::getProjectList() finish.
+[2026-09-05 02:30:47] [DEBUG] CodeMasterModel：：getCodesByGroup() start...
+[2026-09-05 02:30:47] [DEBUG] CodeMasterModel：：getCodesByGroup() finish.
+[2026-09-05 02:30:47] [DEBUG] ProjectController::getNaviFooterHtml() start...
+[2026-09-05 02:30:47] [DEBUG] ProjectController::getNaviFooterHtml() finish.
+[2026-09-05 02:30:47] [DEBUG] ProjectController::startProjectNabi() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaC() \Develop\Views\AreaC\Area_C.view start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaC\Area_C.view
+[2026-09-05 02:30:47] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::updateAreaC() finish.
+[2026-09-05 02:30:47] [DEBUG] ConsoleController::AreaInitialAction() finish.
+[2026-09-05 02:30:47] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:47] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:48] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:48] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:48] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:48] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:48] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:48] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:30:48] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:30:48] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:30:48] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:48] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:48] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:30:48] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:30:48] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:48] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:48] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:30:48] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:48] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:50] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:50] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:50] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:50] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:50] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:50] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:30:50] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:30:50] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:50] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:30:50] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:50] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:30:50] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:50] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:50] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:30:50] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:50] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:53] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:53] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:53] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:53] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:53] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:53] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::changeTypeAction()
+[2026-09-05 02:30:53] [DEBUG] PartsDefinitionController::changeTypeAction() start...
+[2026-09-05 02:30:53] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:53] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:30:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:30:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:53] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:53] [DEBUG] PartsDefinitionController::changeTypeAction() end.
+[2026-09-05 02:30:53] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:53] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:55] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:55] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:55] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:55] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:55] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:55] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:30:55] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:55] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:30:55] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:55] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:30:55] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:55] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:55] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:30:55] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:55] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:56] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:56] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:56] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:56] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:56] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:56] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:30:56] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:56] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:30:56] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:56] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:30:56] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:56] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:56] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:30:56] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:56] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:30:59] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:30:59] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:30:59] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:30:59] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:30:59] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:30:59] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:30:59] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:30:59] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:30:59] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:30:59] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:30:59] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:30:59] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:30:59] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:30:59] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:30:59] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:00] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:01] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:01] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:01] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:01] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:01] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: developers
+[2026-09-05 02:31:01] [DEBUG] 逆引き成功: 物理名 developers -> table_id : 14
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:01] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:01] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:01] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:01] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:01] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:01] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:01] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:01] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:02] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:02] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:02] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:02] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:02] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:02] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: developers
+[2026-09-05 02:31:02] [DEBUG] 逆引き成功: 物理名 developers -> table_id : 14
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:02] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:02] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:02] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:02] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:02] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:02] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:02] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:02] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:03] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:03] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:03] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:03] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:03] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:03] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:03] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:03] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:03] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:03] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:03] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:03] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:03] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:03] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:03] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:03] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:03] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:05] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:05] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:05] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:05] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:05] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:05] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:05] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:05] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:05] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:05] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:05] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:05] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:05] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:05] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:05] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:05] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:05] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:37] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:37] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:37] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:37] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:37] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:37] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:31:37] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:37] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:37] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:37] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:37] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:37] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:37] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:37] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:37] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:38] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:38] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:38] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:38] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:38] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:38] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:31:38] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:38] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:38] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:38] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:38] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:38] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:38] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:38] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:38] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:41] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:41] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:41] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:41] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:41] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:41] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:31:41] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:41] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:41] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:41] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:41] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:41] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:41] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:41] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:41] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:42] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:42] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:42] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:42] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:42] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:42] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:31:42] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:42] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:42] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:42] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:42] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:42] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:42] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:42] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:42] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:49] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:49] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:49] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:49] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:49] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:49] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: developers
+[2026-09-05 02:31:49] [DEBUG] 逆引き成功: 物理名 developers -> table_id : 14
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:49] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:49] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:49] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:49] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:49] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:49] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:49] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:49] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:31:59] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:31:59] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:31:59] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:31:59] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:31:59] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:31:59] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:31:59] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:31:59] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:31:59] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:31:59] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:31:59] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:31:59] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:31:59] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:31:59] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:31:59] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:35:29] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:35:29] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:35:29] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:35:29] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:35:29] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:35:29] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:35:29] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:29] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:35:29] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:35:29] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:35:29] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:35:29] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:35:29] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:35:29] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:35:29] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:35:31] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:35:31] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:35:31] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:35:31] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:35:31] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:35:31] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:35:31] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:35:31] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:31] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:31] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:35:31] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:35:31] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:35:32] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:35:32] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:35:32] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:35:32] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:35:32] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:35:32] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:35:32] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:35:32] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:35:32] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:35:32] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:35:32] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:35:32] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:35:32] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:33] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:33] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:35:33] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:35:33] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:35:33] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:35:33] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:35:33] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:35:33] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:35:33] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:35:34] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:35:34] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:35:34] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:35:34] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:35:34] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:35:34] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:35:34] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:35:34] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:34] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:34] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:35:34] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:35:34] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:35:34] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:35:34] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:35:34] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:35:34] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:35:34] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:35:36] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:35:36] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:35:36] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:35:36] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:35:36] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:35:36] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:35:36] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:35:36] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:35:36] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:35:36] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:35:36] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:35:36] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:35:36] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:35:36] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:35:36] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:38:53] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:38:53] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:38:53] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:38:53] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:38:53] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:38:53] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:38:53] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:38:53] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:38:53] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:38:53] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:38:53] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:38:53] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:38:53] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:38:53] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:38:53] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:38:53] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:38:53] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:38:55] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:38:55] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:38:55] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:38:55] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:38:55] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:38:55] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:38:55] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:38:55] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:38:55] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:38:55] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:38:55] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:38:55] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:38:55] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:38:55] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:38:55] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:38:55] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:38:57] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:38:57] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:38:57] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:38:57] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:38:57] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:38:57] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:38:57] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:38:57] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:38:57] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:38:57] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:38:57] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:38:57] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:38:57] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:38:57] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:38:57] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:38:59] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:38:59] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:38:59] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:38:59] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:38:59] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:38:59] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:38:59] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:38:59] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:38:59] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:38:59] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:38:59] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:38:59] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:38:59] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:38:59] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:38:59] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:38:59] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:39:01] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:39:01] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:39:01] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:39:01] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:39:01] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:39:01] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ScreenDefinitionController::initialAction()
+[2026-09-05 02:39:01] [DEBUG] ScreenDefinitionController::initialAction() start...
+[2026-09-05 02:39:01] [DEBUG] ScreenDefinitionModel::getAllScreenList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:39:01] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\ScreenDefinition\ScreenDefinitionList.view start...
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\ScreenDefinition\ScreenDefinitionList.view
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:39:01] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:39:01] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:39:01] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:39:01] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:39:01] [DEBUG] ScreenDefinitionController::initialAction() end.
+[2026-09-05 02:39:01] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:39:01] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:39:02] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:39:03] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:39:03] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:39:03] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:39:03] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:39:03] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\ScreenDefinitionController::editAction()
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionController::editAction() start...
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getScreenData() start... project_id: PRJ-D45FEF, screen_id: 2
+[2026-09-05 02:39:03] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: newDevelopers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: newDevelopers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: newDevelopers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: applicantmaster
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 19件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: applicantmaster
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 19件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: applicantmaster
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 19件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: newDevelopers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionModel::getColumnsByTableName() start... project_id: PRJ-D45FEF, table_name: developers
+[2026-09-05 02:39:03] [DEBUG] 🔍 取得カラム数: 9件
+[2026-09-05 02:39:03] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\ScreenDefinition\RegistScreen.view start...
+[2026-09-05 02:39:03] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:39:03] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\ScreenDefinition\RegistScreen.view
+[2026-09-05 02:39:03] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:39:03] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:39:03] [DEBUG] ScreenDefinitionController::editAction() end.
+[2026-09-05 02:39:03] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:39:03] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:46:28] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:46:28] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:46:28] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:46:28] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:46:28] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:46:28] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::InitialAction()
+[2026-09-05 02:46:28] [DEBUG] DBDefinitionController::initialAction() start...
+[2026-09-05 02:46:28] [DEBUG] PartsDefinitionController::initialAction() projectId : PRJ-D45FEF
+[2026-09-05 02:46:28] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:46:28] [DEBUG] Screen::updateAreaD() path: \Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view start...
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaD\PartsDefinition\PartsDefinitionList.view
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:46:28] [DEBUG] Screen::updateAreaD() finish.
+[2026-09-05 02:46:28] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\Area_E_clear.view start...
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\Area_E_clear.view
+[2026-09-05 02:46:28] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:46:28] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:46:28] [DEBUG] DBDefinitionController::initialAction() end.
+[2026-09-05 02:46:28] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:46:28] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:46:29] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:46:29] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:46:29] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:46:29] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:46:29] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:46:29] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::newPartsAction()
+[2026-09-05 02:46:29] [DEBUG] PartsDefinitionController::newPartsAction() start...
+[2026-09-05 02:46:29] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:46:29] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:46:29] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:46:29] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:46:29] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:46:29] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:46:29] [DEBUG] PartsDefinitionController::newPartsAction() end.
+[2026-09-05 02:46:29] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:46:29] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:47:02] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:47:02] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:47:02] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:47:02] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:47:02] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:47:02] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::changeTypeAction()
+[2026-09-05 02:47:02] [DEBUG] PartsDefinitionController::changeTypeAction() start...
+[2026-09-05 02:47:02] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:47:02] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:47:02] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:47:02] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:47:02] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:47:02] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:47:02] [DEBUG] PartsDefinitionController::changeTypeAction() end.
+[2026-09-05 02:47:02] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:47:02] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:47:14] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:47:14] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:47:14] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:47:14] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:47:14] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:47:14] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:47:14] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:47:14] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:47:14] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:47:14] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:47:14] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:47:14] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:47:14] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:47:14] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:47:14] [DEBUG] Screen::areaView() finish.
+[2026-09-05 02:47:15] [DEBUG] --- wwProject System Start ---
+[2026-09-05 02:47:15] [DEBUG] Router::Router() /jemini/wwProjectV1.57/Develop/Console/ServerBridgeAction/
+[2026-09-05 02:47:15] [DEBUG] Attempting to load: \Develop\Controllers\ConsoleController::ServerBridgeAction
+[2026-09-05 02:47:15] [DEBUG] Router: Executing \Develop\Controllers\ConsoleController->ServerBridgeAction
+[2026-09-05 02:47:15] [DEBUG] ConsoleController::ServerBridge() start...
+[2026-09-05 02:47:15] [DEBUG] ConsoleController::ServerBridge() \Develop\Controllers\PartsDefinitionController::editPartsAction()
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionController::editPartsAction() start...
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionModel::getAllPartsList() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionModel::getColumnsByTableId() start... Input: newDevelopers
+[2026-09-05 02:47:15] [DEBUG] 逆引き成功: 物理名 newDevelopers -> table_id : 12
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionModel::getColumnsByTableId() finish. 件数: 9
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionModel::getTableStructure() start... Project ID: PRJ-D45FEF
+[2026-09-05 02:47:15] [DEBUG] Screen::updateAreaE() [iframe起動版] path: \Develop\Views\AreaE\PartsDefinition\RegistParts.view start...
+[2026-09-05 02:47:15] [DEBUG] Screen::getContents() start...
+[2026-09-05 02:47:15] [DEBUG] Screen::getContents() (2.2) C:/xampp8/htdocs/jemini/wwProjectV1.57\Develop\Views\AreaE\PartsDefinition\RegistParts.view
+[2026-09-05 02:47:15] [DEBUG] Screen::getContents() finish.
+[2026-09-05 02:47:15] [DEBUG] Screen::updateAreaE() finish.
+[2026-09-05 02:47:15] [DEBUG] PartsDefinitionController::editPartsAction() end.
+[2026-09-05 02:47:15] [DEBUG] Screen::areaView() start...
+[2026-09-05 02:47:15] [DEBUG] Screen::areaView() finish.

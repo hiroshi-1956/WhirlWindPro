@@ -40,6 +40,7 @@ class Screen {
         
         ob_start();
         extract($data);
+        $logger->debug("Screen::getContents() (2.2) " . $file);
         include $file;
         $content = ob_get_clean();
         

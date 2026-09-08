@@ -1,7 +1,6 @@
 <?php
 /**
- * multi_record_confirm.view (Multi Record Confirm / 拡張設定部分)
- * - 表示行数の変更とDB保存に対応した完全版
+ * multi_record_search.view (Multi Record Search / 拡張設定部分)
  */
 if (!function_exists('convertToDeveloperVariableNamePHP')) {
     function convertToDeveloperVariableNamePHP($str) {
@@ -13,7 +12,7 @@ if (!function_exists('convertToDeveloperVariableNamePHP')) {
 }
 
 $textinput_configs = $textinput_configs ?? [];
-$rowCount = max(1, intval($input_rows ?? 3));
+$rowCount = 3; // 表示行数は固定（3行）
 $isEditMode = !empty($is_edit);
 ?>
 
@@ -24,12 +23,26 @@ $isEditMode = !empty($is_edit);
 <!-- 選択されたカラムを確実にサーバーへ送信するための隠しフィールド -->
 <input type="hidden" id="checked_columns" name="checked_columns" value="<?= htmlspecialchars(is_array($checked_columns ?? null) ? implode(',', $checked_columns) : ($checked_columns ?? ''), ENT_QUOTES, 'UTF-8') ?>">
 
-<!-- ★ 親の onClickSave が参照する表示行数の隠しフィールド -->
-<input type="hidden" id="input_rows_hidden" value="<?= htmlspecialchars($input_rows ?? '3', ENT_QUOTES, 'UTF-8') ?>">
+<!-- 各カラムのプルダウン設定値（input_style）をサーバーへ送信するための隠しフィールド -->
+<input type="hidden" id="input_style_json" name="input_style_json" value="<?= htmlspecialchars(is_array($input_style ?? null) ? json_encode($input_style, JSON_UNESCAPED_UNICODE) : ($input_style ?? '{}'), ENT_QUOTES, 'UTF-8') ?>">
 
-<div id="multi-record-confirm-fields-container" style="display: block; margin-top: 0;">
+<!-- 固定の表示行数を隠しフィールドとしても保持 -->
+<input type="hidden" id="input_rows_hidden" value="<?= $rowCount; ?>">
+
+<input type="hidden" id="search_area_hidden" name="search_area" value="1">
+
+<div id="search-multi-record-fields-container" style="display: block; margin-top: 0;">
     <table class="extended-table" style="border-collapse: collapse; width: 100%; border: none;">
         
+        <!-- パーツ種類の固定表示行 -->
+        <tr id="row-parts-type-fixed" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">パーツ種類</th>
+            <td style="padding: 0; vertical-align: middle; font-size: 14px; font-weight: bold;">
+                Multi Record Search
+                <input type="hidden" name="parts_type" id="parts_type" value="Multi Record Search">
+            </td>
+        </tr>
+
         <tr id="row-table-id" style="height: 40px;">
             <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">参照テーブル</th>
             <td style="padding: 0; vertical-align: middle;">
@@ -55,16 +68,6 @@ $isEditMode = !empty($is_edit);
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
-                </div>
-            </td>
-        </tr>
-        
-        <tr id="live-column-count-row" style="height: 40px;">
-            <th id="column-count-label" style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">表示行数</th>
-            <td style="padding: 0; vertical-align: middle;">
-                <div id="wrapper-multi-rows" style="display: flex; align-items: center; gap: 8px; padding-left: 0;">
-                    <input type="number" id="input_rows" name="input_rows" min="1" max="99" style="width: 60px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; font-weight: bold; text-align: center;" value="<?= htmlspecialchars($input_rows ?? '3', ENT_QUOTES, 'UTF-8'); ?>" oninput="onRowCountChange(); saveMainForm();" onchange="onRowCountChange(); saveMainForm();">
-                    <span style="font-size: 14px; font-weight: bold; color: #000;">行</span>
                 </div>
             </td>
         </tr>
@@ -99,6 +102,23 @@ $isEditMode = !empty($is_edit);
             </td>
         </tr>
 
+        <tr id="row-detail-button" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">詳細ボタン</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 40px; height: 30px; font-size: 14px; padding-left: 0;">
+                    <?php 
+                        $current_detail = (isset($detail_button) && $detail_button === 'exist') ? 'exist' : 'none'; 
+                    ?>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="detail_button" value="none" <?= $current_detail === 'none' ? 'checked' : '' ?> onchange="toggleDetailButtonVisibility(); saveMainForm();"> 無し
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="detail_button" value="exist" <?= $current_detail === 'exist' ? 'checked' : '' ?> onchange="toggleDetailButtonVisibility(); saveMainForm();"> 有り
+                    </label>
+                </div>
+            </td>
+        </tr>
+
         <tr id="row-preview-title" style="height: 40px;">
             <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面タイトル</th>
             <td style="padding: 0; vertical-align: middle;">
@@ -113,7 +133,19 @@ $isEditMode = !empty($is_edit);
             <table id="horizontal-columns-table" style="border-collapse: collapse; width: auto; font-size: 14px; background-color: #fff; table-layout: auto;">
                 <?php if (!empty($m_partsinfo_columns)): ?>
                     <?php 
+                        $showDetail = ($current_detail === 'exist');
+                        
+                        $decoded_input_style = [];
+                        if (isset($input_style)) {
+                            if (is_array($input_style)) {
+                                $decoded_input_style = $input_style;
+                            } else if (is_string($input_style)) {
+                                $decoded_input_style = json_decode($input_style, true) ?? [];
+                            }
+                        }
+
                         $checkboxHtml = '<tr style="border-bottom: 1px solid #ccc; background-color: #fafafa;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">選択</th>';
+                        $pulldownHtml = '<tr style="border-bottom: 1px solid #ccc; background-color: #fff;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">検索</th>';
                         $headerHtml   = '<tr style="border-bottom: 1px solid #ccc;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">項目名</th>';
                         
                         $rowHtmls = [];
@@ -137,27 +169,47 @@ $isEditMode = !empty($is_edit);
                                 }
                             }
 
-                            // 1段目：選択チェックボックス
+                            $current_pulldown_val = $decoded_input_style[$p_col] ?? '';
+
                             $checkboxHtml .= '<td class="horizontal-item-cell" data-index="'.$idx.'" style="text-align: center; border-right: 1px solid #ccc; padding: 6px 8px; background-color: #fff;">';
                             $checkboxHtml .= '<input type="checkbox" name="selected_columns_horizontal[]" value="'.htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8').'" data-index="'.$idx.'" onchange="toggleColumnListVisibility(); saveMainForm();" '.($isChecked ? 'checked' : '').' style="transform: scale(1.1); cursor: pointer;">';
                             $checkboxHtml .= '</td>';
 
-                            // 2段目：項目名（物理名/論理名）
+                            $pulldownHtml .= '<td class="horizontal-pulldown-cell" data-index="'.$idx.'" data-physical="'.htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8').'" style="text-align: center; border-right: 1px solid #ccc; padding: 4px 6px; background-color: #fff;">';
+                            $pulldownHtml .= '<select name="column_pulldown['.htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8').']" class="column-pulldown-select" style="height: 24px; font-size: 12px; border: 1px solid #999; outline: none; background: #fff; cursor: pointer;" onchange="saveMainForm();">';
+                            $pulldownHtml .= '<option value="">-- 選択してください --</option>';
+                            $pulldownHtml .= '<option value="text" '.($current_pulldown_val === 'text' ? 'selected' : '').'>text</option>';
+                            $pulldownHtml .= '<option value="pulldown" '.($current_pulldown_val === 'pulldown' ? 'selected' : '').'>pulldown</option>';
+                            $pulldownHtml .= '<option value="radiobox" '.($current_pulldown_val === 'radiobox' ? 'selected' : '').'>radiobox</option>';
+                            $pulldownHtml .= '<option value="checkbox" '.($current_pulldown_val === 'checkbox' ? 'selected' : '').'>checkbox</option>';
+                            $pulldownHtml .= '</select>';
+                            $pulldownHtml .= '</td>';
+
                             $headerHtml   .= '<th class="horizontal-label-cell" data-index="'.$idx.'" data-physical="'.htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8').'" data-logical="'.htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8').'" style="padding: 6px 12px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap;" title="'.htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8').'</th>';
 
-                            // 3段目以降：表示行数分の「空のセル」
                             for ($r = 1; $r <= $rowCount; $r++) {
                                 $rowHtmls[$r] .= '<td class="horizontal-item-cell" data-index="'.$idx.'" style="width: 140px; height: 28px; padding: 6px 8px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; background-color: #fff; vertical-align: middle;">&nbsp;</td>';
                             }
                         }
                         
+                        $displayStyleDetail = $showDetail ? '' : 'display: none;';
+
+                        $checkboxHtml .= '<td style="background-color: #fafafa; border-left: 1px solid #ccc; padding: 0;">&nbsp;</td>';
+                        $pulldownHtml .= '<td style="background-color: #fff; border-left: 1px solid #ccc; padding: 4px 8px; vertical-align: middle; text-align: center;"><div style="width: 60px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background-color: #28a745; color: #fff; border: 1px solid #1e7e34; font-size: 12px; font-weight: bold; box-sizing: border-box; cursor: pointer;" onclick="alert(\'検索を実行します\');">検索</div></td>';
+                        $headerHtml   .= '<td style="background-color: #fafafa; border-left: 1px solid #ccc; padding: 0;">&nbsp;</td>';
+                        
+                        for ($r = 1; $r <= $rowCount; $r++) {
+                            $rowHtmls[$r] .= '<td class="detail-button-cell" style="background-color: #fff; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 4px 8px; vertical-align: middle; text-align: center; ' . $displayStyleDetail . '"><div style="width: 60px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background-color: #007bff; color: #fff; border: 1px solid #0056b3; font-size: 12px; font-weight: bold; box-sizing: border-box; cursor: pointer;" onclick="alert(\'行 '.$r.' の詳細を表示します\');">詳細</div></td>';
+                        }
+
                         $checkboxHtml .= '</tr>';
+                        $pulldownHtml .= '</tr>';
                         $headerHtml   .= '</tr>';
                         foreach ($rowHtmls as $r => $rH) {
                             $rowHtmls[$r] .= '</tr>';
                         }
 
-                        echo $checkboxHtml . $headerHtml . implode('', $rowHtmls);
+                        echo $checkboxHtml . $pulldownHtml . $headerHtml . implode('', $rowHtmls);
                     ?>
                 <?php endif; ?>
             </table>
@@ -167,6 +219,7 @@ $isEditMode = !empty($is_edit);
 
 <script>
 let cachedColumnsData = null;
+const FIXED_ROW_COUNT = 3;
 
 function switchDisplayLabel(type) {
     const headers = document.querySelectorAll('.horizontal-label-cell');
@@ -185,19 +238,33 @@ function switchDisplayLabel(type) {
     });
 }
 
+function toggleDetailButtonVisibility() {
+    const detailButtonRadio = document.querySelector('input[name="detail_button"]:checked');
+    const isExist = detailButtonRadio && detailButtonRadio.value === 'exist';
+    
+    const detailCells = document.querySelectorAll('.detail-button-cell');
+    detailCells.forEach(cell => {
+        cell.style.display = isExist ? '' : 'none';
+    });
+    
+    saveMainForm();
+}
+
 function toggleColumnListVisibility() {
     const filterRadio = document.querySelector('input[name="column_filter"]:checked');
     const filterType = filterRadio ? filterRadio.value : 'all';
     
     const table = document.getElementById('horizontal-columns-table');
-    if (!table || table.rows.length < 2) return;
+    if (!table || table.rows.length < 3) return;
 
     const checkboxCells = table.querySelectorAll('tr:nth-child(1) td');
-    const headerCells = table.querySelectorAll('tr:nth-child(2) th:not(:first-child)');
+    const pulldownCells = table.querySelectorAll('tr:nth-child(2) td');
+    const headerCells = table.querySelectorAll('tr:nth-child(3) th:not(:first-child)');
     const allRows = table.querySelectorAll('tr');
 
     headerCells.forEach((th, idx) => {
         const chkCell = checkboxCells[idx];
+        const pdCell = pulldownCells[idx];
         if (!chkCell) return;
 
         const checkbox = chkCell.querySelector('input[type="checkbox"]');
@@ -211,30 +278,15 @@ function toggleColumnListVisibility() {
         const displayStyle = show ? '' : 'none';
         th.style.display = displayStyle;
         chkCell.style.display = displayStyle;
+        if (pdCell) pdCell.style.display = displayStyle;
 
-        for (let r = 2; r < allRows.length; r++) {
+        for (let r = 3; r < allRows.length; r++) {
             const rowCells = allRows[r].querySelectorAll('td');
-            if (rowCells[idx]) {
+            if (rowCells[idx] && !rowCells[idx].classList.contains('detail-button-cell')) {
                 rowCells[idx].style.display = displayStyle;
             }
         }
     });
-}
-
-function onRowCountChange() {
-    // 親の保存処理が参照する隠しフィールド（input_rows_hidden）へも数値を同期
-    const inputRowsEl = document.getElementById('input_rows');
-    const hiddenEl = document.getElementById('input_rows_hidden');
-    if (inputRowsEl && hiddenEl) {
-        hiddenEl.value = inputRowsEl.value;
-    }
-
-    if (cachedColumnsData && cachedColumnsData.length > 0) {
-        renderHorizontalColumns(cachedColumnsData);
-        toggleColumnListVisibility();
-    } else {
-        loadColumnsFromDB();
-    }
 }
 
 function loadColumnsFromDB() {
@@ -242,14 +294,6 @@ function loadColumnsFromDB() {
     const selectedTableName = tableSelect ? tableSelect.value : '';
     const columnListWrapper = document.getElementById('column-list-wrapper');
     const horizontalTable = document.getElementById('horizontal-columns-table');
-    const inputRowsEl = document.getElementById('input_rows');
-    const currentRows = inputRowsEl ? inputRowsEl.value : '3';
-
-    // 隠しフィールドへも同期
-    const hiddenEl = document.getElementById('input_rows_hidden');
-    if (hiddenEl) {
-        hiddenEl.value = currentRows;
-    }
 
     if (!selectedTableName) {
         if (columnListWrapper) columnListWrapper.style.display = 'none';
@@ -259,22 +303,27 @@ function loadColumnsFromDB() {
         return;
     }
 
+    const detailButtonRadio = document.querySelector('input[name="detail_button"]:checked');
+    const detailButtonVal = detailButtonRadio ? detailButtonRadio.value : 'none';
+
     if (typeof window.bridge === 'function') {
         window.bridge({
             code: 'PartsDefinition/getColumns',
             table_name: selectedTableName,
-            parts_type: document.getElementById('parts_type') ? document.getElementById('parts_type').value : 'Multi Record Confirm',
+            parts_type: document.getElementById('parts_type') ? document.getElementById('parts_type').value : 'Multi Record Search',
             parts_id: document.getElementById('parts_id') ? document.getElementById('parts_id').value : '',
             parts_name: document.getElementById('parts_name') ? document.getElementById('parts_name').value : '',
             parts_description: document.getElementById('parts_description') ? document.getElementById('parts_description').value : '',
             preview_title: document.getElementById('preview_title') ? document.getElementById('preview_title').value : '',
-            input_rows: currentRows
+            detail_button: detailButtonVal,
+            input_rows: FIXED_ROW_COUNT
         }, function(response) {
             if (response && response.columns) {
                 cachedColumnsData = response.columns;
                 renderHorizontalColumns(response.columns);
                 if (columnListWrapper) columnListWrapper.style.display = 'block';
                 toggleColumnListVisibility();
+                toggleDetailButtonVisibility();
                 if (typeof saveMainForm === 'function') saveMainForm();
             }
         });
@@ -285,22 +334,34 @@ function renderHorizontalColumns(columns) {
     const horizontalTable = document.getElementById('horizontal-columns-table');
     const displayLabelRadio = document.querySelector('input[name="display_label"]:checked');
     const isPhysical = displayLabelRadio ? displayLabelRadio.value === 'physical' : true;
-    const inputRowsEl = document.getElementById('input_rows');
-    const rowCount = inputRowsEl ? Math.max(1, parseInt(inputRowsEl.value) || 3) : 3;
+    const detailButtonRadio = document.querySelector('input[name="detail_button"]:checked');
+    const showDetail = detailButtonRadio ? (detailButtonRadio.value === 'exist') : false;
+    const rowCount = FIXED_ROW_COUNT;
 
     const existingCheckboxes = {};
+    const existingPulldowns = {};
 
-    if (horizontalTable && horizontalTable.rows.length >= 1) {
+    if (horizontalTable && horizontalTable.rows.length >= 2) {
         const oldCheckCells = horizontalTable.querySelectorAll('tr:nth-child(1) td');
-        oldCheckCells.forEach((chkCell) => {
+        const oldPulldownCells = horizontalTable.querySelectorAll('tr:nth-child(2) td');
+        
+        oldCheckCells.forEach((chkCell, idx) => {
             const chk = chkCell.querySelector('input[type="checkbox"]');
             if (chk) {
                 existingCheckboxes[chk.value] = chk.checked;
+            }
+            if (oldPulldownCells[idx]) {
+                const sel = oldPulldownCells[idx].querySelector('select');
+                const physicalName = oldPulldownCells[idx].getAttribute('data-physical');
+                if (sel && physicalName) {
+                    existingPulldowns[physicalName] = sel.value;
+                }
             }
         });
     }
 
     let checkboxHtml = '<tr style="border-bottom: 1px solid #ccc; background-color: #fafafa;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">選択</th>';
+    let pulldownHtml = '<tr style="border-bottom: 1px solid #ccc; background-color: #fff;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">検索</th>';
     let headerHtml   = '<tr style="border-bottom: 1px solid #ccc;"><th style="width: 60px; padding: 6px 8px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap; background-color: #fafafa;">項目名</th>';
     
     let rowHtmls = {};
@@ -319,9 +380,21 @@ function renderHorizontalColumns(columns) {
             isChecked = existingCheckboxes[pCol];
         }
 
+        const currentPdVal = existingPulldowns[pCol] || '';
+
         checkboxHtml += `<td class="horizontal-item-cell" data-index="${idx}" style="text-align: center; border-right: 1px solid #ccc; padding: 6px 8px; background-color: #fff;">`;
         checkboxHtml += `<input type="checkbox" name="selected_columns_horizontal[]" value="${escapeHtml(pCol)}" data-index="${idx}" onchange="toggleColumnListVisibility(); saveMainForm();" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer;">`;
         checkboxHtml += `</td>`;
+
+        pulldownHtml += `<td class="horizontal-pulldown-cell" data-index="${idx}" data-physical="${escapeHtml(pCol)}" style="text-align: center; border-right: 1px solid #ccc; padding: 4px 6px; background-color: #fff;">`;
+        pulldownHtml += `<select name="column_pulldown[${escapeHtml(pCol)}]" class="column-pulldown-select" style="height: 24px; font-size: 12px; border: 1px solid #999; outline: none; background: #fff; cursor: pointer;" onchange="saveMainForm();">`;
+        pulldownHtml += `<option value="">-- 選択してください --</option>`;
+        pulldownHtml += `<option value="text" ${currentPdVal === 'text' ? 'selected' : ''}>text</option>`;
+        pulldownHtml += `<option value="pulldown" ${currentPdVal === 'pulldown' ? 'selected' : ''}>pulldown</option>`;
+        pulldownHtml += `<option value="radiobox" ${currentPdVal === 'radiobox' ? 'selected' : ''}>radiobox</option>`;
+        pulldownHtml += `<option value="checkbox" ${currentPdVal === 'checkbox' ? 'selected' : ''}>checkbox</option>`;
+        pulldownHtml += `</select>`;
+        pulldownHtml += `</td>`;
 
         headerHtml   += `<th class="horizontal-label-cell" data-index="${idx}" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="padding: 6px 12px; font-weight: bold; color: #000; border-right: 1px solid #ccc; text-align: center; white-space: nowrap;" title="${escapeHtml(middleLabel)}">${escapeHtml(middleLabel)}</th>`;
 
@@ -330,14 +403,25 @@ function renderHorizontalColumns(columns) {
         }
     });
 
+    const displayStyleDetail = showDetail ? '' : 'display: none;';
+
+    checkboxHtml += '<td style="background-color: #fafafa; border-left: 1px solid #ccc; padding: 0;">&nbsp;</td>';
+    pulldownHtml += '<td style="background-color: #fff; border-left: 1px solid #ccc; padding: 4px 8px; vertical-align: middle; text-align: center;"><div style="width: 60px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background-color: #28a745; color: #fff; border: 1px solid #1e7e34; font-size: 12px; font-weight: bold; box-sizing: border-box; cursor: pointer;" onclick="alert(\'検索を実行します\');">検索</div></td>';
+    headerHtml   += '<td style="background-color: #fafafa; border-left: 1px solid #ccc; padding: 0;">&nbsp;</td>';
+    
+    for (let r = 1; r <= rowCount; r++) {
+        rowHtmls[r] += `<td class="detail-button-cell" style="background-color: #fff; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 4px 8px; vertical-align: middle; text-align: center; ${displayStyleDetail}"><div style="width: 60px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background-color: #007bff; color: #fff; border: 1px solid #0056b3; font-size: 12px; font-weight: bold; box-sizing: border-box; cursor: pointer;" onclick="alert('行 ${r} の詳細を表示します');">詳細</div></td>`;
+    }
+
     checkboxHtml += '</tr>';
+    pulldownHtml += '</tr>';
     headerHtml   += '</tr>';
     for (let r = 1; r <= rowCount; r++) {
         rowHtmls[r] += '</tr>';
     }
 
     if (horizontalTable) {
-        horizontalTable.innerHTML = checkboxHtml + headerHtml + Object.values(rowHtmls).join('');
+        horizontalTable.innerHTML = checkboxHtml + pulldownHtml + headerHtml + Object.values(rowHtmls).join('');
     }
 }
 
@@ -360,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (isEditMode) {
         const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
-        if (partsTypeEl) {
+        if (partsTypeEl && partsTypeEl.tagName === 'SELECT') {
             partsTypeEl.disabled = true;
             partsTypeEl.style.backgroundColor = '#f0f0f0';
             partsTypeEl.style.cursor = 'not-allowed';
@@ -369,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const horizontalTable = document.getElementById('horizontal-columns-table');
     if (horizontalTable && horizontalTable.children.length > 0) {
-        const headerCells = horizontalTable.querySelectorAll('tr:nth-child(2) th:not(:first-child)');
+        const headerCells = horizontalTable.querySelectorAll('tr:nth-child(3) th:not(:first-child)');
         if (headerCells.length > 0) {
             cachedColumnsData = [];
             headerCells.forEach(th => {
@@ -382,29 +466,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     toggleColumnListVisibility();
+    toggleDetailButtonVisibility();
 });
 
 function updateSerializedData() {
     const table = document.getElementById('horizontal-columns-table');
-    if (!table || table.rows.length < 2) return;
+    if (!table || table.rows.length < 3) return;
 
     const checkedColumns = [];
+    const inputStyleData = {};
     const rows = table.querySelectorAll('tr');
-    if (rows.length < 2) return;
+    if (rows.length < 3) return;
 
     const checkboxCells = rows[0].querySelectorAll('td');
-    const headerCells = rows[1].querySelectorAll('th:not(:first-child)');
+    const pulldownCells = rows[1].querySelectorAll('td');
+    const headerCells = rows[2].querySelectorAll('th:not(:first-child)');
 
     headerCells.forEach((th, idx) => {
         const physicalName = th.getAttribute('data-physical');
         const chkCell = checkboxCells[idx];
+        const pdCell = pulldownCells[idx];
 
         if (!physicalName) return;
 
         const checkbox = chkCell ? chkCell.querySelector('input[type="checkbox"]') : null;
-
         if (checkbox && checkbox.checked) {
             checkedColumns.push(physicalName);
+        }
+
+        if (pdCell) {
+            const selectEl = pdCell.querySelector('select');
+            if (selectEl && selectEl.value) {
+                inputStyleData[physicalName] = selectEl.value;
+            }
         }
     });
 
@@ -412,11 +506,45 @@ function updateSerializedData() {
     if (checkedJsonEl) {
         checkedJsonEl.value = checkedColumns.join(',');
     }
-}
 
-function saveMainForm() {
-    if (typeof updateSerializedData === 'function') {
-        updateSerializedData();
+    let inputStyleEl = document.getElementById('input_style_json');
+    if (!inputStyleEl) {
+        inputStyleEl = document.createElement('input');
+        inputStyleEl.type = 'hidden';
+        inputStyleEl.id = 'input_style_json';
+        inputStyleEl.name = 'input_style';
+        document.getElementById('search-multi-record-fields-container').appendChild(inputStyleEl);
+    } else {
+        inputStyleEl.name = 'input_style';
     }
+    inputStyleEl.value = JSON.stringify(inputStyleData);
+
+    // ★詳細ボタンの選択状態を隠しフィールド（detail_button_hidden）へ確実に同期する
+    const detailButtonRadio = document.querySelector('input[name="detail_button"]:checked');
+    if (detailButtonRadio) {
+        let detailHiddenEl = document.getElementById('detail_button_hidden');
+        if (!detailHiddenEl) {
+            detailHiddenEl = document.createElement('input');
+            detailHiddenEl.type = 'hidden';
+            detailHiddenEl.id = 'detail_button_hidden';
+            detailHiddenEl.name = 'detail_button';
+            document.getElementById('search-multi-record-fields-container').appendChild(detailHiddenEl);
+        }
+        detailHiddenEl.value = detailButtonRadio.value;
+    }
+
+    // ★ search_area に無条件で 1 をセットする隠しフィールドの同期処理
+    let searchAreaEl = document.getElementById('search_area_hidden');
+    if (!searchAreaEl) {
+        searchAreaEl = document.createElement('input');
+        searchAreaEl.type = 'hidden';
+        searchAreaEl.id = 'search_area_hidden';
+        searchAreaEl.name = 'search_area';
+        const container = document.getElementById('search-multi-record-fields-container') || document.getElementById('module-container');
+        if (container) {
+            container.appendChild(searchAreaEl);
+        }
+    }
+    searchAreaEl.value = '1';
 }
 </script>

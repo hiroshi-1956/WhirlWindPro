@@ -105,7 +105,7 @@ CREATE TABLE m_parts_info (
     preview_title       VARCHAR(100),
     display_label       VARCHAR(20) DEFAULT 'physical',
     column_filter       VARCHAR(20) DEFAULT 'all',
-    checked_columns_json TEXT,                          -- MySQL 5.7以降なら JSON 型にしてもOKです
+    checked_columns     TEXT,                          -- MySQL 5.7以降なら JSON 型にしてもOKです
     
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

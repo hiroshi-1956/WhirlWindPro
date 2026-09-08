@@ -37,29 +37,32 @@ class ConsoleController extends \Develop\Utils\BaseController {
         $this->logger->debug("ConsoleController::AreaInitialAction() start...");
         
         try {
-            // Request::post を使用
-            $projectId = \Develop\Utils\Request::post('project_id');
+            // リクエストからのプロジェクトIDは別名で受け取る
+            $reqProjectId = \Develop\Utils\Request::post('project_id');
             
-            if ($projectId) {
-                // プロジェクトが選択された場合のみ更新
-                \Develop\Utils\Session::set('active_project', $projectId);
-                // 名称は ProjectController 内でDBから取得したものを優先するため、ここではIDを入れない
+            if ($reqProjectId) {
+                \Develop\Utils\Session::set('project_id', $reqProjectId);
+                \Develop\Utils\Session::set('active_project', $reqProjectId);
                 \Develop\Utils\Session::set('Selected_Project_Name', '');
             } else {
-                // 初期表示（window.onload）の時だけリセットしたい場合はここを有効に
-                // \Develop\Utils\Session::set('active_project', null);
+                \Develop\Utils\Session::set('active_function', null);
             }
-            \Develop\Utils\Session::set('active_function', null);
             
-            // 共通データの準備（既存通り）
+            // 共通データの準備
             $loginUserName = \Develop\Utils\Session::get('user_name');
             $footerMessage = \Develop\Utils\Session::get('Footer_Message');
             
+            // セッションから確実にプロジェクト情報を取得
+            $projectId = \Develop\Utils\Session::get('project_id');
+            $projectMap = \Develop\Utils\Session::get('project_map') ?? [];
+            $projectName = ($projectId && isset($projectMap[$projectId])) ? $projectMap[$projectId] : '';
+            $displayProject = $projectName ? $projectName . ' ( ' . $projectId . ' )' : '';
+            
             $dataA = [ 'Logo_Name' => 'wwProject' ];
-            $dataB = [ 'User_Name' => $loginUserName, 'Selected_Project_Name' => '' ];
+            $dataB = [ 'User_Name' => $loginUserName, 'Selected_Project_Name' => $displayProject ];
             $dataF = [ 'Footer_Message' => $footerMessage, 'Current_Year' => '2026', 'Company_Name' => 'WhirlWindPro Team.' ];
             
-            // 各エリアのView更新（既存通り）
+            // 各エリアのView更新
             \Develop\Utils\Screen::updateAreaA('\Develop\Views\AreaA\Area_A.view', $dataA);
             \Develop\Utils\Screen::updateAreaB('\Develop\Views\AreaB\Area_B.view', $dataB);
             \Develop\Utils\Screen::updateAreaD('\Develop\Views\AreaD\Area_D_clear.view', []);

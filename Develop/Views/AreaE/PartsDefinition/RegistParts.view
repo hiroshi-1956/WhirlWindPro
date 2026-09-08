@@ -6,6 +6,10 @@ $parts_type = $parts_type ?? '';
 $m_tables = $m_tables ?? [];
 $m_partsinfo_columns = $m_partsinfo_columns ?? [];
 $textinput_configs = $textinput_configs ?? [];
+
+$checked_columns_str = is_array($checked_columns ?? null) ? json_encode($checked_columns, JSON_UNESCAPED_UNICODE) : ($checked_columns ?? '[]');
+$input_style_str     = is_array($input_style ?? null) ? json_encode($input_style, JSON_UNESCAPED_UNICODE) : ($input_style ?? '[]');
+$detail_button_str   = is_array($detail_button ?? null) ? ($detail_button[0] ?? 'none') : ($detail_button ?? 'none');
 ?>
 
 <div class="designer-base" style="padding: 20px; box-sizing: border-box; background-color: #fff; font-family: 'Hiragino Kaku Gothic ProN', 'Helvetica Neue', Arial, sans-serif; font-size: 14px; color: #000;">
@@ -18,9 +22,12 @@ $textinput_configs = $textinput_configs ?? [];
     <input type="hidden" id="server_columns_json" value="<?= htmlspecialchars(json_encode($m_partsinfo_columns, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
 
 	<!-- ★ここに常時存在する隠しフィールドを配置し、モジュール側と共有する -->
-    <input type="hidden" id="checked_columns_json" value="<?= htmlspecialchars($checked_columns_json ?? '[]', ENT_QUOTES, 'UTF-8') ?>">
-    <input type="hidden" id="input_style_hidden" value="<?= htmlspecialchars($input_style ?? '[]', ENT_QUOTES, 'UTF-8') ?>">
+	<input type="hidden" id="checked_columns" value="<?= htmlspecialchars($checked_columns_str, ENT_QUOTES, 'UTF-8') ?>">
+    <input type="hidden" id="input_style_hidden" value="<?= htmlspecialchars($input_style_str, ENT_QUOTES, 'UTF-8') ?>">
     
+    <!-- サーバーから渡された detail_button の初期値を保持する隠しフィールド -->
+    <input type="hidden" id="detail_button_hidden" value="<?= htmlspecialchars($detail_button_str, ENT_QUOTES, 'UTF-8') ?>">
+        
     <!-- 共通基本情報（名称・説明・種類） -->
     <table class="input-table" style="border-collapse: collapse; width: 100%; border: none; margin-bottom: 0;">
         <tr style="height: 40px;">
@@ -47,6 +54,7 @@ $textinput_configs = $textinput_configs ?? [];
                         <option value="Text Input" <?= $current_type === 'Text Input' ? 'selected' : '' ?>>Text Input</option>
                         <option value="Single Record Confirm" <?= $current_type === 'Single Record Confirm' ? 'selected' : '' ?>>Single Record Confirm</option>
                         <option value="Multi Record Confirm" <?= $current_type === 'Multi Record Confirm' ? 'selected' : '' ?>>Multi Record Confirm</option>
+                        <option value="Multi Record Search" <?= $current_type === 'Multi Record Search' ? 'selected' : '' ?>>Multi Record Search</option>
                         <option value="Text Confirm" <?= $current_type === 'Text Confirm' ? 'selected' : '' ?>>Text Confirm</option>
                         <option value="Text Display" <?= $current_type === 'Text Display' ? 'selected' : '' ?>>Text Display</option>
                         <option value="Style Display" <?= $current_type === 'Style Display' ? 'selected' : '' ?>>Style Display</option>
@@ -85,6 +93,11 @@ $textinput_configs = $textinput_configs ?? [];
                 echo '<script>console.log("[PHP Debug] Loaded Module: Multi Record Confirm");</script>';
                 break;
                 
+            case 'Multi Record Search':
+                @include __DIR__ . '/parts/multi_record_search.view';
+                echo '<script>console.log("[PHP Debug] Loaded Module: Multi Record Search");</script>';
+                break;
+                
             case 'Text Confirm':
                 @include __DIR__ . '/parts/text_confirm.view';
                 echo '<script>console.log("[PHP Debug] Loaded Module: Text Confirm");</script>';
@@ -121,7 +134,12 @@ if (typeof window.bridge !== 'function') {
         : function(payload) { console.log('Bridge payload:', payload); };
 }
 
-// 種類の変更に応じて、対応するモジュールペインをJavaScriptで即座に切り替えつつバックエンドへ通知
+if (typeof saveMainForm !== 'function') {
+    window.saveMainForm = function() {
+        console.log('[JS Debug] saveMainForm called (stub)');
+    };
+}
+
 function onChangePartsType(selectedType) {
     console.log('[JS Debug] onChangePartsType switched to:', selectedType);
 
@@ -150,7 +168,6 @@ function onClickSave() {
     }
     if (!confirm('保存しますか？')) return;
 
-    // 1. 各モジュールの最新シリアライズ関数があれば実行して隠しフィールドに同期
     if (typeof updateSerializedData === 'function') {
         updateSerializedData();
     }
@@ -163,7 +180,36 @@ function onClickSave() {
         return checkedEl ? checkedEl.value : '';
     };
 
-    // 2. 送信データ (payload) の作成
+    let inputStyleVal = '[]';
+    const inputStyleJsonEl = document.getElementById('input_style_json') || document.getElementById('input_style_hidden');
+    if (inputStyleJsonEl) {
+        inputStyleVal = inputStyleJsonEl.value;
+    }
+
+    // --- ▼ 詳細ボタンの値を確実に取得するロジック ▼ ---
+    let detailButtonVal = '';
+    const checkedDetailRadio = document.querySelector('input[name="detail_button"]:checked');
+    if (checkedDetailRadio) {
+        detailButtonVal = checkedDetailRadio.value;
+    } else {
+        const detailHidden = document.getElementById('detail_button_hidden');
+        if (detailHidden && detailHidden.value) {
+            detailButtonVal = detailHidden.value;
+        } else {
+            detailButtonVal = 'none';
+        }
+    }
+    // --- ▲ ここまで ▲ ---
+
+    // --- ▼ search_area の値を確実に取得（要素があればその値、なければデフォルトで '1'） ▼ ---
+	let searchAreaVal = '0'; // デフォルトは '0'
+    const partsTypeVal = document.getElementById('parts_type').value;
+    
+    if (partsTypeVal === 'Multi Record Search') {
+        searchAreaVal = '1';
+    }
+    // --- ▲ ここまで ▲ ---
+
     const payload = {
         code: 'PartsDefinition/save',
         parts_id: document.getElementById('parts_id').value,
@@ -177,15 +223,14 @@ function onClickSave() {
         display_label: getRadioValue('display_label'),
         column_filter: getRadioValue('column_filter'),
 
-        // ★ contents（表示内容）を確実に送信対象に含める
+        search_area: searchAreaVal,
+        detail_button: detailButtonVal,
+        input_style: inputStyleVal,
         contents: document.getElementById('contents') ? document.getElementById('contents').value : '',
-
-        checked_columns_json: document.getElementById('checked_columns_json') ? document.getElementById('checked_columns_json').value : '[]',
-        input_style: document.getElementById('input_style_hidden') ? document.getElementById('input_style_hidden').value : '[]'
+        checked_columns: document.getElementById('checked_columns') ? document.getElementById('checked_columns').value : '[]'
     };
 
     console.log('[JS Debug] Final Save Payload:', payload);
-
     window.bridge(payload);
 }
 </script>

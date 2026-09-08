@@ -1,0 +1,256 @@
+<?php
+/**
+ * s_single_record_input.view
+ */
+?>
+<div style="width: 100%; background: #fff; box-sizing: border-box; padding: 0 20px 20px 20px;">
+    <!-- 画面タイトル（新規画面登録画面 → 画面詳細画面 に変更、2行目の重複部分は削除済み） -->
+    <div style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">
+        画面詳細画面
+    </div>
+
+    <!-- テーブル基本情報入力エリア -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+        <tr style="height: 35px;">
+            <th style="width: 120px; text-align: left; font-weight: normal;">画面名称</th>
+            <td>
+                <input type="text" id="detail-screen-name" style="width: 100%; height: 30px; border: 2px solid #000; padding: 0 6px; box-sizing: border-box; outline: none;" value="">
+            </td>
+        </tr>
+        <tr style="height: 35px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; padding-bottom: 10px;">日本語名称</th>
+            <td style="padding-bottom: 10px;">
+                <input type="text" id="detail-jp-name" style="width: 100%; height: 30px; border: 2px solid #000; padding: 0 6px; box-sizing: border-box; outline: none;" value="">
+            </td>
+        </tr>
+        <tr style="height: 35px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; padding-top: 5px; padding-bottom: 15px; vertical-align: bottom;">行列</th>
+            <td style="padding-top: 5px; padding-bottom: 15px; vertical-align: bottom;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="detail-input-rows-text" style="font-weight: bold; min-width: 20px; text-align: center;">1</span>
+                    <span>×</span>
+                    <span id="detail-input-cols-text" style="font-weight: bold; min-width: 20px; text-align: center;">1</span>
+                    <input type="hidden" id="detail-input-rows" value="1">
+                    <input type="hidden" id="detail-input-cols" value="1">
+                </div>
+            </td>
+        </tr>
+        <tr style="height: 35px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; padding-top: 5px; vertical-align: top;">種別</th>
+            <td style="padding-top: 5px; vertical-align: top;">
+                <span id="detail-part-type" style="font-size: 16px; font-weight: bold;">-</span>
+            </td>
+        </tr>
+    </table>
+
+    <!-- テーブル名見出し -->
+    <div id="detail-table-name-heading" style="font-size: 16px; font-weight: bold; margin-bottom: 8px;" data-table-name="">
+        テーブル名称 : -
+    </div>
+    
+    <!-- テーブル（横幅 100%） -->
+    <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; margin-bottom: 20px;">
+        <thead>
+            <tr style="background: #f9f9f9; border-bottom: 2px solid #000;">
+                <th style="border: 1px solid #000; padding: 8px; text-align: left; font-weight: normal; width: 8%; white-space: nowrap;">種類</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left; font-weight: normal; width: 20%;">表示名</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left; font-weight: normal; width: 20%;">入力形式</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left; font-weight: normal; width: 52%;">変数名</th>
+            </tr>
+        </thead>
+        <tbody id="detail-table-tbody">
+            <!-- 動的生成エリア -->
+        </tbody>
+    </table>
+
+    <!-- INSERT SQL 表示エリア（高さ自動可変対応） -->
+    <div style="margin-bottom: 30px;">
+        <div style="font-size: 15px; font-weight: bold; margin-bottom: 6px;">INSERT SQL</div>
+        <textarea id="detail-insert-sql" readonly style="width: 100%; overflow: hidden; background: #f4f4f4; border: 1px solid #ccc; padding: 10px; font-family: monospace; font-size: 13px; box-sizing: border-box; resize: none; outline: none; line-height: 1.4;"></textarea>
+    </div>
+</div>
+
+<script>
+if (typeof window.initSingleRecordInput !== 'function') {
+    window.initSingleRecordInput = function(matchedPart) {
+        if (!matchedPart) return;
+
+        const screenNameInput = document.getElementById('detail-screen-name');
+        if (screenNameInput) {
+            const topScreenNameEl = document.getElementById('screen-name') || document.getElementById('screen_name');
+            screenNameInput.value = (topScreenNameEl && topScreenNameEl.value) ? topScreenNameEl.value : (matchedPart.preview_title || matchedPart.parts_name || '');
+        }
+
+        const jpNameInput = document.getElementById('detail-jp-name');
+        if (jpNameInput) {
+            const topJpNameEl = document.getElementById('parts-description');
+            jpNameInput.value = (topJpNameEl && topJpNameEl.value) ? topJpNameEl.value : (matchedPart.parts_description || '');
+        }
+
+        const rVal = matchedPart.row ?? matchedPart.row_index ?? matchedPart.r ?? 1;
+        const cVal = matchedPart.col ?? matchedPart.col_index ?? matchedPart.c ?? 1;
+
+        const rowsText = document.getElementById('detail-input-rows-text');
+        const colsText = document.getElementById('detail-input-cols-text');
+        const rowsInput = document.getElementById('detail-input-rows');
+        const colsInput = document.getElementById('detail-input-cols');
+
+        if (rowsText) rowsText.innerText = rVal;
+        if (colsText) colsText.innerText = cVal;
+        if (rowsInput) rowsInput.value = rVal;
+        if (colsInput) colsInput.value = cVal;
+
+        const typeSpan = document.getElementById('detail-part-type');
+        if (typeSpan) {
+            typeSpan.innerText = (matchedPart.parts_id || '') + '. ' + (matchedPart.parts_name || '') + ' （' + (matchedPart.parts_type || '') + '）';
+        }
+
+        const tableName = matchedPart.table_name || matchedPart.tablename || '';
+        const tableHeading = document.getElementById('detail-table-name-heading');
+        if (tableHeading) {
+            tableHeading.innerText = 'テーブル名称 : ' + (tableName ? tableName : '（未設定）');
+            tableHeading.setAttribute('data-table-name', tableName);
+        }
+
+        let checkedCols = [];
+        let rawChecked = matchedPart.checked_columns || matchedPart.checked_columns || [];
+        if (typeof rawChecked === 'string') {
+            checkedCols = rawChecked.split(',').map(s => s.trim());
+        } else if (Array.isArray(rawChecked)) {
+            checkedCols = rawChecked;
+        }
+
+        let allColumns = matchedPart.columns || matchedPart.col_list || [];
+        if (!Array.isArray(allColumns) && typeof allColumns === 'object') {
+            allColumns = Object.values(allColumns);
+        }
+
+        const displayLabel = String(matchedPart.display_label || 'physical').trim().toLowerCase();
+        const isLogical = (displayLabel === 'logical');
+
+        let inputStyles = [];
+        if (matchedPart.input_style) {
+            inputStyles = String(matchedPart.input_style).split(',').map(s => s.trim());
+        }
+
+        const tbody = document.getElementById('detail-table-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (allColumns.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 15px; border: 1px solid #000;">カラム情報が見つかりませんでした。</td></tr>';
+            updateInsertSql();
+            return;
+        }
+
+        let savedVars = [];
+        if (matchedPart.variable_names) {
+            if (typeof matchedPart.variable_names === 'string') {
+                savedVars = matchedPart.variable_names.split(',').map(s => s.trim());
+            } else if (Array.isArray(matchedPart.variable_names)) {
+                savedVars = matchedPart.variable_names;
+            }
+        }
+
+        allColumns.forEach((col, index) => {
+            const phys = col.physical_name || col.physical || col.name || '';
+            const log = col.logical_name || col.logical || phys;
+            const dispName = isLogical ? (log !== '' ? log : phys) : phys;
+
+            const isChecked = checkedCols.includes(phys);
+            const kindPrefix = 'Input';
+
+            let styleCellHtml = '';
+            let varNameCellHtml = '';
+            let currentStyle = inputStyles[index] || (inputStyles.length > 0 && inputStyles[0] !== '--' ? inputStyles[index] : 'text');
+
+            if (isChecked) {
+                let defaultVarName = `${kindPrefix}_${tableName}_${phys}`;
+                if (savedVars[index]) {
+                    defaultVarName = savedVars[index];
+                }
+                varNameCellHtml = `<input type="text" class="detail-var-input" value="${escapeHtml(defaultVarName)}" readonly style="width: 100%; border: none; background: transparent; padding: 4px 6px; box-sizing: border-box; outline: none;">`;
+
+                styleCellHtml = escapeHtml(currentStyle);
+                if (currentStyle.toLowerCase() !== 'text') {
+                    styleCellHtml += `<br><span style="color: #555;">${escapeHtml(tableName)}_${escapeHtml(phys)}</span>`;
+                }
+            } else {
+                styleCellHtml = '--';
+                let defaultVarName = savedVars[index] || '';
+                varNameCellHtml = `<input type="text" class="detail-var-input" value="${escapeHtml(defaultVarName)}" oninput="updateInsertSql();" style="width: 100%; border: 1px solid #ccc; padding: 4px 6px; box-sizing: border-box; outline: none;">`;
+            }
+
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-physical-name', phys);
+            tr.setAttribute('data-input-style', currentStyle);
+            tr.innerHTML = `
+                <td style="border: 1px solid #000; padding: 6px 12px; text-align: center; font-weight: bold; white-space: nowrap; width: 8%;">Input</td>
+                <td style="border: 1px solid #000; padding: 6px 10px; width: 20%;">${escapeHtml(dispName)}</td>
+                <td class="column-input-style-cell" style="border: 1px solid #000; padding: 6px 10px; width: 20%;">${styleCellHtml}</td>
+                <td class="column-var-name-cell" style="border: 1px solid #000; padding: 6px 10px; width: 52%;">${varNameCellHtml}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        updateInsertSql();
+    };
+}
+
+if (typeof window.updateInsertSql !== 'function') {
+    window.updateInsertSql = function() {
+        const tableNameEl = document.getElementById('detail-table-name-heading');
+        const tableName = tableNameEl ? tableNameEl.getAttribute('data-table-name') || 'table_name' : 'table_name';
+        
+        const rowsTrs = document.querySelectorAll('#detail-table-tbody tr');
+        let columnsList = [];
+        let valuesList = [];
+
+        rowsTrs.forEach((tr) => {
+            const phys = tr.getAttribute('data-physical-name');
+            const varInput = tr.querySelector('.detail-var-input');
+            
+            if (phys && varInput) {
+                const varName = varInput.value.trim();
+                columnsList.push(`    \`${phys}\``);
+
+                const isFullWidthBracket = (varName.startsWith('【') && varName.endsWith('】'));
+                const isHalfWidthBracket = (varName.startsWith('[') && varName.endsWith(']'));
+
+                if (isFullWidthBracket || isHalfWidthBracket) {
+                    const innerValue = varName.substring(1, varName.length - 1);
+                    valuesList.push(`    ${innerValue}`);
+                } else {
+                    valuesList.push(`    '${varName.replace(/'/g, "''")}'`);
+                }
+            }
+        });
+
+        let sql = '';
+        if (columnsList.length > 0) {
+            sql = `INSERT INTO \`${tableName}\` (\n` + columnsList.join(',\n') + `\n) VALUES (\n` + valuesList.join(',\n') + `\n);`;
+        } else {
+            sql = `-- 登録するカラム情報がありません`;
+        }
+
+        const sqlTextArea = document.getElementById('detail-insert-sql');
+        if (sqlTextArea) {
+            sqlTextArea.value = sql;
+            sqlTextArea.style.height = 'auto';
+            sqlTextArea.style.height = (sqlTextArea.scrollHeight + 4) + 'px';
+        }
+    };
+}
+
+if (typeof window.escapeHtml !== 'function') {
+    window.escapeHtml = function(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+}
+</script>

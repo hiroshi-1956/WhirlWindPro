@@ -1,0 +1,343 @@
+<?php
+/**
+ * RegistScreen.view (Main Router / Entry Point for Screen Definition - 状態保持対応版)
+ */
+$is_edit = $is_edit ?? false;
+$project_id = $project_id ?? '';
+$screen_id = $screen_id ?? '';
+$screen_name = $screen_name ?? '';
+$screen_description = $screen_description ?? '';
+$rows_count = $rows_count ?? 3;
+$cols_count = $cols_count ?? 2;
+$grids_config_json = $grids_config_json ?? '{}';
+$screen_parts = $screen_parts ?? [];
+?>
+
+<script>
+const availableScreenParts = <?= json_encode($screen_parts, JSON_UNESCAPED_UNICODE) ?>;
+const isEditMode = <?= !empty($is_edit) ? 'true' : 'false'; ?>;
+
+// セルごとの詳細設定や状態を一時保持するオブジェクト
+let cellDetailConfigs = {};
+let currentEditingCell = { r: null, c: null };
+</script>
+
+<div class="designer-base" style="padding: 20px; box-sizing: border-box; background-color: #fff; font-family: 'Hiragino Kaku Gothic ProN', 'Helvetica Neue', Arial, sans-serif; font-size: 14px; color: #000;">
+    <div id="screen-title" style="font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #000;">
+        <?= !empty($is_edit) ? '修正画面登録画面' : '新規画面登録画面'; ?>
+    </div>
+
+    <input type="hidden" id="project_id" value="<?= htmlspecialchars($project_id, ENT_QUOTES, 'UTF-8') ?>">
+    <input type="hidden" id="screen_id" value="<?= htmlspecialchars($screen_id, ENT_QUOTES, 'UTF-8') ?>">
+    <input type="hidden" id="grids_config_json" value="<?= htmlspecialchars($grids_config_json, ENT_QUOTES, 'UTF-8') ?>">
+
+    <!-- 基本情報テーブル -->
+    <table id="base-info-table" class="input-table" style="border-collapse: collapse; width: 100%; border: none; margin-bottom: 20px;">
+        <tr style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面名称</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="screen_name" style="width: 520px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($screen_name, ENT_QUOTES, 'UTF-8'); ?>">
+            </td>
+        </tr>
+        <tr style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">内容の説明</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="text" id="screen_description" style="width: 780px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px;" value="<?= htmlspecialchars($screen_description, ENT_QUOTES, 'UTF-8'); ?>">
+            </td>
+        </tr>
+        <tr style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">行数</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="number" id="rows" style="width: 80px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; text-align: center;" value="<?= htmlspecialchars($rows_count, ENT_QUOTES, 'UTF-8'); ?>" min="1" max="10" onchange="renderGridPreview();">
+            </td>
+        </tr>
+        <tr style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">列数</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <input type="number" id="cols" style="width: 80px; height: 30px; border: 2px solid #000; padding: 0 6px; background: #fff; box-sizing: border-box; outline: none; font-size: 14px; text-align: center;" value="<?= htmlspecialchars($cols_count, ENT_QUOTES, 'UTF-8'); ?>" min="1" max="5" onchange="renderGridPreview();">
+            </td>
+        </tr>
+    </table>
+
+    <div id="main-content-container">
+        <!-- ① 通常のグリッド設定エリア -->
+        <div id="normal-view-container" style="display: flex; width: 920px; border: 2px solid #000; box-sizing: border-box; background: #fff;">
+            <div id="left-grid-container" style="width: 260px; border-right: 2px solid #000; padding: 15px; box-sizing: border-box; min-height: 350px;"></div>
+            <div id="right-grid-container" style="flex: 1; padding: 15px; box-sizing: border-box; min-height: 350px;">
+                <button type="button" onclick="onClickDefaultValue();" style="width: 120px; height: 32px; border: none; background-color: #007bff; color: #fff; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; outline: none; margin-bottom: 20px;">初期値</button>
+                <div id="right-cells-area"></div>
+            </div>
+        </div>
+
+        <!-- ② Single Record Input 詳細入力画面エリア -->
+        <div id="s_single-record-container" style="display: none;">
+            <?php 
+                $detail_path = 'C:/xampp8/htdocs/jemini/wwProjectV1.57/Develop/Views/AreaE/ScreenDefinition/screen/s_single_record_input.view';
+                if (file_exists($detail_path)) {
+                    include $detail_path;
+                } else {
+                    echo '<p style="color:red;">詳細画面ファイルが見つかりません: ' . $detail_path . '</p>';
+                }
+            ?>
+        </div>
+    </div>
+
+    <div id="common-actions" style="width: 920px; display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; padding-bottom: 20px;">
+        <button type="button" onclick="onClickCancel();" style="width: 120px; height: 36px; background-color: #c9302c; border: none; color: #fff; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; outline: none;">キャンセル</button>
+        <button type="button" onclick="onClickSave();" style="width: 120px; height: 36px; background-color: #218838; border: none; color: #fff; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; outline: none;">保存</button>
+    </div>
+</div>
+
+<script>
+if (typeof window.saveMainForm !== 'function') {
+    window.saveMainForm = function() {
+        console.log('[JS Debug] saveMainForm called (stub)');
+    };
+}
+
+if (typeof window.bridge !== 'function') {
+    window.bridge = (typeof parent !== 'undefined' && typeof parent.bridge === 'function') 
+        ? parent.bridge 
+        : function(payload) { console.log('Bridge payload:', payload); };
+}
+
+let currentViewMode = 'normal';
+
+function openDetailSettings(r, c) {
+    currentEditingCell = { r: r, c: c };
+
+    const selectEl = document.querySelector(`.grid-part-select[data-row="${r}"][data-col="${c}"]`);
+    const selectedPartId = selectEl ? selectEl.value : '';
+
+    if (!selectedPartId) {
+        alert('画面パーツが選択されていません。');
+        return;
+    }
+
+    let matchedPartOriginal = null;
+    if (typeof availableScreenParts !== 'undefined' && Array.isArray(availableScreenParts)) {
+        matchedPartOriginal = availableScreenParts.find(p => String(p.parts_id) === String(selectedPartId));
+    }
+
+    if (!matchedPartOriginal) {
+        alert('パーツ情報が見つかりません。');
+        return;
+    }
+
+    let savedConfig = cellDetailConfigs[`${r}_${c}`] || {};
+
+    let matchedPart = Object.assign({}, matchedPartOriginal, {
+        row: r,
+        col: c,
+        row_index: r,
+        col_index: c,
+        input_rows: savedConfig.rows || matchedPartOriginal.input_rows,
+        input_cols: savedConfig.cols || matchedPartOriginal.input_cols
+    });
+
+    const partType = String(matchedPart.parts_type || '').trim();
+
+    // 画面の切り替え
+    document.getElementById('normal-view-container').style.display = 'none';
+    const s1 = document.getElementById('s_single-record-container');
+    if (s1) s1.style.display = 'none';
+
+    document.getElementById('screen-title').innerText = isEditMode ? '修正画面登録画面' : '新規画面登録画面';
+    document.getElementById('base-info-table').style.display = 'none';
+    document.getElementById('common-actions').style.display = 'none';
+
+    if (partType === 'Single Record Input') {
+        currentViewMode = 's_single_record_input';
+        if (s1) s1.style.display = 'block';
+        if (typeof window.initSingleRecordInput === 'function') {
+            window.initSingleRecordInput(matchedPart);
+        } else {
+            console.error('❌ initSingleRecordInput 関数が見つかりません。');
+        }
+    } else {
+        document.getElementById('normal-view-container').style.display = 'flex';
+        alert('このパーツタイプ (' + matchedPart.parts_type + ') に対応する詳細画面が定義されていません。');
+    }
+}
+
+function backToNormalView() {
+    if (currentViewMode === 's_single_record_input') {
+        if (currentEditingCell.r && currentEditingCell.c) {
+            const r = currentEditingCell.r;
+            const c = currentEditingCell.c;
+            
+            const rowsVal = document.getElementById('detail-input-rows') ? document.getElementById('detail-input-rows').value : 1;
+            const colsVal = document.getElementById('detail-input-cols') ? document.getElementById('detail-input-cols').value : 1;
+            const screenNameVal = document.getElementById('detail-screen-name') ? document.getElementById('detail-screen-name').value : '';
+            const jpNameVal = document.getElementById('detail-jp-name') ? document.getElementById('detail-jp-name').value : '';
+
+            cellDetailConfigs[`${r}_${c}`] = {
+                rows: rowsVal,
+                cols: colsVal,
+                screen_name: screenNameVal,
+                jp_name: jpNameVal
+            };
+        }
+    }
+
+    currentViewMode = 'normal';
+    document.getElementById('screen-title').innerText = isEditMode ? '修正画面登録画面' : '新規画面登録画面';
+    document.getElementById('base-info-table').style.display = 'table';
+    document.getElementById('common-actions').style.display = 'flex';
+
+    const s1 = document.getElementById('s_single-record-container'); 
+    if(s1) s1.style.display = 'none';
+    
+    document.getElementById('normal-view-container').style.display = 'flex';
+    renderGridPreview();
+}
+
+function renderGridPreview() {
+    if (currentViewMode !== 'normal') return;
+
+    const rows = parseInt(document.getElementById('rows').value) || 1;
+    const cols = parseInt(document.getElementById('cols').value) || 1;
+
+    const leftContainer = document.getElementById('left-grid-container');
+    const rightCellsArea = document.getElementById('right-cells-area');
+
+    if (!leftContainer || !rightCellsArea) return;
+
+    // 現在画面上にあるセレクトボックスの選択状態を一度退避しておく
+    let currentSelections = {};
+    document.querySelectorAll('.grid-part-select').forEach(sel => {
+        const r = sel.getAttribute('data-row');
+        const c = sel.getAttribute('data-col');
+        if (sel.value) {
+            currentSelections[`${r}_${c}`] = sel.value;
+        }
+    });
+
+    leftContainer.innerHTML = '';
+    rightCellsArea.innerHTML = '';
+
+    leftContainer.style.display = 'block';
+    rightCellsArea.style.display = 'grid';
+    rightCellsArea.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    rightCellsArea.style.gap = '15px';
+
+    let optionsHtml = '<option value=""></option>';
+    if (typeof availableScreenParts !== 'undefined' && Array.isArray(availableScreenParts)) {
+        availableScreenParts.forEach(part => {
+            const partId = part.parts_id ?? '';
+            let partName = part.parts_name ?? '';
+            optionsHtml += `<option value="${partId}">${partId}.${partName}</option>`;
+        });
+    }
+
+    let leftHtml = '';
+    let rightHtml = '';
+
+    for (let r = 1; r <= rows; r++) {
+        for (let c = 1; c <= cols; c++) {
+            leftHtml += `<div style="border: 2px solid #000; padding: 8px 12px; margin-bottom: 10px; background: #fff; font-weight: bold; text-align: center;">【${r}, ${c}】</div>`;
+
+            rightHtml += `
+                <div style="border: 2px solid #000; padding: 10px; background: #fff; box-sizing: border-box; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <div style="font-size: 13px; font-weight: bold;">【${r}, ${c}】</div>
+                        <button type="button" onclick="openDetailSettings(${r}, ${c});" style="font-size: 11px; padding: 2px 6px; cursor: pointer; background: #f0f0f0; border: 1px solid #000; border-radius: 3px;">詳細</button>
+                    </div>
+                    <select class="grid-part-select" data-row="${r}" data-col="${c}" style="width: 100%; height: 35px; border: 2px solid #000; box-sizing: border-box; background: #fff; padding: 0 5px; font-size: 14px; outline: none;">
+                        ${optionsHtml}
+                    </select>
+                </div>
+            `;
+        }
+    }
+
+    leftContainer.innerHTML = leftHtml;
+    rightCellsArea.innerHTML = rightHtml;
+
+    // 再描画後に、保持していた選択状態（セルの種類）を復元する
+    document.querySelectorAll('.grid-part-select').forEach(sel => {
+        const r = sel.getAttribute('data-row');
+        const c = sel.getAttribute('data-col');
+        const key = `${r}_${c}`;
+        if (currentSelections[key]) {
+            sel.value = currentSelections[key];
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // ページロード時に既存の grids_config_json があれば cellDetailConfigs や選択状態へ復元することも可能
+    const gridsConfigJsonEl = document.getElementById('grids_config_json');
+    if (gridsConfigJsonEl && gridsConfigJsonEl.value) {
+        try {
+            const savedConfigs = JSON.parse(gridsConfigJsonEl.value);
+            // 初期表示用として一時保存へ反映
+            setTimeout(() => {
+                for (const key in savedConfigs) {
+                    const [r, c] = key.split('_');
+                    const sel = document.querySelector(`.grid-part-select[data-row="${r}"][data-col="${c}"]`);
+                    if (sel) {
+                        sel.value = savedConfigs[key];
+                    }
+                }
+            }, 50);
+        } catch(e) {
+            console.error('Failed to parse grids_config_json:', e);
+        }
+    }
+    renderGridPreview();
+});
+
+function onClickCancel() {
+    if (confirm('戻りますか？')) {
+        if (typeof window.bridge === 'function') {
+            window.bridge({ code: 'ScreenDefinition/cancel' });
+        } else {
+            history.back();
+        }
+    }
+}
+
+function onClickSave() {
+    const screenNameEl = document.getElementById('screen_name');
+    if (!screenNameEl || !screenNameEl.value.trim()) {
+        alert('画面名称を入力してください。');
+        return;
+    }
+    if (!confirm('保存しますか？')) return;
+
+    if (typeof window.saveMainForm === 'function') {
+        window.saveMainForm();
+    }
+
+    const gridConfigs = {};
+    document.querySelectorAll('.grid-part-select').forEach(sel => {
+        const r = sel.getAttribute('data-row');
+        const c = sel.getAttribute('data-col');
+        gridConfigs[`${r}_${c}`] = sel.value;
+    });
+    
+    const gridsConfigJsonEl = document.getElementById('grids_config_json');
+    if (gridsConfigJsonEl) {
+        gridsConfigJsonEl.value = JSON.stringify(gridConfigs);
+    }
+
+    const payload = {
+        code: 'ScreenDefinition/save',
+        project_id: document.getElementById('project_id') ? document.getElementById('project_id').value : '',
+        screen_id: document.getElementById('screen_id') ? document.getElementById('screen_id').value : '',
+        screen_name: screenNameEl.value.trim(),
+        screen_description: document.getElementById('screen_description') ? document.getElementById('screen_description').value : '',
+        rows_count: document.getElementById('rows') ? document.getElementById('rows').value : 1,
+        cols_count: document.getElementById('cols') ? document.getElementById('cols').value : 1,
+        grids_config_json: gridsConfigJsonEl ? gridsConfigJsonEl.value : '{}',
+        cell_detail_configs: JSON.stringify(cellDetailConfigs) // 必要に応じて詳細設定も一緒に保存可能
+    };
+
+    if (typeof window.bridge === 'function') {
+        window.bridge(payload);
+    } else {
+        console.error('❌ window.bridge が関数として定義されていません。');
+    }
+}
+</script>

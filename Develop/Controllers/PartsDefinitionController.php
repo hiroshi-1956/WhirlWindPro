@@ -194,8 +194,8 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
         $mTables = $model->getTableStructure($projectId);
         
         $checkedColumns = [];
-        if (!empty($targetParts['checked_columns_json'])) {
-            $rawStr = trim($targetParts['checked_columns_json']);
+        if (!empty($targetParts['checked_columns'])) {
+            $rawStr = trim($targetParts['checked_columns']);
             $rawArray = explode(',', $rawStr);
             $checkedColumns = array_filter(array_map('trim', $rawArray), 'strlen');
         }
@@ -257,7 +257,7 @@ class PartsDefinitionController extends \Develop\Utils\BaseController {
             'column_filter'        => $requestParams['column_filter']        ?? $_POST['column_filter']        ?? 'all',
             'preview_title'        => $requestParams['preview_title']        ?? $_POST['preview_title']        ?? '',
             'input_rows'           => $rawInputRows,
-            'checked_columns_json' => $requestParams['checked_columns_json'] ?? $_POST['checked_columns_json'] ?? '[]',
+            'checked_columns'      => $requestParams['checked_columns']      ?? $_POST['checked_columns']      ?? '[]',
             'input_style'          => $requestParams['input_style']          ?? $_POST['input_style']          ?? '',
             'contents'             => $requestParams['contents']             ?? $_POST['contents']             ?? '',
             'style_condition'      => $requestParams['style_condition']      ?? $_POST['style_condition']      ?? '',

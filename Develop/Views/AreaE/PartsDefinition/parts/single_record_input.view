@@ -1,7 +1,7 @@
 <?php
 /**
  * single_record_input.view (Single Record Input / 拡張設定部分)
- * - カラムを縦向き（リスト形式）に変更した版
+ * - セクションチェックボックスの初期値全チェック 対応版
  */
 if (!function_exists('convertToDeveloperVariableNamePHP')) {
     function convertToDeveloperVariableNamePHP($str) {
@@ -15,22 +15,12 @@ if (!function_exists('convertToDeveloperVariableNamePHP')) {
 $textinput_configs = $textinput_configs ?? [];
 $isEditMode = !empty($is_edit);
 
-// JSON形式、または従来のカンマ区切り形式の両方から安全にスタイルマップを復元
+// スタイルマップの復元
 $inputStyleMap = [];
 if (!empty($input_style)) {
     $decoded = json_decode($input_style, true);
     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
         $inputStyleMap = $decoded;
-    } else {
-        $rawStyles = explode(',', $input_style);
-        if (!empty($m_partsinfo_columns) && is_array($m_partsinfo_columns)) {
-            foreach ($m_partsinfo_columns as $idx => $col) {
-                $pName = $col['physical_name'] ?? '';
-                if ($pName !== '' && isset($rawStyles[$idx])) {
-                    $inputStyleMap[$pName] = trim($rawStyles[$idx]);
-                }
-            }
-        }
     }
 }
 ?>
@@ -38,7 +28,6 @@ if (!empty($input_style)) {
 <input type="hidden" id="is_edit_mode_flag" value="<?= $isEditMode ? '1' : '0'; ?>">
 <input type="hidden" id="grids_config_json" name="grids_config_json" value="<?= htmlspecialchars($grids_config_json ?? '{}', ENT_QUOTES, 'UTF-8') ?>">
 <input type="hidden" id="textinput_configs_json" value="<?= htmlspecialchars(json_encode($textinput_configs, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>">
-<!-- サーバー送信用の隠しフィールド（JSON形式で保存） -->
 <input type="hidden" id="input_style_hidden" name="input_style" value="<?= htmlspecialchars($input_style ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
 <div id="single-record-input-fields-container" style="display: block; margin-top: 0;">
@@ -103,6 +92,19 @@ if (!empty($input_style)) {
             </td>
         </tr>
 
+        <tr id="row-section-flags" style="height: 40px;">
+            <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">入力</th>
+            <td style="padding: 0; vertical-align: middle;">
+                <!-- すべてのセクションに checked を付与 -->
+                <div style="display: flex; align-items: center; gap: 24px; height: 30px; font-size: 14px; padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="use_input" value="1" checked style="transform: scale(1.1);"> 入力</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="use_confirm" value="1" checked style="transform: scale(1.1);"> 確認</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="use_error" value="1" checked style="transform: scale(1.1);"> エラー発生時</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" name="use_finish" value="1" checked style="transform: scale(1.1);"> 正常終了時</label>
+                </div>
+            </td>
+        </tr>
+
         <tr id="row-preview-title" style="height: 40px;">
             <th style="width: 120px; text-align: left; font-weight: normal; font-size: 14px; padding: 0; vertical-align: middle;">画面タイトル</th>
             <td style="padding: 0; vertical-align: middle;">
@@ -111,9 +113,10 @@ if (!empty($input_style)) {
         </tr>
     </table>
 
-    <!-- 縦向きテーブル表示エリア -->
-    <div id="column-list-wrapper" style="display: <?= !empty($table_name) ? 'block' : 'none'; ?>; margin-top: 15px; margin-left: 120px; width: 520px; box-sizing: border-box;">		            
-        <div id="container-layout-vertical" style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box; max-height: 400px; overflow-y: auto;">
+    <!-- 1. Input (入力) セクション -->
+    <div id="section-input-container" style="margin-top: 20px;">
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 2px solid #000; padding-bottom: 2px;">Input (入力)</div>
+        <div style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box;">
             <table id="vertical-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff;">
                 <tbody>
                     <?php if (!empty($m_partsinfo_columns)): ?>
@@ -124,34 +127,29 @@ if (!empty($input_style)) {
                                 if (empty($l_col) || $l_col === '&nbsp;') { $l_col = $p_col; }
                                 $middle_label = ($current_display === 'physical') ? $p_col : $l_col;
 
-                                $isChecked = false;
-                                if (empty($is_edit)) {
-                                    $isChecked = true;
-                                } else if (!empty($checked_columns) && is_array($checked_columns)) {
-                                    $lower_checked = array_map('strtolower', $checked_columns);
-                                    if (in_array(strtolower($p_col), $lower_checked)) {
-                                        $isChecked = true;
-                                    }
-                                }
-
-                                $current_style_val = $inputStyleMap[$p_col] ?? '';
+                                $isChecked = empty($is_edit) || (!empty($checked_columns) && in_array(strtolower($p_col), array_map('strtolower', $checked_columns)));
+                                $current_style_val = $isChecked ? ($inputStyleMap[$p_col] ?? 'text') : '';
+                                $current_table_name = $table_name ?? 'テーブル名';
                             ?>
                             <tr class="vertical-column-row" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="border-bottom: 1px solid #ccc;">
-                                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">
-                                    <input type="checkbox" name="selected_columns_horizontal[]" value="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-index="<?= $idx ?>" onchange="toggleColumnListVisibility(); saveMainForm();" <?= $isChecked ? 'checked' : '' ?> style="transform: scale(1.1); cursor: pointer;">
+                                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; width: 50px; background-color: #fff;">
+                                    <input type="checkbox" name="selected_columns_horizontal[]" value="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-index="<?= $idx ?>" onchange="onInputCheckboxChange(this);" <?= $isChecked ? 'checked' : '' ?> style="transform: scale(1.1); cursor: pointer;">
                                 </td>
-                                <td class="vertical-label-cell" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="<?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>">
+                                <td class="vertical-label-cell" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>">
                                     <?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>
                                 </td>
-                                <td style="padding: 6px 8px; text-align: center; vertical-align: middle;">
-                                    <select class="single-input-style-select" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" style="width: 140px; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">
-                                        <option value="" <?= $current_style_val === '' ? 'selected' : '' ?>>-- 選択 --</option>
+                                <td style="padding: 6px 8px; border-right: 1px solid #ccc; width: 160px; text-align: center;">
+                                    <select class="single-input-style-select" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" style="width: 100%; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">
+                                        <option value="" <?= $current_style_val === '' ? 'selected' : '' ?>>--</option>
                                         <option value="text" <?= $current_style_val === 'text' ? 'selected' : '' ?>>text</option>
                                         <option value="pulldown" <?= $current_style_val === 'pulldown' ? 'selected' : '' ?>>pulldown</option>
-                                        <option value="radiobox" <?= $current_style_val === 'radiobox' ? 'selected' : '' ?>>radiobox</option>
+                                        <option value="radiobutton" <?= $current_style_val === 'radiobutton' ? 'selected' : '' ?>>radiobutton</option>
                                         <option value="checkbox" <?= $current_style_val === 'checkbox' ? 'selected' : '' ?>>checkbox</option>
                                         <option value="button" <?= $current_style_val === 'button' ? 'selected' : '' ?>>button</option>
                                     </select>
+                                </td>
+                                <td style="padding: 8px 12px; font-size: 13px; color: #333;">
+                                    SingleInput_(<?= htmlspecialchars($current_table_name, ENT_QUOTES, 'UTF-8') ?>)_(<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>)
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -160,13 +158,67 @@ if (!empty($input_style)) {
             </table>
         </div>
     </div>
+
+    <!-- 2. Confirm (確認) セクション -->
+    <div id="section-confirm-container" style="margin-top: 20px;">
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 2px solid #000; padding-bottom: 2px;">Confirm (確認)</div>
+        <div style="width: 100%; border: 2px solid #000; background-color: #fff; box-sizing: border-box;">
+            <table id="confirm-columns-table" style="border-collapse: collapse; width: 100%; font-size: 14px; background-color: #fff;">
+                <tbody>
+                    <?php if (!empty($m_partsinfo_columns)): ?>
+                        <?php foreach ($m_partsinfo_columns as $idx => $col): ?>
+                            <?php 
+                                $p_col = $col['physical_name'] ?? ''; 
+                                $l_col = $col['logical_name'] ?? ''; 
+                                if (empty($l_col) || $l_col === '&nbsp;') { $l_col = $p_col; }
+                                $middle_label = ($current_display === 'physical') ? $p_col : $l_col;
+                                $isChecked = empty($is_edit) || (!empty($checked_columns) && in_array(strtolower($p_col), array_map('strtolower', $checked_columns)));
+                                $current_table_name = $table_name ?? 'テーブル名';
+                            ?>
+                            <tr class="confirm-column-row" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="border-bottom: 1px solid #ccc;">
+                                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; width: 50px; background-color: #fff;">
+                                    <input type="checkbox" name="confirm_columns[]" value="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" <?= $isChecked ? 'checked' : '' ?> onchange="onConfirmCheckboxChange(this);" style="transform: scale(1.1); cursor: pointer;">
+                                </td>
+                                <td class="confirm-label-cell" data-physical="<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>" data-logical="<?= htmlspecialchars($l_col, ENT_QUOTES, 'UTF-8') ?>" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>">
+                                    <?= htmlspecialchars($middle_label, ENT_QUOTES, 'UTF-8') ?>
+                                </td>
+                                <td style="padding: 8px 12px; border-right: 1px solid #ccc; font-size: 13px; color: #333;">
+                                    SingleInput_(<?= htmlspecialchars($current_table_name, ENT_QUOTES, 'UTF-8') ?>)_(<?= htmlspecialchars($p_col, ENT_QUOTES, 'UTF-8') ?>)
+                                </td>
+                                <td style="padding: 8px 12px; width: 100px; text-align: center; font-size: 13px; color: #555;">
+                                    --
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. Error (エラー発生時) セクション -->
+    <div id="section-error-container" style="margin-top: 20px;">
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 2px solid #000; padding-bottom: 2px;">Error (エラー発生時)</div>
+        <div style="border: 2px solid #000; background: #fff; height: 90px; padding: 4px; box-sizing: border-box;">
+            <textarea id="error_message_box" style="width: 100%; height: 100%; border: none; outline: none; resize: none; font-size: 14px;" oninput="saveMainForm();"><?= htmlspecialchars($error_message ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+        </div>
+    </div>
+
+    <!-- 4. Finish (正常終了時) セクション -->
+    <div id="section-finish-container" style="margin-top: 20px; margin-bottom: 30px;">
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 2px solid #000; padding-bottom: 2px;">Finish (正常終了時)</div>
+        <div style="border: 2px solid #000; background: #fff; height: 90px; padding: 4px; box-sizing: border-box;">
+            <textarea id="finish_message_box" style="width: 100%; height: 100%; border: none; outline: none; resize: none; font-size: 14px;" oninput="saveMainForm();"><?= htmlspecialchars($finish_message ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+        </div>
+    </div>
 </div>
 
 <script>
 let cachedColumnsData = null;
 
+// 表示項目選択（物理名 / 日本語名）の連動
 function switchDisplayLabel(type) {
-    const labelCells = document.querySelectorAll('.vertical-label-cell');
+    const labelCells = document.querySelectorAll('.vertical-label-cell, .confirm-label-cell');
     labelCells.forEach(td => {
         const physicalName = td.getAttribute('data-physical');
         const logicalName = td.getAttribute('data-logical');
@@ -182,12 +234,68 @@ function switchDisplayLabel(type) {
     });
 }
 
+// Input側でチェックボックスが変更された時の処理
+function onInputCheckboxChange(checkbox) {
+    const row = checkbox.closest('.vertical-column-row');
+    const physical = row.getAttribute('data-physical');
+    const styleSelect = row.querySelector('.single-input-style-select');
+
+    if (!checkbox.checked) {
+        if (styleSelect) {
+            styleSelect.value = "";
+        }
+    } else {
+        if (styleSelect && styleSelect.value === "") {
+            styleSelect.value = "text";
+        }
+    }
+
+    const confirmRows = document.querySelectorAll('.confirm-column-row');
+    confirmRows.forEach(cRow => {
+        if (cRow.getAttribute('data-physical') === physical) {
+            const cCheckbox = cRow.querySelector('input[type="checkbox"]');
+            if (cCheckbox) {
+                cCheckbox.checked = checkbox.checked;
+            }
+        }
+    });
+
+    toggleColumnListVisibility();
+    saveMainForm();
+}
+
+// Confirm側でチェックボックスが変更された時の処理
+function onConfirmCheckboxChange(checkbox) {
+    const row = checkbox.closest('.confirm-column-row');
+    const physical = row.getAttribute('data-physical');
+
+    const inputRows = document.querySelectorAll('.vertical-column-row');
+    inputRows.forEach(iRow => {
+        if (iRow.getAttribute('data-physical') === physical) {
+            const iCheckbox = iRow.querySelector('input[type="checkbox"]');
+            const styleSelect = iRow.querySelector('.single-input-style-select');
+            if (iCheckbox) {
+                iCheckbox.checked = checkbox.checked;
+                if (!checkbox.checked && styleSelect) {
+                    styleSelect.value = "";
+                } else if (checkbox.checked && styleSelect && styleSelect.value === "") {
+                    styleSelect.value = "text";
+                }
+            }
+        }
+    });
+
+    toggleColumnListVisibility();
+    saveMainForm();
+}
+
+// フィルタ（全カラム / 表示カラムだけ）によるInput側の表示/非表示制御
 function toggleColumnListVisibility() {
     const filterRadio = document.querySelector('input[name="column_filter"]:checked');
     const filterType = filterRadio ? filterRadio.value : 'all';
     
-    const rows = document.querySelectorAll('.vertical-column-row');
-    rows.forEach(row => {
+    const inputRows = document.querySelectorAll('.vertical-column-row');
+    inputRows.forEach(row => {
         const checkbox = row.querySelector('input[type="checkbox"]');
         if (!checkbox) return;
 
@@ -195,32 +303,24 @@ function toggleColumnListVisibility() {
         if (filterType === 'selected' && !checkbox.checked) {
             show = false;
         }
-
         row.style.display = show ? '' : 'none';
+    });
+
+    const confirmRows = document.querySelectorAll('.confirm-column-row');
+    confirmRows.forEach(cRow => {
+        cRow.style.display = '';
     });
 }
 
 function loadColumnsFromDB() {
     const tableSelect = document.getElementById('table_name');
     const selectedTableName = tableSelect.value;
-    const columnListWrapper = document.getElementById('column-list-wrapper');
     const verticalTableBody = document.querySelector('#vertical-columns-table tbody');
-
-    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
-
-    if (isEditMode) {
-        const formInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
-        formInputs.forEach((el, idx) => {
-            const key = 'backup_input_' + (el.id || el.name || idx);
-            if (el.value) {
-                localStorage.setItem(key, el.value);
-            }
-        });
-    }
+    const confirmTableBody = document.querySelector('#confirm-columns-table tbody');
 
     if (!selectedTableName) {
-        columnListWrapper.style.display = 'none';
-        verticalTableBody.innerHTML = '';
+        if (verticalTableBody) verticalTableBody.innerHTML = '';
+        if (confirmTableBody) confirmTableBody.innerHTML = '';
         cachedColumnsData = null;
         if (typeof saveMainForm === 'function') saveMainForm();
         return;
@@ -232,139 +332,87 @@ function loadColumnsFromDB() {
             table_name: selectedTableName,
             parts_type: document.getElementById('parts_type') ? document.getElementById('parts_type').value : 'Single Record Input',
             parts_id: document.getElementById('parts_id') ? document.getElementById('parts_id').value : '',
-            parts_name: document.getElementById('parts_name') ? document.getElementById('parts_name').value : '',
-            parts_description: document.getElementById('parts_description') ? document.getElementById('parts_description').value : '',
             preview_title: document.getElementById('preview_title') ? document.getElementById('preview_title').value : ''
         }, function(response) {
             if (response && response.columns) {
                 cachedColumnsData = response.columns;
-                renderVerticalColumns(response.columns);
-                columnListWrapper.style.display = 'block';
+                renderSections(response.columns, selectedTableName);
                 toggleColumnListVisibility();
-
-                if (isEditMode) {
-                    const currentInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
-                    currentInputs.forEach((el, idx) => {
-                        const key = 'backup_input_' + (el.id || el.name || idx);
-                        const savedVal = localStorage.getItem(key);
-                        if (savedVal && !el.value) {
-                            el.value = savedVal;
-                        }
-                    });
-                }
-
                 if (typeof saveMainForm === 'function') saveMainForm();
             }
         });
     }
 }
 
-function renderVerticalColumns(columns) {
+function renderSections(columns, tableName) {
     const verticalTableBody = document.querySelector('#vertical-columns-table tbody');
+    const confirmTableBody = document.querySelector('#confirm-columns-table tbody');
     const displayLabelRadio = document.querySelector('input[name="display_label"]:checked');
     const isPhysical = displayLabelRadio ? displayLabelRadio.value === 'physical' : true;
 
-    const existingCheckboxes = {};
-    const existingStyles = {};
+    if (!verticalTableBody || !confirmTableBody) return;
 
-    if (verticalTableBody) {
-        const rows = verticalTableBody.querySelectorAll('tr.vertical-column-row');
-        rows.forEach(row => {
-            const chk = row.querySelector('input[type="checkbox"]');
-            const sel = row.querySelector('select.single-input-style-select');
-            if (chk) {
-                existingCheckboxes[chk.value] = chk.checked;
-            }
-            if (sel) {
-                const physicalName = sel.getAttribute('data-physical');
-                existingStyles[physicalName] = sel.value;
-            }
-        });
-    }
+    let inputHtml = '';
+    let confirmHtml = '';
 
-    let html = '';
     columns.forEach((col, idx) => {
         const pCol = col.physical_name || '';
         let lCol = col.logical_name || '';
         if (!lCol) { lCol = pCol; }
         const middleLabel = isPhysical ? pCol : lCol;
 
-        let isChecked = true;
-        if (existingCheckboxes.hasOwnProperty(pCol)) {
-            isChecked = existingCheckboxes[pCol];
-        }
+        inputHtml += `
+            <tr class="vertical-column-row" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="border-bottom: 1px solid #ccc;">
+                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; width: 50px; background-color: #fff;">
+                    <input type="checkbox" name="selected_columns_horizontal[]" value="${escapeHtml(pCol)}" data-index="${idx}" onchange="onInputCheckboxChange(this);" checked style="transform: scale(1.1); cursor: pointer;">
+                </td>
+                <td class="vertical-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(middleLabel)}">
+                    ${escapeHtml(middleLabel)}
+                </td>
+                <td style="padding: 6px 8px; border-right: 1px solid #ccc; width: 160px; text-align: center;">
+                    <select class="single-input-style-select" data-physical="${escapeHtml(pCol)}" style="width: 100%; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">
+                        <option value="">--</option>
+                        <option value="text" selected>text</option>
+                        <option value="pulldown">pulldown</option>
+                        <option value="radiobutton">radiobutton</option>
+                        <option value="checkbox">checkbox</option>
+                        <option value="button">button</option>
+                    </select>
+                </td>
+                <td style="padding: 8px 12px; font-size: 13px; color: #333;">
+                    SingleInput_(${escapeHtml(tableName)})_(${escapeHtml(pCol)})
+                </td>
+            </tr>
+        `;
 
-        let current_style_val = existingStyles[pCol] || '';
-
-        html += `<tr class="vertical-column-row" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="border-bottom: 1px solid #ccc;">`;
-        html += `<td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; background-color: #fff;">`;
-        html += `<input type="checkbox" name="selected_columns_horizontal[]" value="${escapeHtml(pCol)}" data-index="${idx}" onchange="toggleColumnListVisibility(); saveMainForm();" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer;">`;
-        html += `</td>`;
-        html += `<td class="vertical-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="${escapeHtml(middleLabel)}">${escapeHtml(middleLabel)}</td>`;
-        html += `<td style="padding: 6px 8px; text-align: center; vertical-align: middle;">`;
-        html += `<select class="single-input-style-select" data-physical="${escapeHtml(pCol)}" style="width: 140px; height: 28px; border: 1px solid #000; box-sizing: border-box; outline: none; font-size: 13px; cursor: pointer; background: #fff;" onchange="saveMainForm();">`;
-        html += `<option value="" ${current_style_val === '' ? 'selected' : ''}>-- 選択 --</option>`;
-        html += `<option value="text" ${current_style_val === 'text' ? 'selected' : ''}>text</option>`;
-        html += `<option value="pulldown" ${current_style_val === 'pulldown' ? 'selected' : ''}>pulldown</option>`;
-        html += `<option value="radiobox" ${current_style_val === 'radiobox' ? 'selected' : ''}>radiobox</option>`;
-        html += `<option value="checkbox" ${current_style_val === 'checkbox' ? 'selected' : ''}>checkbox</option>`;
-        html += `<option value="button" ${current_style_val === 'button' ? 'selected' : ''}>button</option>`;
-        html += `</select>`;
-        html += `</td>`;
-        html += `</tr>`;
+        confirmHtml += `
+            <tr class="confirm-column-row" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="border-bottom: 1px solid #ccc;">
+                <td style="text-align: center; border-right: 1px solid #ccc; padding: 8px; width: 50px; background-color: #fff;">
+                    <input type="checkbox" name="confirm_columns[]" value="${escapeHtml(pCol)}" checked onchange="onConfirmCheckboxChange(this);" style="transform: scale(1.1); cursor: pointer;">
+                </td>
+                <td class="confirm-label-cell" data-physical="${escapeHtml(pCol)}" data-logical="${escapeHtml(lCol)}" style="padding: 8px 12px; border-right: 1px solid #ccc; text-align: left; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(middleLabel)}">
+                    ${escapeHtml(middleLabel)}
+                </td>
+                <td style="padding: 8px 12px; border-right: 1px solid #ccc; font-size: 13px; color: #333;">
+                    SingleInput_(${escapeHtml(tableName)})_(${escapeHtml(pCol)})
+                </td>
+                <td style="padding: 8px 12px; width: 100px; text-align: center; font-size: 13px; color: #555;">
+                    --
+                </td>
+            </tr>
+        `;
     });
 
-    verticalTableBody.innerHTML = html;
+    verticalTableBody.innerHTML = inputHtml;
+    confirmTableBody.innerHTML = confirmHtml;
 }
 
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&'`<>"]/g, function(match) {
-        return {
-            '&': '&amp;',
-            "'": '&#x27;',
-            '`': '&#x60;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;'
-        }[match];
+        return { '&': '&amp;', "'": '&#x27;', '`': '&#x60;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[match];
     });
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const isEditMode = document.getElementById('is_edit_mode_flag') && document.getElementById('is_edit_mode_flag').value === '1';
-
-    if (isEditMode) {
-        const currentInputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
-        currentInputs.forEach((el, idx) => {
-            const key = 'backup_input_' + (el.id || el.name || idx);
-            const savedVal = localStorage.getItem(key);
-            if (savedVal && !el.value) {
-                el.value = savedVal;
-            }
-        });
-
-        const partsTypeEl = document.getElementById('parts_type') || document.querySelector('[name="parts_type"]');
-        if (partsTypeEl) {
-            partsTypeEl.disabled = true;
-            partsTypeEl.style.backgroundColor = '#f0f0f0';
-            partsTypeEl.style.cursor = 'not-allowed';
-        }
-    }
-
-    const rows = document.querySelectorAll('.vertical-column-row');
-    if (rows.length > 0) {
-        cachedColumnsData = [];
-        rows.forEach(row => {
-            cachedColumnsData.push({
-                physical_name: row.getAttribute('data-physical'),
-                logical_name: row.getAttribute('data-logical')
-            });
-        });
-    }
-
-    toggleColumnListVisibility();
-});
 
 function updateSerializedData() {
     const rows = document.querySelectorAll('.vertical-column-row');
@@ -384,7 +432,7 @@ function updateSerializedData() {
         }
     });
 
-    const checkedJsonEl = document.getElementById('checked_columns_json');
+    const checkedJsonEl = document.getElementById('checked_columns');
     if (checkedJsonEl) {
         checkedJsonEl.value = checkedColumns.join(',');
     }
@@ -400,4 +448,8 @@ function saveMainForm() {
         updateSerializedData();
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    toggleColumnListVisibility();
+});
 </script>

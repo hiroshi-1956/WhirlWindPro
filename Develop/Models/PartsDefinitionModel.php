@@ -3,7 +3,6 @@ namespace Develop\Models;
 
 class PartsDefinitionModel extends \Develop\Utils\BaseModel {
     
-    
     protected $db;
     
     /**
@@ -23,7 +22,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                         column_filter,
                         preview_title,
                         input_rows,
-                        checked_columns_json,
+                        checked_columns,
                         input_style,
                         contents,
                         style_condition,
@@ -41,7 +40,15 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
             $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);
             $stmt->execute();
             
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // DBのtinyint（1/0）を画面側の文字列（exist/none）に正規化
+            foreach ($results as &$row) {
+                $row['detail_button'] = (!empty($row['detail_button']) && $row['detail_button'] == 1) ? 'exist' : 'none';
+            }
+            unset($row);
+            
+            return $results;
             
         } catch (\Exception $e) {
             $this->logger->error("❌ PartsDefinitionModel::getAllPartsList() でエラー: " . $e->getMessage());
@@ -86,11 +93,9 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
         try {
             $tableId = null;
             
-            // 💡 1. 入力値が「数値」か「物理名（文字列）」かを判別し、すべて内部で「数値の table_id」に一本化する
             if (is_numeric($table_name_or_id)) {
                 $tableId = (int)$table_name_or_id;
             } else {
-                // 💡 文字列（例: developers）が渡された場合、m_tables から table_id を逆引きする
                 $sqlTable = "SELECT table_id FROM m_tables WHERE physical_name = :p_name LIMIT 1";
                 $stmtTable = $this->db->prepare($sqlTable);
                 $stmtTable->bindValue(':p_name', $table_name_or_id, \PDO::PARAM_STR);
@@ -103,19 +108,17 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 }
             }
             
-            // 💡 2. table_idが特定できなかった場合は処理を終了
             if (empty($tableId)) {
                 $this->logger->error("❌ テーブルIDの特定に失敗したため、カラム取得をスキップします。Input: {$table_name_or_id}");
                 return [];
             }
             
-            // 💡 3. 確実かつ安全に存在する table_id を使って m_columns から取得する
             $sql = "SELECT
                         physical_name,
                         logical_name AS logical_name
                     FROM m_columns
                     WHERE table_id = :table_id
-                    ORDER BY column_id ASC"; // 元のソート順（column_id ASC）を完全に維持
+                    ORDER BY column_id ASC";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':table_id', $tableId, \PDO::PARAM_INT);
@@ -143,21 +146,19 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
         }
         
         try {
-            // ★ コントローラーから渡されるキー名 'checked_columns_json'（または互換として 'selected_columns'）を正しく受け取る
-            $rawChecked = $data['checked_columns_json'] ?? $data['selected_columns'] ?? '';
+            $rawChecked = $data['checked_columns'] ?? $data['selected_columns'] ?? '';
             
             if (is_array($rawChecked)) {
-                $checkedColumnsJson = implode(',', $rawChecked);
+                $checkedColumns = implode(',', $rawChecked);
             } else {
-                $checkedColumnsJson = (string)$rawChecked;
+                $checkedColumns = (string)$rawChecked;
             }
-            $checkedColumnsJson = trim($checkedColumnsJson, " \t\n\r\0\x0B,");
+            $checkedColumns = trim($checkedColumns, " \t\n\r\0\x0B,");
             
-            $this->logger->debug("PartsDefinitionModel::saveParts() 保存するchecked_columns_jsonの値: [{$checkedColumnsJson}]");
+            $this->logger->debug("PartsDefinitionModel::saveParts() 保存するchecked_columnsの値: [{$checkedColumns}]");
             
             $pType = $data['parts_type'] ?? '';
             $inputRows = null;
-            // 💡 条件に 'Text Display' を追加
             if (($pType === 'Multi Record Input' || $pType === 'Multi Record Confirm' || $pType === 'Text Input' || $pType === 'Text Confirm' || $pType === 'Text Display') && !empty($data['input_rows'])) {
                 $inputRows = (int)$data['input_rows'];
             }
@@ -167,11 +168,15 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
             $style_condition = $data['style_condition'] ?? null;
             $style_column    = $data['style_column'] ?? null;
             
-            $search_area   = $data['search_area'] ?? null;
-            $detail_button = $data['detail_button'] ?? null;
+            $search_area   = $data['search_area'] ?? '0';
+            
+            // --- ▼ detail_button を tinyint(1) 用の数値（1 または 0）に変換 ▼ ---
+            $rawDetailButton = $data['detail_button'] ?? 'none';
+            $detail_button = ($rawDetailButton === 'exist' || $rawDetailButton === '1' || $rawDetailButton === true) ? 1 : 0;
+            // --- ▲ ここまで ▲ ---
             
             $this->logger->debug("PartsDefinitionModel::saveParts() search_area : {$search_area}");
-            $this->logger->debug("PartsDefinitionModel::saveParts() detail_button : {$detail_button}");
+            $this->logger->debug("PartsDefinitionModel::saveParts() detail_button (converted) : {$detail_button}");
             
             if (empty($parts_id) || $parts_id === '0') {
                 $sql = "INSERT INTO m_screenparts (
@@ -184,7 +189,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             preview_title,
                             column_filter,
                             input_rows,
-                            checked_columns_json,
+                            checked_columns,
                             input_style,
                             contents,
                             style_condition,
@@ -201,7 +206,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             :preview_title,
                             :column_filter,
                             :input_rows,
-                            :checked_columns_json,
+                            :checked_columns,
                             :input_style,
                             :contents,
                             :style_condition,
@@ -223,13 +228,13 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':preview_title', $data['preview_title'], \PDO::PARAM_STR);
                 $stmt->bindValue(':column_filter', $data['column_filter'], \PDO::PARAM_STR);
                 $stmt->bindValue(':input_rows', $inputRows, $inputRows === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
-                $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
+                $stmt->bindValue(':checked_columns', $checkedColumns, \PDO::PARAM_STR);
                 $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':search_area', $search_area, $search_area === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
-                $stmt->bindValue(':detail_button', $detail_button, $detail_button === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':detail_button', $detail_button, \PDO::PARAM_INT);
                 
                 $stmt->execute();
                 $parts_id = $this->db->lastInsertId();
@@ -244,7 +249,7 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                             preview_title = :preview_title,
                             column_filter = :column_filter,
                             input_rows = :input_rows,
-                            checked_columns_json = :checked_columns_json,
+                            checked_columns = :checked_columns,
                             input_style = :input_style,
                             contents = :contents,
                             style_condition = :style_condition,
@@ -267,13 +272,13 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
                 $stmt->bindValue(':preview_title', $data['preview_title'], \PDO::PARAM_STR);
                 $stmt->bindValue(':column_filter', $data['column_filter'], \PDO::PARAM_STR);
                 $stmt->bindValue(':input_rows', $inputRows, $inputRows === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
-                $stmt->bindValue(':checked_columns_json', $checkedColumnsJson, \PDO::PARAM_STR);
+                $stmt->bindValue(':checked_columns', $checkedColumns, \PDO::PARAM_STR);
                 $stmt->bindValue(':input_style', $inputStyle, $inputStyle === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':contents', $contents, $contents === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_condition', $style_condition, $style_condition === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':style_column', $style_column, $style_column === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
                 $stmt->bindValue(':search_area', $search_area, $search_area === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
-                $stmt->bindValue(':detail_button', $detail_button, $detail_button === null ? \PDO::PARAM_NULL : \PDO::PARAM_STR);
+                $stmt->bindValue(':detail_button', $detail_button, \PDO::PARAM_INT);
                 
                 $stmt->bindValue(':project_id', $project_id, \PDO::PARAM_STR);
                 $stmt->bindValue(':parts_id', $parts_id, \PDO::PARAM_STR);
@@ -292,7 +297,6 @@ class PartsDefinitionModel extends \Develop\Utils\BaseModel {
      * IDを指定して特定の画面パーツ情報を1件取得する
      */
     public function getPartsById($projectId, $partsId) {
-        // 最初に提示いただいたオリジナルのロジックを100%完全に復元
         $allParts = $this->getAllPartsList($projectId);
         foreach ($allParts as $parts) {
             if ($parts['parts_id'] == $partsId) {
